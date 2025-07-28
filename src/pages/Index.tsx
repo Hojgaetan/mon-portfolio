@@ -30,9 +30,9 @@ const Index = () => {
   };
 
   return (
-    <div className="h-screen bg-background flex flex-col">
+    <div className="min-h-screen h-auto bg-background flex flex-col">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto">
         {renderContent()}
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import {ChevronDown, ChevronRight} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Resizable } from "re-resizable";
@@ -183,7 +183,7 @@ export const AboutSection = () => {
   };
 
   return (
-    <div className="flex flex-row h-full min-h-0 min-w-0">
+    <div className="flex flex-col xl:flex-row h-full w-full">
       {/* Sidebar */}
       <Resizable
         defaultSize={{ width: 260, height: "100%" }}
@@ -194,8 +194,8 @@ export const AboutSection = () => {
         className="relative h-full min-h-0 min-w-0"
       >
         <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col">
-          <div className="p-4 flex-1 overflow-auto min-w-0 min-h-0">
-            <div className="space-y-2">
+          <div className="space-y-2">
+            <div className="space-y-2 sticky top-12 z-20 bg-sidebar-background">
               {/* Informations personnelles */}
               <div>
                 <Button
@@ -275,29 +275,26 @@ export const AboutSection = () => {
         </div>
       </Resizable>
       {/* Main Content */}
-      <div className="flex-1 flex flex-col xl:flex-row min-w-0 min-h-0">
+      <div className="flex-1 flex flex-col xl:flex-row h-full">
         {/* Code Editor */}
-        <div className="flex-1 bg-background">
-          <div className="border-b border-border bg-sidebar-background">
+        <div className="flex-1">
+          <div className="border-b border-border bg-sidebar-background sticky top-12 z-10">
             <div className="flex items-center">
               <div className="px-4 py-2 bg-background border-r border-border">
                 <span className="font-mono text-sm text-foreground">{selectedInfo}</span>
               </div>
             </div>
           </div>
-          
           <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm overflow-x-auto">
             {infoContents[selectedInfo]}
           </div>
         </div>
-
         {/* Skills Panel */}
         <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border">
           <div className="p-4">
             <div className="text-foreground font-mono text-xs sm:text-sm mb-4">
               // les langages de programmation que je maitrise et ceux que j'apprends encore
             </div>
-            
             <div className="space-y-3">
               {[
                 { name: "HTML", checked: true },
@@ -315,8 +312,8 @@ export const AboutSection = () => {
                 { name: "Angular", checked: false },
               ].map((skill) => (
                 <div key={skill.name} className="flex items-center space-x-3">
-                  <Checkbox 
-                    checked={skill.checked} 
+                  <Checkbox
+                    checked={skill.checked}
                     className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                   />
                   <span className="text-foreground font-mono text-xs sm:text-sm">{skill.name}</span>
