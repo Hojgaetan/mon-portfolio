@@ -4,9 +4,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 export const AboutSection = () => {
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col lg:flex-row h-full">
       {/* Sidebar */}
-      <div className="w-64 bg-sidebar-background border-r border-sidebar-border">
+      <div className="w-full lg:w-64 bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border">
         <div className="p-4">
           <div className="space-y-2">
             {/* Informations personnelles */}
@@ -51,7 +51,7 @@ export const AboutSection = () => {
             <div className="mt-6 space-y-2">
               <div className="flex items-center space-x-2">
                 <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                <span className="text-sidebar-foreground font-mono text-xs">contact@joelhassam.com</span>
+                <span className="text-sidebar-foreground font-mono text-xs break-all">contact@joelhassam.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <span className="w-4 h-4 flex items-center justify-center">📱</span>
@@ -67,7 +67,7 @@ export const AboutSection = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex flex-col xl:flex-row">
         {/* Code Editor */}
         <div className="flex-1 bg-background">
           <div className="border-b border-border bg-sidebar-background">
@@ -78,8 +78,8 @@ export const AboutSection = () => {
             </div>
           </div>
           
-          <div className="p-6 font-mono text-sm">
-            <div className="space-y-2">
+          <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm overflow-x-auto">
+            <div className="space-y-2 min-w-max">
               <div className="flex">
                 <span className="text-muted-foreground mr-4 select-none w-6">1</span>
                 <span className="text-code-comment">/**</span>
@@ -131,9 +131,9 @@ export const AboutSection = () => {
         </div>
 
         {/* Skills Panel */}
-        <div className="w-80 bg-background border-l border-border">
+        <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border">
           <div className="p-4">
-            <div className="text-foreground font-mono text-sm mb-4">
+            <div className="text-foreground font-mono text-xs sm:text-sm mb-4">
               // les langages de programmation que je maitrise et ceux que j'apprends encore
             </div>
             
@@ -152,7 +152,7 @@ export const AboutSection = () => {
                     checked={skill.checked} 
                     className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                   />
-                  <span className="text-foreground font-mono text-sm">{skill.name}</span>
+                  <span className="text-foreground font-mono text-xs sm:text-sm">{skill.name}</span>
                 </div>
               ))}
             </div>
