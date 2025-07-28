@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Menu, X } from "lucide-react";
+import logoBeige from "@/assets/logo fond beige 1.png";
+import logoNuit from "@/assets/logo fond nuit 1.png";
+import { useTheme } from "next-themes";
 
 interface NavigationProps {
   activeTab: string;
@@ -20,6 +23,7 @@ const navItems = [
 
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme } = useTheme();
 
   return (
     <nav className="w-full bg-sidebar-background border-b border-sidebar-border">
@@ -27,8 +31,12 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
         <div className="flex items-center justify-between h-12">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-accent rounded-sm flex items-center justify-center">
-              <span className="text-accent-foreground font-mono text-sm font-bold">JG</span>
+            <div className="w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden bg-accent">
+              <img
+                src={theme === "dark" ? logoNuit : logoBeige}
+                alt="Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
             <span className="hidden sm:inline text-sidebar-foreground font-mono text-sm">joel-gaetan-hassam-obah</span>
             <span className="sm:hidden text-sidebar-foreground font-mono text-sm">JG</span>
