@@ -9,13 +9,13 @@ interface NavigationProps {
 }
 
 const navItems = [
-  { id: "hello", label: "_hello", active: true },
-  { id: "about", label: "_à-propos", active: false },
-  { id: "projects", label: "_projets", active: false },
-  { id: "blog", label: "_blog", active: false },
-  { id: "formations", label: "_formations", active: false },
-  { id: "services", label: "_services", active: false },
-  { id: "contact", label: "_me-contacter", active: false },
+  { id: "hello", label: "_hello", icon: <span role="img" aria-label="hello">👋</span> },
+  { id: "about", label: "_à-propos", icon: <span role="img" aria-label="à-propos">🧑‍💼</span> },
+  { id: "projects", label: "_projets", icon: <span role="img" aria-label="projets">🛠️</span> },
+  { id: "blog", label: "_blog", icon: <span role="img" aria-label="blog">📝</span> },
+  { id: "formations", label: "_formations", icon: <span role="img" aria-label="formations">🎓</span> },
+  { id: "services", label: "_services", icon: <span role="img" aria-label="services">💼</span> },
+  { id: "contact", label: "_me-contacter", icon: <span role="img" aria-label="contact">✉️</span> },
 ];
 
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
@@ -47,6 +47,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 }`}
                 onClick={() => setActiveTab(item.id)}
               >
+                <span className="mr-2">{item.icon}</span>
                 {item.label}
               </Button>
             ))}
@@ -87,6 +88,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                     setIsMobileMenuOpen(false);
                   }}
                 >
+                  <span className="mr-2">{item.icon}</span>
                   {item.label}
                 </Button>
               ))}

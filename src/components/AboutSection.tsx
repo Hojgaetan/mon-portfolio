@@ -213,11 +213,11 @@ export const AboutSection = () => {
                 {infoOpen && (
                   <div className="ml-6 mt-2 space-y-1">
                     {[
-                      { icon: "📄", label: "bio", color: "text-sidebar-foreground" },
-                      { icon: "🎯", label: "centres-d_intérêts", color: "text-sidebar-foreground" },
-                      { icon: "🎓", label: "éducation", color: "text-sidebar-foreground" },
-                      { icon: "📸", label: "lycée/collège", color: "text-sidebar-foreground" },
-                      { icon: "📸", label: "université", color: "text-sidebar-foreground" },
+                      { icon: <ChevronRight className="w-4 h-4" />, label: "bio", color: "text-sidebar-foreground", iconType: "bio" },
+                      { icon: <span role="img" aria-label="centres-d_interets">🎯</span>, label: "centres-d_intérêts", color: "text-sidebar-foreground", iconType: "centres" },
+                      { icon: <span role="img" aria-label="éducation">🎓</span>, label: "éducation", color: "text-sidebar-foreground", iconType: "education" },
+                      { icon: <span role="img" aria-label="lycée/collège">🏫</span>, label: "lycée/collège", color: "text-sidebar-foreground", iconType: "lycee" },
+                      { icon: <span role="img" aria-label="université">🏛️</span>, label: "université", color: "text-sidebar-foreground", iconType: "universite" },
                     ].map((item) => (
                       <div
                         key={item.label}
@@ -250,7 +250,7 @@ export const AboutSection = () => {
                   <div className="ml-6 mt-2 space-y-2">
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                      <span className="text-sidebar-foreground font-mono text-xs break-all">contact@joelhassam.com</span>
+                      <span className="text-sidebar-foreground font-mono text-xs break-all">contact@joelhassam.me</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📱</span>
