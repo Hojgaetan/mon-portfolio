@@ -183,18 +183,18 @@ export const AboutSection = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row h-full">
+    <div className="flex flex-row h-full min-h-0 min-w-0">
       {/* Sidebar */}
       <Resizable
         defaultSize={{ width: 260, height: "100%" }}
-        minWidth={180}
+        minWidth={140}
         maxWidth={480}
         enable={{ right: true }}
         handleStyles={{ right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
-        className="relative h-full"
+        className="relative h-full min-h-0 min-w-0"
       >
-        <div className="h-full bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border flex flex-col">
-          <div className="p-4 flex-1 overflow-auto">
+        <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col">
+          <div className="p-4 flex-1 overflow-auto min-w-0 min-h-0">
             <div className="space-y-2">
               {/* Informations personnelles */}
               <div>
@@ -263,12 +263,19 @@ export const AboutSection = () => {
                   </div>
                 )}
               </div>
+
+              {/* Guide interactif pour l'utilisateur */}
+              <div className="mt-6">
+                <div className="bg-accent/80 text-xs text-foreground px-2 py-1 rounded shadow pointer-events-none select-none animate-pulse w-fit">
+                  ↔ Glissez le bord droit pour ajuster la largeur de la barre latérale
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </Resizable>
       {/* Main Content */}
-      <div className="flex-1 flex flex-col xl:flex-row min-w-0">
+      <div className="flex-1 flex flex-col xl:flex-row min-w-0 min-h-0">
         {/* Code Editor */}
         <div className="flex-1 bg-background">
           <div className="border-b border-border bg-sidebar-background">

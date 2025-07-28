@@ -12,6 +12,7 @@ const navItems = [
   { id: "hello", label: "_hello", active: true },
   { id: "about", label: "_à-propos", active: false },
   { id: "projects", label: "_projets", active: false },
+  { id: "blog", label: "_blog", active: false },
   { id: "formations", label: "_formations", active: false },
   { id: "services", label: "_services", active: false },
   { id: "contact", label: "_me-contacter", active: false },

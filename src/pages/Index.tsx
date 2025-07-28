@@ -3,6 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/HeroSection";
 import { AboutSection } from "@/components/AboutSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
+import { BlogSection } from "@/components/BlogSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("hello");
@@ -15,6 +16,8 @@ const Index = () => {
         return <AboutSection />;
       case "projects":
         return <ProjectsSection />;
+      case "blog":
+        return <BlogSection />;
       case "formations":
         return <div className="flex items-center justify-center h-full"><span className="text-muted-foreground font-mono">// formations - en cours de développement</span></div>;
       case "services":
