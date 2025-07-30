@@ -31,24 +31,24 @@ export const AboutSection = () => {
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">5</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Diplômé]</span>
-          <span className="text-foreground"> Bachelor en conception et développement de solutions digitales</span>
+          <span className="text-orange-500">[Nom & Prenoms]</span>
+            <span className="text-foreground"> Joel Gaetan <strong>HASSAM OBAH</strong></span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">6</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Formation]</span>
-          <span className="text-foreground"> conception et développement de solutions digitales</span>
+          <span className="text-orange-500">[Date & Lieu de Naissance]</span>
+          <span className="text-foreground"> Nee le 28 Decembre 1997 a Douala, Cameroun</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">7</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Programmation]</span>
-          <span className="text-foreground"> De septembre 2023 j'étais un étudiant en développement web d'où</span>
+          <span className="text-orange-500">[Lieu de Residence]</span>
+          <span className="text-foreground"> Colobane - Dakar, Senegal</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">8</span>
-          <span className="text-foreground">. j'ai appris les principes de l'analyse, la conception et développement logiciel</span>
+          <span className="text-foreground">. </span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">9</span>
@@ -266,7 +266,7 @@ export const AboutSection = () => {
 
               {/* Guide interactif pour l'utilisateur */}
               <div className="mt-6">
-                <div className="bg-accent/80 text-xs text-foreground px-2 py-1 rounded shadow pointer-events-none select-none animate-pulse w-fit">
+                <div className="bg-accent/80 text-xs text-foreground px-2 py-1 rounded shadow pointer-events-none select-none animate-pulse w-fit dark:bg-accent/60 dark:text-white text-white">
                   ↔ Glissez le bord droit pour ajuster la largeur de la barre latérale
                 </div>
               </div>
