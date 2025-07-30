@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,25 +46,35 @@ export const ProjectsSection = () => {
       title: "Plannification du projet",
       description: "Organisation, tâches, avancement, Trello, etc.",
       icon: "📅",
-      trello: "https://trello.com/"
+      linkKey: null,
     },
     {
       key: "modelisation",
       title: "Modélisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
       icon: "🧩",
+      linkKey: null,
+    },
+    {
+      key: "charte",
+      title: "Charte Graphique",
+      description: "Palette de couleurs, typographies, logos, etc.",
+      icon: "🎨",
+      linkKey: null,
     },
     {
       key: "maquette",
       title: "Maquette & Prototype",
       description: "Wireframes, maquettes Figma, prototypes interactifs, etc.",
       icon: "🖼️",
+      linkKey: null,
     },
     {
       key: "code",
       title: "Code Github",
       description: "Lien vers le dépôt Github du projet.",
       icon: "💻",
+      linkKey: "github_url",
     },
   ];
 
@@ -148,94 +157,33 @@ export const ProjectsSection = () => {
               <div className="p-3 sm:p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="font-sans text-xs sm:text-sm text-accent break-words">{project.title}</h3>
-                  {project.featured && (
-                    <Badge variant="secondary" className="text-xs">En vedette</Badge>
-                  )}
                 </div>
-                {project.description && (
-                  <p className="text-muted-foreground font-sans text-xs sm:text-sm mb-4 leading-relaxed">{project.description}</p>
-                )}
-                
-                {/* Technologies */}
+                <p className="text-muted-foreground text-xs mb-4">{project.description}</p>
+                {/* Affichage des technologies utilisées */}
                 {project.technologies && project.technologies.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-xs font-semibold text-accent mb-2">Technologies:</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {project.technologies.map((tech, idx) => (
+                      <span key={idx} className="bg-accent/10 text-accent px-2 py-1 rounded text-xs font-mono border border-accent/20">
+                        {tech}
+                      </span>
+                    ))}
                   </div>
                 )}
-
-                {/* Liens */}
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.project_url && (
-                    <a
-                      href={project.project_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
-                    >
-                      Voir le projet
-                    </a>
-                  )}
-                  {project.github_url && (
-                    <a
-                      href={project.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
-                    >
-                      Code source
-                    </a>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {/* Grille des phases du projet */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                   {projectPhases.map(phase => (
-                    <div key={phase.key} className="bg-background border border-border rounded-lg p-4 flex flex-col items-start gap-2 shadow-sm">
-                      <span className="text-2xl">{phase.icon}</span>
-                      <span className="font-sans font-semibold text-accent text-sm">{phase.title}</span>
-                      <span className="text-muted-foreground font-sans text-xs">{phase.description}</span>
-                      {phase.key === 'code' && (
+                    <div key={phase.key} className="bg-muted rounded-lg p-4 flex flex-col items-start border border-border shadow-sm">
+                      <div className="text-2xl mb-2">{phase.icon}</div>
+                      <div className="font-semibold text-sm mb-1">{phase.title}</div>
+                      <div className="text-xs text-muted-foreground mb-2">{phase.description}</div>
+                      {phase.linkKey && project[phase.linkKey] && (
                         <a
-                          href="https://github.com/Hojgaetan"
+                          href={project[phase.linkKey] as string}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                          className="text-primary underline text-xs mt-auto"
                         >
-                          Voir sur Github
-                        </a>
-                      )}
-                      {phase.key === 'maquette' && (
-                        <a
-                          href="https://www.figma.com/"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
-                        >
-                          Voir sur Figma
-                        </a>
-                      )}
-                      {phase.key === 'planning' && (
-                        <a
-                          href={phase.trello}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
-                        >
-                          Voir sur Trello
-                        </a>
-                      )}
-                      {phase.key === 'modelisation' && (
-                        <a
-                          href="/uml-example.pdf"
-                          download
-                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
-                        >
-                          Télécharger le fichier UML
+                          Voir le lien
                         </a>
                       )}
                     </div>
