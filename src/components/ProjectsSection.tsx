@@ -42,6 +42,35 @@ export const ProjectsSection = () => {
     },
   ];
 
+  // Exemple de phases pour chaque projet
+  const projectPhases = [
+    {
+      key: "planning",
+      title: "Plannification du projet",
+      description: "Organisation, tâches, avancement, Trello, etc.",
+      icon: "📅",
+      trello: "https://trello.com/"
+    },
+    {
+      key: "modelisation",
+      title: "Modélisation & Analyse",
+      description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
+      icon: "🧩",
+    },
+    {
+      key: "maquette",
+      title: "Maquette & Prototype",
+      description: "Wireframes, maquettes Figma, prototypes interactifs, etc.",
+      icon: "🖼️",
+    },
+    {
+      key: "code",
+      title: "Code Github",
+      description: "Lien vers le dépôt Github du projet.",
+      icon: "💻",
+    },
+  ];
+
   const [selectedProject, setSelectedProject] = useState(projects[0].id);
 
   return (
@@ -88,12 +117,54 @@ export const ProjectsSection = () => {
               <div className="p-3 sm:p-4">
                 <h3 className="font-sans text-xs sm:text-sm text-accent mb-2 break-words">{project.title}</h3>
                 <p className="text-muted-foreground font-sans text-xs sm:text-sm mb-4 leading-relaxed">{project.description}</p>
-                <Button
-                  variant="outline"
-                  className="w-full font-sans text-xs sm:text-sm bg-accent/10 border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-                >
-                  view-project-on-github
-                </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {projectPhases.map(phase => (
+                    <div key={phase.key} className="bg-background border border-border rounded-lg p-4 flex flex-col items-start gap-2 shadow-sm">
+                      <span className="text-2xl">{phase.icon}</span>
+                      <span className="font-sans font-semibold text-accent text-sm">{phase.title}</span>
+                      <span className="text-muted-foreground font-sans text-xs">{phase.description}</span>
+                      {phase.key === 'code' && (
+                        <a
+                          href="https://github.com/Hojgaetan"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          Voir sur Github
+                        </a>
+                      )}
+                      {phase.key === 'maquette' && (
+                        <a
+                          href="https://www.figma.com/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          Voir sur Figma
+                        </a>
+                      )}
+                      {phase.key === 'planning' && (
+                        <a
+                          href={phase.trello}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          Voir sur Trello
+                        </a>
+                      )}
+                      {phase.key === 'modelisation' && (
+                        <a
+                          href="/uml-example.pdf"
+                          download
+                          className="mt-2 inline-block px-3 py-1 rounded bg-accent/10 text-accent font-sans text-xs border border-accent hover:bg-accent hover:text-accent-foreground transition-colors"
+                        >
+                          Télécharger le fichier UML
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
