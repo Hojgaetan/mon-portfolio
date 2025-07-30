@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Tomorrow:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -112,6 +114,6 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }

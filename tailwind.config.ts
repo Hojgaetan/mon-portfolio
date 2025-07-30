@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import * as tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -66,7 +67,14 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'primary-light': '#efefef',
+				'primary-dark': '#0f1120',
+				'accent-red': '#df3821',
+				'accent-blue': '#0652e9',
+				'accent-sky': '#38b6ff',
+				'accent-green': '#b9e185',
+				'accent-yellow': '#fbeb78',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -94,8 +102,11 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out'
-			}
+			},
+			fontFamily: {
+				sans: ["Tomorrow", "sans-serif"],
+			},
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;

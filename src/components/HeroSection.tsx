@@ -19,13 +19,13 @@ export const HeroSection = () => {
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       
       {/* Main content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 font-sans">
         <div className="max-w-4xl w-full">
           <div className="space-y-8">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-muted-foreground font-mono text-lg">Salut, Je suis</p>
-              
+              <p className="text-muted-foreground font-sans text-lg">Salut, Je suis</p>
+
               {/* Name */}
               <h1 className="text-6xl md:text-7xl font-bold text-primary leading-tight">
                 Joel Gaetan
@@ -36,14 +36,14 @@ export const HeroSection = () => {
               {/* Title */}
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
-                <p className="text-xl md:text-2xl text-muted-foreground font-mono">
+                <p className="text-xl md:text-2xl text-muted-foreground font-sans">
                   Étudiant Développeur Web/Mobile
                 </p>
               </div>
             </div>
 
             {/* Contact Info as Code */}
-            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-6 border border-border font-mono text-sm space-y-2 max-w-2xl">
+            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-6 border border-border font-sans text-sm space-y-2 max-w-2xl">
               <div className="text-code-comment">// mes contacts</div>
               
               <div className="flex items-center space-x-2">
@@ -66,7 +66,7 @@ export const HeroSection = () => {
 
             {/* Social Links */}
             <div className="flex items-center space-x-4">
-              <span className="text-muted-foreground font-mono text-sm">Mes liens sociaux:</span>
+              <span className="text-muted-foreground font-sans text-sm">Mes liens sociaux:</span>
               <div className="flex items-center space-x-3">
                 <a href="https://www.linkedin.com/in/joel-gaetan-hassam-obah/" target="_blank" rel="noopener noreferrer" className="p-2 bg-card/60 backdrop-blur-sm rounded border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

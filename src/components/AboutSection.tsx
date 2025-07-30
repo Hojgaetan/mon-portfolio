@@ -11,7 +11,7 @@ export const AboutSection = () => {
 
   const infoContents: Record<string, JSX.Element> = {
     bio: (
-      <div className="space-y-2 min-w-max">
+      <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">1</span>
           <span className="text-code-comment">/**</span>
@@ -61,7 +61,7 @@ export const AboutSection = () => {
       </div>
     ),
     "centres-d_intérêts": (
-      <div className="space-y-2 min-w-max">
+      <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">1</span>
           <span className="text-code-comment">/**</span>
@@ -93,7 +93,7 @@ export const AboutSection = () => {
       </div>
     ),
     "éducation": (
-      <div className="space-y-2 min-w-max">
+      <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">1</span>
           <span className="text-code-comment">/**</span>
@@ -117,7 +117,7 @@ export const AboutSection = () => {
       </div>
     ),
     "lycée/collège": (
-      <div className="space-y-2 min-w-max">
+      <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">1</span>
           <span className="text-code-comment">/**</span>
@@ -153,7 +153,7 @@ export const AboutSection = () => {
       </div>
     ),
     "université": (
-      <div className="space-y-2 min-w-max">
+      <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">1</span>
           <span className="text-code-comment">/**</span>
@@ -183,7 +183,7 @@ export const AboutSection = () => {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row h-full w-full">
+    <div className="flex flex-col xl:flex-row h-full w-full font-sans">
       {/* Sidebar */}
       <Resizable
         defaultSize={{ width: 260, height: "100%" }}
@@ -193,7 +193,7 @@ export const AboutSection = () => {
         handleStyles={{ right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
         className="relative h-full min-h-0 min-w-0"
       >
-        <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col">
+        <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col font-sans">
           <div className="space-y-2">
             <div className="space-y-2 sticky top-12 z-20 bg-sidebar-background">
               {/* Informations personnelles */}
@@ -225,7 +225,7 @@ export const AboutSection = () => {
                         onClick={() => setSelectedInfo(item.label)}
                       >
                         <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
-                        <span className={`${item.color} font-mono text-sm`}>{item.label}</span>
+                        <span className={`${item.color} font-sans text-sm`}>{item.label}</span>
                       </div>
                     ))}
                   </div>
@@ -250,15 +250,15 @@ export const AboutSection = () => {
                   <div className="ml-6 mt-2 space-y-2">
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                      <span className="text-sidebar-foreground font-mono text-xs break-all">contact@joelhassam.me</span>
+                      <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.me</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                      <span className="text-sidebar-foreground font-mono text-xs">+221 77 202 04 30</span>
+                      <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                      <span className="text-sidebar-foreground font-mono text-xs">+221 70 818 40 10</span>
+                      <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
                     </div>
                   </div>
                 )}
@@ -275,7 +275,7 @@ export const AboutSection = () => {
         </div>
       </Resizable>
       {/* Main Content */}
-      <div className="flex-1 flex flex-col xl:flex-row h-full">
+      <div className="flex-1 flex flex-col xl:flex-row h-full font-sans">
         {/* Code Editor */}
         <div className="flex-1">
           <div className="border-b border-border bg-sidebar-background sticky top-12 z-10">
@@ -285,14 +285,14 @@ export const AboutSection = () => {
               </div>
             </div>
           </div>
-          <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm overflow-x-auto">
+          <div className="p-4 sm:p-6 font-sans text-xs sm:text-sm overflow-x-auto">
             {infoContents[selectedInfo]}
           </div>
         </div>
         {/* Skills Panel */}
-        <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border">
+        <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border font-sans">
           <div className="p-4">
-            <div className="text-foreground font-mono text-xs sm:text-sm mb-4">
+            <div className="text-foreground font-sans text-xs sm:text-sm mb-4">
               // les langages de programmation que je maitrise et ceux que j'apprends encore
             </div>
             <div className="space-y-3">
@@ -316,7 +316,7 @@ export const AboutSection = () => {
                     checked={skill.checked}
                     className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                   />
-                  <span className="text-foreground font-mono text-xs sm:text-sm">{skill.name}</span>
+                  <span className="text-foreground font-sans text-xs sm:text-sm">{skill.name}</span>
                 </div>
               ))}
             </div>
