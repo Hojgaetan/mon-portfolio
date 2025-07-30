@@ -65,6 +65,12 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
           <div className="flex items-center space-x-2">
             <ThemeToggle />
             <span className="hidden md:inline text-sidebar-foreground font-mono text-sm">_@Hojgaetan</span>
+            <a 
+              href="/auth" 
+              className="text-accent hover:text-accent/80 text-xs sm:text-sm font-mono hidden md:inline"
+            >
+              admin
+            </a>
             
             {/* Mobile Menu Button */}
             <Button
