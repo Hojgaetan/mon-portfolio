@@ -1,5 +1,5 @@
-import logoBeige from "@/assets/logo fond beige.svg";
-import logoNuit from "@/assets/logo fond nuit.svg";
+import logoBeige from "@/assets/logo fond beige 1.png";
+import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useContext } from "react";
 import { ThemeProviderContext } from "./theme-provider";
 
