@@ -37,7 +37,7 @@ export const HeroSection = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
                 <p className="text-xl md:text-2xl text-muted-foreground font-sans">
-                  Étudiant Développeur Web/Mobile
+                    Programmeur Python et Concepteur Developpeur de solutions digitales End User Applications (Junior)
                 </p>
               </div>
             </div>
