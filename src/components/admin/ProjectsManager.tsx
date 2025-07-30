@@ -19,6 +19,10 @@ interface Project {
   github_url: string | null;
   technologies: string[] | null;
   featured: boolean | null;
+  planning_url: string | null; // nouveau champ
+  analysis_url: string | null; // nouveau champ
+  design_url: string | null; // nouveau champ
+  prototype_url: string | null; // nouveau champ
   created_at: string;
   updated_at: string;
 }
@@ -36,6 +40,10 @@ export function ProjectsManager() {
     image_url: "",
     project_url: "",
     github_url: "",
+    planning_url: "", // nouveau champ
+    analysis_url: "", // nouveau champ
+    design_url: "", // nouveau champ
+    prototype_url: "", // nouveau champ
     technologies: "",
     featured: false,
   });
@@ -52,7 +60,24 @@ export function ProjectsManager() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProjects(data || []);
+      setProjects(
+        (data || []).map((project: any) => ({
+          id: project.id,
+          title: project.title,
+          description: project.description ?? "",
+          image_url: project.image_url ?? "",
+          project_url: project.project_url ?? "",
+          github_url: project.github_url ?? "",
+          planning_url: project.planning_url ?? "",
+          analysis_url: project.analysis_url ?? "",
+          design_url: project.design_url ?? "",
+          prototype_url: project.prototype_url ?? "",
+          technologies: project.technologies ?? [],
+          featured: project.featured ?? false,
+          created_at: project.created_at,
+          updated_at: project.updated_at,
+        }))
+      );
     } catch (error) {
       toast({
         title: "Erreur",
@@ -71,6 +96,10 @@ export function ProjectsManager() {
       image_url: "",
       project_url: "",
       github_url: "",
+      planning_url: "",
+      analysis_url: "",
+      design_url: "",
+      prototype_url: "",
       technologies: "",
       featured: false,
     });
@@ -86,6 +115,10 @@ export function ProjectsManager() {
       image_url: project.image_url || "",
       project_url: project.project_url || "",
       github_url: project.github_url || "",
+      planning_url: project.planning_url || "",
+      analysis_url: project.analysis_url || "",
+      design_url: project.design_url || "",
+      prototype_url: project.prototype_url || "",
       technologies: project.technologies?.join(", ") || "",
       featured: project.featured || false,
     });
@@ -99,7 +132,6 @@ export function ProjectsManager() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
       const projectData = {
         title: formData.title,
@@ -107,6 +139,10 @@ export function ProjectsManager() {
         image_url: formData.image_url || null,
         project_url: formData.project_url || null,
         github_url: formData.github_url || null,
+        planning_url: formData.planning_url || null,
+        analysis_url: formData.analysis_url || null,
+        design_url: formData.design_url || null,
+        prototype_url: formData.prototype_url || null,
         technologies: formData.technologies
           ? formData.technologies.split(",").map(tech => tech.trim()).filter(Boolean)
           : null,
@@ -251,7 +287,47 @@ export function ProjectsManager() {
                   />
                 </div>
               </div>
-              
+
+              <div className="space-y-2">
+                <Label htmlFor="planning_url">URL du planning</Label>
+                <Input
+                  id="planning_url"
+                  type="url"
+                  value={formData.planning_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, planning_url: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="analysis_url">URL de l'analyse</Label>
+                <Input
+                  id="analysis_url"
+                  type="url"
+                  value={formData.analysis_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, analysis_url: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="design_url">URL du design</Label>
+                <Input
+                  id="design_url"
+                  type="url"
+                  value={formData.design_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, design_url: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="prototype_url">URL du prototype</Label>
+                <Input
+                  id="prototype_url"
+                  type="url"
+                  value={formData.prototype_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, prototype_url: e.target.value }))}
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="technologies">Technologies (séparées par des virgules)</Label>
                 <Input
@@ -345,6 +421,46 @@ export function ProjectsManager() {
                     className="hover:underline"
                   >
                     Code source
+                  </a>
+                )}
+                {project.planning_url && (
+                  <a
+                    href={project.planning_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Planning
+                  </a>
+                )}
+                {project.analysis_url && (
+                  <a
+                    href={project.analysis_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Analyse
+                  </a>
+                )}
+                {project.design_url && (
+                  <a
+                    href={project.design_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Design
+                  </a>
+                )}
+                {project.prototype_url && (
+                  <a
+                    href={project.prototype_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Prototype
                   </a>
                 )}
               </div>
