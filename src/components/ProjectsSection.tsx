@@ -12,6 +12,10 @@ interface Project {
   github_url: string | null;
   technologies: string[] | null;
   featured: boolean | null;
+  planning_url?: string | null;
+  modelisation_url?: string | null;
+  charte_url?: string | null;
+  prototype_url?: string | null;
 }
 
 export const ProjectsSection = () => {
@@ -39,42 +43,37 @@ export const ProjectsSection = () => {
     }
   };
 
-  // Exemple de phases pour chaque projet
+  // Phases dynamiques selon les liens présents dans le projet
   const projectPhases = [
     {
-      key: "planning",
+      key: "planning_url",
       title: "Plannification du projet",
       description: "Organisation, tâches, avancement, Trello, etc.",
       icon: "📅",
-      linkKey: null,
     },
     {
-      key: "modelisation",
+      key: "modelisation_url",
       title: "Modélisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
       icon: "🧩",
-      linkKey: null,
     },
     {
-      key: "charte",
+      key: "charte_url",
       title: "Charte Graphique",
       description: "Palette de couleurs, typographies, logos, etc.",
       icon: "🎨",
-      linkKey: null,
     },
     {
-      key: "maquette",
+      key: "prototype_url",
       title: "Maquette & Prototype",
       description: "Wireframes, maquettes Figma, prototypes interactifs, etc.",
       icon: "🖼️",
-      linkKey: null,
     },
     {
-      key: "code",
+      key: "github_url",
       title: "Code Github",
       description: "Lien vers le dépôt Github du projet.",
       icon: "💻",
-      linkKey: "github_url",
     },
   ];
 
@@ -171,21 +170,19 @@ export const ProjectsSection = () => {
                 )}
                 {/* Grille des phases du projet */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {projectPhases.map(phase => (
+                  {projectPhases.filter(phase => project[phase.key as keyof Project]).map(phase => (
                     <div key={phase.key} className="bg-muted rounded-lg p-4 flex flex-col items-start border border-border shadow-sm">
                       <div className="text-2xl mb-2">{phase.icon}</div>
                       <div className="font-semibold text-sm mb-1">{phase.title}</div>
                       <div className="text-xs text-muted-foreground mb-2">{phase.description}</div>
-                      {phase.linkKey && project[phase.linkKey] && (
-                        <a
-                          href={project[phase.linkKey] as string}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary underline text-xs mt-auto"
-                        >
-                          Voir le lien
-                        </a>
-                      )}
+                      <a
+                        href={project[phase.key as keyof Project] as string}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary underline text-xs mt-auto"
+                      >
+                        Voir le lien
+                      </a>
                     </div>
                   ))}
                 </div>
