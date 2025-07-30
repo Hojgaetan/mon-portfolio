@@ -270,7 +270,7 @@ export function ProjectsManager() {
                 />
                 <Label htmlFor="featured">Projet en vedette</Label>
               </div>
-              
+
               <div className="flex space-x-2">
                 <Button type="submit">
                   {editingProject ? "Mettre à jour" : "Créer"}
