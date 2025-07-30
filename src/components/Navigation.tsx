@@ -38,17 +38,17 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 className="w-8 h-8 object-contain"
               />
             </div>
-            <span className="hidden sm:inline text-sidebar-foreground font-mono text-sm">joel-gaetan-hassam-obah</span>
-            <span className="sm:hidden text-sidebar-foreground font-mono text-sm">JG</span>
+            <span className="hidden sm:inline text-sidebar-foreground font-sans text-sm">joel-gaetan-hassam-obah</span>
+            <span className="sm:hidden text-sidebar-foreground font-sans text-sm">JG</span>
           </div>
 
           {/* Desktop Navigation Tabs */}
-          <div className="hidden lg:flex items-center">
+          <div className="hidden lg:flex items-center font-sans">
             {navItems.map((item) => (
               <Button
                 key={item.id}
                 variant="ghost"
-                className={`font-mono text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border ${
+                className={`font-sans text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border ${
                   activeTab === item.id
                     ? "bg-background text-foreground border-b-2 border-accent"
                     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -80,13 +80,13 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-sidebar-border bg-sidebar-background">
+          <div className="lg:hidden border-t border-sidebar-border bg-sidebar-background font-sans">
             <div className="py-2 space-y-1">
               {navItems.map((item) => (
                 <Button
                   key={item.id}
                   variant="ghost"
-                  className={`w-full justify-start font-mono text-sm px-4 py-3 rounded-none ${
+                  className={`w-full justify-start font-sans text-sm px-4 py-3 rounded-none ${
                     activeTab === item.id
                       ? "bg-background text-foreground border-l-2 border-accent"
                       : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
