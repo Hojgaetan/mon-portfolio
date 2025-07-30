@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 interface BlogPost {
   id: string;
@@ -17,6 +18,7 @@ interface BlogPost {
 export const BlogSection: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPosts();
@@ -67,28 +69,25 @@ export const BlogSection: React.FC = () => {
       <h2 className="text-3xl font-bold mb-8 text-accent">Blog</h2>
       <div className="grid gap-8 md:grid-cols-2">
         {posts.map((post) => (
-          <article key={post.id} className="bg-background border border-border rounded-lg shadow p-6 flex flex-col">
-            {post.image_url && (
-              <div className="mb-4 rounded-lg overflow-hidden">
-                <img
-                  src={post.image_url}
-                  alt={post.title}
-                  className="w-full h-48 object-cover"
-                />
-              </div>
-            )}
-            <h3 className="text-xl font-semibold mb-2 text-foreground">{post.title}</h3>
-            <span className="text-xs text-muted-foreground mb-2">
-              {new Date(post.created_at).toLocaleDateString("fr-FR")}
-            </span>
-            {post.excerpt && (
-              <p className="text-sm text-muted-foreground mb-4 flex-1">{post.excerpt}</p>
-            )}
-            <button className="self-end text-accent hover:underline text-sm font-mono">Lire plus</button>
-          </article>
+          <div key={post.id} className="bg-card rounded-lg shadow p-6 flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                {post.title}
+                <Badge variant={post.published ? "default" : "secondary"}>
+                  {post.published ? "Publié" : "Brouillon"}
+                </Badge>
+              </h3>
+              <p className="text-muted-foreground mb-4 line-clamp-3">{post.excerpt}</p>
+            </div>
+            <button
+              className="mt-4 text-primary underline text-sm self-end hover:text-accent transition"
+              onClick={() => navigate(`/article/${post.slug}`)}
+            >
+              Lire plus
+            </button>
+          </div>
         ))}
       </div>
     </section>
   );
 };
-

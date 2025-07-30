@@ -38,6 +38,8 @@ export function BlogManager() {
     published: false,
   });
 
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
+
   useEffect(() => {
     fetchPosts();
   }, []);
@@ -185,6 +187,13 @@ export function BlogManager() {
     }
   };
 
+  const filteredPosts = posts.filter(post => {
+    if (filter === 'all') return true;
+    if (filter === 'published') return post.published;
+    if (filter === 'draft') return !post.published;
+    return true;
+  });
+
   if (loading) {
     return <div className="text-center">Chargement des articles...</div>;
   }
@@ -198,7 +207,11 @@ export function BlogManager() {
           Nouvel article
         </Button>
       </div>
-
+      <div className="flex gap-2 mb-4">
+        <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>Tous</Button>
+        <Button variant={filter === 'published' ? 'default' : 'outline'} onClick={() => setFilter('published')}>Publiés</Button>
+        <Button variant={filter === 'draft' ? 'default' : 'outline'} onClick={() => setFilter('draft')}>Brouillons</Button>
+      </div>
       {(isCreating || editingPost) && (
         <Card>
           <CardHeader>
@@ -290,7 +303,7 @@ export function BlogManager() {
       )}
 
       <div className="grid gap-6">
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <Card key={post.id}>
             <CardHeader>
               <div className="flex justify-between items-start">
