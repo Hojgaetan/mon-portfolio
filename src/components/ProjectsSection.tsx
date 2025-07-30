@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ChevronRight } from "lucide-react";
 
 export const ProjectsSection = () => {
   const projects = [
@@ -40,17 +42,23 @@ export const ProjectsSection = () => {
     },
   ];
 
+  const [selectedProject, setSelectedProject] = useState(projects[0].id);
+
   return (
-    <div className="flex flex-col lg:flex-row h-full">
+    <div className="flex flex-col lg:flex-row h-full font-sans">
       {/* Sidebar */}
-      <div className="w-full lg:w-64 bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border">
+      <div className="w-full lg:w-64 bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border flex flex-col font-sans">
         <div className="p-4">
           <div className="space-y-2">
-            <div className="text-sidebar-foreground font-mono text-sm mb-4">_projets</div>
-            {projects.slice(0, 3).map((project) => (
-              <div key={project.id} className="flex items-center space-x-2 py-1">
-                <span className="w-4 h-4 flex items-center justify-center">📁</span>
-                <span className="text-sidebar-foreground font-mono text-xs sm:text-sm truncate">{project.id}</span>
+            <div className="text-sidebar-foreground font-sans text-sm mb-4">_projets</div>
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
+                onClick={() => setSelectedProject(project.id)}
+              >
+                <ChevronRight className="w-4 h-4 text-sidebar-foreground" />
+                <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.id}</span>
               </div>
             ))}
           </div>
@@ -62,35 +70,33 @@ export const ProjectsSection = () => {
         <div className="border-b border-border bg-sidebar-background">
           <div className="flex items-center">
             <div className="px-4 py-2 bg-background border-r border-border">
-              <span className="font-mono text-sm text-foreground">_projets</span>
+              <span className="font-sans text-sm text-foreground">{selectedProject}</span>
             </div>
           </div>
         </div>
-        
         <div className="p-4 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            {projects.map((project) => (
-              <div key={project.id} className="bg-card border border-border rounded-lg overflow-hidden">
-                <div className="h-32 sm:h-48 bg-muted">
-                  <img 
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-3 sm:p-4">
-                  <h3 className="font-mono text-xs sm:text-sm text-accent mb-2 break-words">{project.title}</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm mb-4 leading-relaxed">{project.description}</p>
-                  <Button 
-                    variant="outline" 
-                    className="w-full font-mono text-xs sm:text-sm bg-accent/10 border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-                  >
-                    view-project-on-github
-                  </Button>
-                </div>
+          {/* Affiche uniquement le projet sélectionné */}
+          {projects.filter(p => p.id === selectedProject).map((project) => (
+            <div key={project.id} className="bg-card border border-border rounded-lg overflow-hidden">
+              <div className="h-32 sm:h-48 bg-muted">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover"
+                />
               </div>
-            ))}
-          </div>
+              <div className="p-3 sm:p-4">
+                <h3 className="font-sans text-xs sm:text-sm text-accent mb-2 break-words">{project.title}</h3>
+                <p className="text-muted-foreground font-sans text-xs sm:text-sm mb-4 leading-relaxed">{project.description}</p>
+                <Button
+                  variant="outline"
+                  className="w-full font-sans text-xs sm:text-sm bg-accent/10 border-accent text-accent hover:bg-accent hover:text-accent-foreground"
+                >
+                  view-project-on-github
+                </Button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
