@@ -71,3 +71,5 @@ export const useTheme = () => {
 
   return context;
 };
+
+export { ThemeProviderContext };

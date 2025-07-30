@@ -1,12 +1,20 @@
+import logoBeige from "@/assets/logo fond beige 1.png";
+import logoNuit from "@/assets/logo fond nuit 1.png";
 import backgroundImage from "@/assets/portfolio-bg.jpg";
+import { useContext } from "react";
+import { ThemeProviderContext } from "./theme-provider";
 
 export const HeroSection = () => {
+  const { theme } = useContext(ThemeProviderContext);
+  const isDark = (theme === "dark") || (theme === "system" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const backgroundImageLogo = isDark ? logoNuit : logoBeige;
+
   return (
     <main className="min-h-screen relative overflow-hidden">
       {/* Background with blur effect */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        style={{ backgroundImage: `url(${backgroundImageLogo})` }}
       />
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
       
