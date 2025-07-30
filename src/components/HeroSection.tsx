@@ -1,6 +1,5 @@
-import logoBeige from "@/assets/logo fond beige 1.png";
-import logoNuit from "@/assets/logo fond nuit 1.png";
-import backgroundImage from "@/assets/portfolio-bg.jpg";
+import logoBeige from "@/assets/logo fond beige.svg";
+import logoNuit from "@/assets/logo fond nuit.svg";
 import { useContext } from "react";
 import { ThemeProviderContext } from "./theme-provider";
 
@@ -37,7 +36,7 @@ export const HeroSection = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
                 <p className="text-xl md:text-2xl text-muted-foreground font-sans">
-                    Programmeur Python et Concepteur Developpeur de solutions digitales End User Applications (Junior)
+                    Concepteur Developpeur de solutions End User Applications (Junior)
                 </p>
               </div>
             </div>
