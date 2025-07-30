@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {ChevronDown, ChevronRight} from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Resizable } from "re-resizable";
@@ -204,20 +204,20 @@ export const AboutSection = () => {
                   onClick={() => setInfoOpen((open) => !open)}
                 >
                   {infoOpen ? (
-                    <ChevronDown className="w-4 h-4 mr-1" />
+                    <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 mr-1" />
+                    <Folder className="w-4 h-4 mr-1" />
                   )}
                   <span className="font-mono text-sm">_informations-personnelles</span>
                 </Button>
                 {infoOpen && (
                   <div className="ml-6 mt-2 space-y-1">
                     {[
-                      { icon: <ChevronRight className="w-4 h-4" />, label: "bio", color: "text-sidebar-foreground", iconType: "bio" },
-                      { icon: <span role="img" aria-label="centres-d_interets">🎯</span>, label: "centres-d_intérêts", color: "text-sidebar-foreground", iconType: "centres" },
-                      { icon: <span role="img" aria-label="éducation">🎓</span>, label: "éducation", color: "text-sidebar-foreground", iconType: "education" },
-                      { icon: <span role="img" aria-label="lycée/collège">🏫</span>, label: "lycée/collège", color: "text-sidebar-foreground", iconType: "lycee" },
-                      { icon: <span role="img" aria-label="université">🏛️</span>, label: "université", color: "text-sidebar-foreground", iconType: "universite" },
+                      { icon: <FileText className="w-4 h-4" />, label: "bio", color: "text-sidebar-foreground" },
+                      { icon: <FileMusic className="w-4 h-4" />, label: "centres-d_intérêts", color: "text-sidebar-foreground" },
+                      { icon: <FileCode className="w-4 h-4" />, label: "éducation", color: "text-sidebar-foreground" },
+                      { icon: <FileStack className="w-4 h-4" />, label: "lycée/collège", color: "text-sidebar-foreground" },
+                      { icon: <FileBarChart2 className="w-4 h-4" />, label: "université", color: "text-sidebar-foreground" },
                     ].map((item) => (
                       <div
                         key={item.label}
@@ -240,9 +240,9 @@ export const AboutSection = () => {
                   onClick={() => setContactsOpen((open) => !open)}
                 >
                   {contactsOpen ? (
-                    <ChevronDown className="w-4 h-4 mr-1" />
+                    <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
-                    <ChevronRight className="w-4 h-4 mr-1" />
+                    <Folder className="w-4 h-4 mr-1" />
                   )}
                   <span className="font-mono text-sm">_contacts</span>
                 </Button>
