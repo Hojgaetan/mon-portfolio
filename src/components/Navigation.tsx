@@ -1,7 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Menu, Settings, X } from "lucide-react";
+import {
+	Briefcase,
+	FolderKanban,
+	GraduationCap,
+	Hand,
+	Mail,
+	Menu,
+	Newspaper,
+	Settings,
+	User,
+	X,
+} from "lucide-react";
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
@@ -14,13 +25,35 @@ interface NavigationProps {
 }
 
 const navItems = [
-  { id: "hello", label: "_hello", icon: <span role="img" aria-label="hello">👋</span> },
-  { id: "about", label: "_à-propos", icon: <span role="img" aria-label="à-propos">🧑‍💼</span> },
-  { id: "projects", label: "_projets", icon: <span role="img" aria-label="projets">🛠️</span>, path: "/projets" },
-  { id: "blog", label: "_blog", icon: <span role="img" aria-label="blog">📝</span>, path: "/blog" },
-  { id: "formations", label: "_formations", icon: <span role="img" aria-label="formations">🎓</span> },
-  { id: "services", label: "_services", icon: <span role="img" aria-label="services">💼</span> },
-  { id: "contact", label: "_me-contacter", icon: <span role="img" aria-label="contact">✉️</span> },
+	{ id: "hello", label: "_hello", icon: <Hand className="h-4 w-4" /> },
+	{ id: "about", label: "_à-propos", icon: <User className="h-4 w-4" /> },
+	{
+		id: "projects",
+		label: "_projets",
+		icon: <FolderKanban className="h-4 w-4" />,
+		path: "/projets",
+	},
+	{
+		id: "blog",
+		label: "_blog",
+		icon: <Newspaper className="h-4 w-4" />,
+		path: "/blog",
+	},
+	{
+		id: "formations",
+		label: "_formations",
+		icon: <GraduationCap className="h-4 w-4" />,
+	},
+	{
+		id: "services",
+		label: "_services",
+		icon: <Briefcase className="h-4 w-4" />,
+	},
+	{
+		id: "contact",
+		label: "_me-contacter",
+		icon: <Mail className="h-4 w-4" />,
+	},
 ];
 
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
@@ -28,6 +61,15 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    if (location.pathname !== "/") {
+      navigate("/", { state: { scrollTo: "hello" } });
+    } else {
+      setActiveTab("hello");
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   const handleNavClick = (item: (typeof navItems)[0]) => {
     if (item.path) {
@@ -43,11 +85,11 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   };
 
   return (
-    <nav className="w-full bg-sidebar-background border-b border-sidebar-border">
-      <div className="max-w-full mx-auto px-4">
-        <div className="flex items-center justify-between h-12">
+    <nav className="sticky top-0 z-50 w-full border-b border-sidebar-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto max-w-full px-4">
+        <div className="flex h-12 items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={handleLogoClick}>
             <div className="w-8 h-8 rounded-sm flex items-center justify-center overflow-hidden bg-accent">
               <img
                 src={theme === "dark" ? logoNuit : logoBeige}

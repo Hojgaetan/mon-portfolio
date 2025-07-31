@@ -38,7 +38,7 @@ export default function Auth() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         navigate("/admin");
       }

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Resizable } from "re-resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { TechIcon } from "@/components/TechIcon";
 
 export const AboutSection = () => {
   const isMobile = useIsMobile();
@@ -471,11 +472,11 @@ export const AboutSection = () => {
                 { name: "CSS", checked: true },
                 { name: "JavaScript", checked: true },
                 { name: "TypeScript", checked: true },
-                { name: "React.js", checked: true },
+                { name: "React", checked: true },
                 { name: "Python", checked: true },
                 { name: "Git", checked: true },
                 { name: "Node.js", checked: true },
-                { name: "Express.js", checked: false },
+                { name: "Express", checked: false },
                 { name: "MongoDB", checked: false },
                 { name: "Next.js", checked: false },
                 { name: "Vue.js", checked: false },
@@ -486,6 +487,7 @@ export const AboutSection = () => {
                     checked={skill.checked}
                     className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
                   />
+                  <TechIcon tech={skill.name} />
                   <span className="text-foreground font-sans text-xs sm:text-sm">{skill.name}</span>
                 </div>
               ))}
