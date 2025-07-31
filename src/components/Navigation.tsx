@@ -96,7 +96,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
             >
               <Settings className="h-5 w-5" />
             </a>
-            
+
             {/* Mobile Menu Button */}
             <Button
               variant="ghost"

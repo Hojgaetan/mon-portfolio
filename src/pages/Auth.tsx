@@ -7,6 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
+import logoLight from "@/assets/logo fond beige.svg";
+import logoDark from "@/assets/logo fond nuit.svg";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -116,8 +119,15 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      <Card className="w-full max-w-md bg-primary-light dark:bg-primary-dark">
+        <div className="flex justify-center pt-6">
+          <img src={logoLight} alt="Logo" className="h-20 block dark:hidden" />
+          <img src={logoDark} alt="Logo" className="h-20 hidden dark:block" />
+        </div>
         <CardHeader className="text-center">
           <CardTitle>Administration</CardTitle>
           <CardDescription>

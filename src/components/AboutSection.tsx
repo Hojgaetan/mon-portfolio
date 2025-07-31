@@ -42,7 +42,7 @@ export const AboutSection = () => {
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">6</span>
           <span className="text-foreground">. </span>
-          <span className="text-foreground"> je suis Developpeur web avec dans la création de sites internet et d'applications web responsives.</span>
+          <span className="text-foreground"> je suis Developpeur web dans la création de sites internet et d'applications web responsives.</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">7</span>
