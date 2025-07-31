@@ -1,17 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { User, Session } from "@supabase/supabase-js";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { BlogManager } from "@/components/admin/BlogManager";
+import { UsersManager } from "@/components/admin/UsersManager";
+import { AdminSettings } from "@/components/admin/AdminSettings";
+import { Resizable } from "re-resizable";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState("dashboard");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -68,6 +72,23 @@ export default function Admin() {
     }
   };
 
+  const renderContent = () => {
+    switch (activeSection) {
+      case "dashboard":
+        return <AdminDashboard />;
+      case "projects":
+        return <ProjectsManager />;
+      case "blog":
+        return <BlogManager />;
+      case "users":
+        return <UsersManager />;
+      case "settings":
+        return <AdminSettings />;
+      default:
+        return <AdminDashboard />;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -84,48 +105,31 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Administration</h1>
-            <p className="text-sm text-muted-foreground">
-              Connecté en tant que {user.email}
-            </p>
-          </div>
-          <div className="flex space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => navigate("/")}
-            >
-              Voir le site
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleSignOut}
-            >
-              Déconnexion
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex font-sans">
+      {/* Sidebar */}
+      <Resizable
+        defaultSize={{ width: 280, height: "100%" }}
+        minWidth={200}
+        maxWidth={400}
+        enable={{ right: true }}
+        handleStyles={{ right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
+        className="relative h-screen min-h-0 min-w-0"
+      >
+        <AdminSidebar
+          activeSection={activeSection}
+          setActiveSection={setActiveSection}
+          user={user}
+          onSignOut={handleSignOut}
+          onNavigateHome={() => navigate("/")}
+        />
+      </Resizable>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="projects">Projets</TabsTrigger>
-            <TabsTrigger value="blog">Blog</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="projects">
-            <ProjectsManager />
-          </TabsContent>
-          
-          <TabsContent value="blog">
-            <BlogManager />
-          </TabsContent>
-        </Tabs>
-      </main>
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <main className="flex-1 overflow-auto p-6">
+          {renderContent()}
+        </main>
+      </div>
     </div>
   );
 }
