@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
+import { PdfIcon } from "./PdfIcon";
 
 interface NavigationProps {
   activeTab: string;
@@ -63,6 +64,12 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
           {/* Mobile menu button and Theme Toggle */}
           <div className="flex items-center space-x-2">
+            <a href="/path-to-your-cv.pdf" download className="hidden lg:block">
+                <Button variant="ghost" className="h-12 rounded-none bg-[#df3821] hover:bg-[#df3821]/90 text-white px-3 py-2 flex items-center">
+                    <PdfIcon className="h-5 w-5 mr-2" />
+                    _telecharger-le-cv
+                </Button>
+            </a>
             <ThemeToggle />
             <span className="hidden md:inline text-sidebar-foreground font-mono text-sm">_@Hojgaetan</span>
             <a 
@@ -106,6 +113,15 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   {item.label}
                 </Button>
               ))}
+              <a href="/path-to-your-cv.pdf" download className="w-full">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none bg-[#df3821] hover:bg-[#df3821]/90 text-white"
+                >
+                  <PdfIcon className="h-5 w-5 mr-2" />
+                  _télécharger-cv
+                </Button>
+              </a>
             </div>
           </div>
         )}

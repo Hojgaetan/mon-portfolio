@@ -3,8 +3,10 @@ import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, Fil
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Resizable } from "re-resizable";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const AboutSection = () => {
+  const isMobile = useIsMobile();
   const [selectedInfo, setSelectedInfo] = useState("bio");
   const [infoOpen, setInfoOpen] = useState(true);
   const [contactsOpen, setContactsOpen] = useState(false);
@@ -193,13 +195,13 @@ export const AboutSection = () => {
         <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Maintenance et optimisation du site web : </span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Mise à jour régulière du contenu et des plugins WordPress pour garantir une disponibilité à 99,9%.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9.</span><span className="text-foreground text-[#38b6ff]">Stratégie SEO et visibilité : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10.</span><span className="text-foreground">Audit technique et optimisation des balises meta/titles (+50% de clics organiques en 02 mois).</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">11.</span><span className="text-foreground text-[#38b6ff]">Collaboration cross-fonctionnelle : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">12.</span><span className="text-foreground">Refonte de l’UI/UX avec le designer (Figma), réduisant le taux de rebond de 30%.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">13.</span><span className="text-foreground text-[#38b6ff]">Projets techniques : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">14.</span><span className="text-foreground">Migration du site vers un hébergement plus performant (Hostinger), diminuant le temps de chargement de 2,5s à 0,8s.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">15.</span><span className="text-foreground">Intégration de maquettes responsive pour mobile, augmentant le trafic mobile de 40%.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Stratégie SEO et visibilité : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Audit technique et optimisation des balises meta/titles (+50% de clics organiques en 02 mois).</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">11</span><span className="text-foreground text-[#38b6ff]">Collaboration cross-fonctionnelle : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">12</span><span className="text-foreground">Refonte de l’UI/UX avec le designer (Figma), réduisant le taux de rebond de 30%.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">13</span><span className="text-foreground text-[#38b6ff]">Projets techniques : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">14</span><span className="text-foreground">Migration du site vers un hébergement plus performant (Hostinger), diminuant le temps de chargement de 2,5s à 0,8s.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">15</span><span className="text-foreground">Intégration de maquettes responsive pour mobile, augmentant le trafic mobile de 40%.</span></div>
       </div>
     ),
       "Responsable Informatique": (
@@ -211,9 +213,9 @@ export const AboutSection = () => {
               <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Travail a distance | Douala, Cameroun | Depuis Septembre 2023 | CDD</i></span></div>
               <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
               <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Management d’équipe à distance : </span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9.</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10.</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
           </div>
       ),
   };
@@ -222,12 +224,12 @@ export const AboutSection = () => {
     <div className="flex flex-col xl:flex-row h-full w-full font-sans">
       {/* Sidebar */}
       <Resizable
-        defaultSize={{ width: 260, height: "100%" }}
-        minWidth={140}
-        maxWidth={480}
-        enable={{ right: true }}
-        handleStyles={{ right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
-        className="relative h-full min-h-0 min-w-0"
+        size={isMobile ? { width: "100%", height: "auto" } : { width: 260, height: "100%" }}
+        minWidth={isMobile ? "100%" : 140}
+        maxWidth={isMobile ? "100%" : 480}
+        enable={isMobile ? {} : { right: true }}
+        handleStyles={isMobile ? {} : { right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
+        className="relative h-full min-h-0 min-w-0 xl:h-full"
       >
         <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col font-sans">
           <div className="space-y-2">
@@ -239,6 +241,11 @@ export const AboutSection = () => {
                   className="w-full justify-start p-1 h-auto text-sidebar-foreground"
                   onClick={() => setInfoOpen((open) => !open)}
                 >
+                  {infoOpen ? (
+                    <ChevronDown className="w-4 h-4 mr-1" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 mr-1" />
+                  )}
                   {infoOpen ? (
                     <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
@@ -271,6 +278,11 @@ export const AboutSection = () => {
                         className="w-full justify-start p-1 h-auto text-sidebar-foreground"
                         onClick={() => setEducationOpen((open) => !open)}
                     >
+                        {educationOpen ? (
+                            <ChevronDown className="w-4 h-4 mr-1" />
+                        ) : (
+                            <ChevronRight className="w-4 h-4 mr-1" />
+                        )}
                         {educationOpen ? (
                             <FolderOpen className="w-4 h-4 mr-1" />
                         ) : (
@@ -305,6 +317,11 @@ export const AboutSection = () => {
                   onClick={() => setExperiencesOpen((open) => !open)}
                 >
                   {experiencesOpen ? (
+                    <ChevronDown className="w-4 h-4 mr-1" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 mr-1" />
+                  )}
+                  {experiencesOpen ? (
                     <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
                     <Folder className="w-4 h-4 mr-1" />
@@ -320,6 +337,11 @@ export const AboutSection = () => {
                         className="w-full justify-start p-1 h-auto text-sidebar-foreground"
                         onClick={() => setStagesOpen((open) => !open)}
                       >
+                        {stagesOpen ? (
+                          <ChevronDown className="w-4 h-4 mr-1" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 mr-1" />
+                        )}
                         {stagesOpen ? (
                           <FolderOpen className="w-4 h-4 mr-1" />
                         ) : (
@@ -350,6 +372,11 @@ export const AboutSection = () => {
                         className="w-full justify-start p-1 h-auto text-sidebar-foreground"
                         onClick={() => setEmploisOpen((open) => !open)}
                       >
+                        {emploisOpen ? (
+                          <ChevronDown className="w-4 h-4 mr-1" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 mr-1" />
+                        )}
                         {emploisOpen ? (
                           <FolderOpen className="w-4 h-4 mr-1" />
                         ) : (
@@ -384,6 +411,11 @@ export const AboutSection = () => {
                   className="w-full justify-start p-1 h-auto text-sidebar-foreground"
                   onClick={() => setContactsOpen((open) => !open)}
                 >
+                  {contactsOpen ? (
+                    <ChevronDown className="w-4 h-4 mr-1" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 mr-1" />
+                  )}
                   {contactsOpen ? (
                     <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
