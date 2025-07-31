@@ -14,8 +14,146 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_comments: {
+        Row: {
+          approved: boolean | null
+          article_id: string
+          author_email: string
+          author_name: string
+          content: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          updated_at: string
+        }
+        Insert: {
+          approved?: boolean | null
+          article_id: string
+          author_email: string
+          author_name: string
+          content: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          updated_at?: string
+        }
+        Update: {
+          approved?: boolean | null
+          article_id?: string
+          author_email?: string
+          author_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_likes: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          ip_address: unknown
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          ip_address: unknown
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_likes_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_shares: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          platform: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          platform: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          platform?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_shares_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_views: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_views_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
+          category_id: string | null
           content: string
           created_at: string
           excerpt: string | null
@@ -27,6 +165,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category_id?: string | null
           content: string
           created_at?: string
           excerpt?: string | null
@@ -38,6 +177,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category_id?: string | null
           content?: string
           created_at?: string
           excerpt?: string | null
@@ -48,41 +188,91 @@ export type Database = {
           title?: string
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
         Relationships: []
       }
       projects: {
         Row: {
+          analysis_url: string | null
           created_at: string
           description: string | null
+          design_url: string | null
           featured: boolean | null
           github_url: string | null
           id: string
           image_url: string | null
+          planning_url: string | null
           project_url: string | null
+          prototype_url: string | null
           technologies: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
+          analysis_url?: string | null
           created_at?: string
           description?: string | null
+          design_url?: string | null
           featured?: boolean | null
           github_url?: string | null
           id?: string
           image_url?: string | null
+          planning_url?: string | null
           project_url?: string | null
+          prototype_url?: string | null
           technologies?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
+          analysis_url?: string | null
           created_at?: string
           description?: string | null
+          design_url?: string | null
           featured?: boolean | null
           github_url?: string | null
           id?: string
           image_url?: string | null
+          planning_url?: string | null
           project_url?: string | null
+          prototype_url?: string | null
           technologies?: string[] | null
           title?: string
           updated_at?: string

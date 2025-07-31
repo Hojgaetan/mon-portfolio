@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Plus } from "lucide-react";
 
 interface BlogPost {
@@ -29,6 +30,7 @@ export function BlogManager() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -36,13 +38,29 @@ export function BlogManager() {
     image_url: "",
     slug: "",
     published: false,
+    category_id: "",
   });
 
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
 
   useEffect(() => {
+    fetchCategories();
     fetchPosts();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("*")
+        .order("name");
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error("Erreur lors du chargement des catégories:", error);
+    }
+  };
 
   const fetchPosts = async () => {
     try {
@@ -72,6 +90,7 @@ export function BlogManager() {
       image_url: "",
       slug: "",
       published: false,
+      category_id: "",
     });
     setEditingPost(null);
     setIsCreating(false);
@@ -99,6 +118,7 @@ export function BlogManager() {
       image_url: post.image_url || "",
       slug: post.slug || "",
       published: post.published || false,
+      category_id: (post as any).category_id || "",
     });
     setIsCreating(false);
   };
@@ -121,6 +141,7 @@ export function BlogManager() {
         image_url: formData.image_url || null,
         slug: slug,
         published: formData.published,
+        category_id: formData.category_id || null,
       };
 
       if (editingPost) {
@@ -278,6 +299,31 @@ export function BlogManager() {
                   value={formData.image_url}
                   onChange={(e) => setFormData(prev => ({ ...prev, image_url: e.target.value }))}
                 />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="category">Catégorie</Label>
+                <Select
+                  value={formData.category_id}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: category.color }}
+                          />
+                          {category.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               
               <div className="flex items-center space-x-2">
