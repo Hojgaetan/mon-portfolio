@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ChevronDown, Folder, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { FigmaIcon } from "@/components/FigmaIcon";
+import { GithubIcon } from "@/components/GithubIcon";
 
 interface Project {
   id: string;
@@ -21,6 +23,8 @@ interface Project {
 export const ProjectsSection = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     fetchProjects();
@@ -67,24 +71,28 @@ export const ProjectsSection = () => {
       key: "prototype_url",
       title: "Maquette & Prototype",
       description: "Wireframes, maquettes Figma, prototypes interactifs, etc.",
-      icon: "🖼️",
+      icon: <FigmaIcon className="w-4 h-4" />,
     },
     {
       key: "github_url",
       title: "Code Github",
       description: "Lien vers le dépôt Github du projet.",
-      icon: "💻",
+      icon: <GithubIcon className="w-4 h-4" />,
     },
   ];
 
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
-
-  // Set first project as selected when projects load
+  // Set first project as selected and open when projects load
   useEffect(() => {
     if (projects.length > 0 && !selectedProject) {
       setSelectedProject(projects[0].id);
+      setOpenProjects({ [projects[0].id]: true });
     }
   }, [projects, selectedProject]);
+
+  const toggleProject = (projectId: string) => {
+    setSelectedProject(projectId);
+    setOpenProjects(prev => ({ [projectId]: !prev[projectId] }));
+  };
 
   if (loading) {
     return (
@@ -113,15 +121,43 @@ export const ProjectsSection = () => {
           <div className="space-y-2">
             <div className="text-sidebar-foreground font-sans text-sm mb-4">_projets</div>
             {projects.map((project) => (
-              <div
-                key={project.id}
-                className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
-                onClick={() => setSelectedProject(project.id)}
-              >
-                <ChevronRight className="w-4 h-4 text-sidebar-foreground" />
-                <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.title}</span>
-                {project.featured && (
-                  <Badge variant="secondary" className="text-xs">★</Badge>
+              <div key={project.id}>
+                <div
+                  className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
+                  onClick={() => toggleProject(project.id)}
+                >
+                  {openProjects[project.id] ? (
+                    <ChevronDown className="w-4 h-4 text-sidebar-foreground" />
+                  ) : (
+                    <ChevronRight className="w-4 h-4 text-sidebar-foreground" />
+                  )}
+                  {openProjects[project.id] ? (
+                    <FolderOpen className="w-5 h-5 text-sidebar-foreground" />
+                  ) : (
+                    <Folder className="w-5 h-5 text-sidebar-foreground" />
+                  )}
+                  <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.title}</span>
+                  {project.featured && (
+                    <Badge variant="secondary" className="text-xs">★</Badge>
+                  )}
+                </div>
+                {openProjects[project.id] && (
+                  <div className="ml-6 mt-1 space-y-1 border-l border-sidebar-border pl-4">
+                    {projectPhases
+                      .filter(phase => project[phase.key as keyof Project])
+                      .map(phase => (
+                        <a
+                          key={phase.key}
+                          href={project[phase.key as keyof Project] as string}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 py-1 px-2 rounded cursor-pointer hover:bg-accent/10"
+                        >
+                          <span className="text-lg flex items-center justify-center w-4 h-4">{phase.icon}</span>
+                          <span className="text-xs text-muted-foreground">{phase.title}</span>
+                        </a>
+                      ))}
+                  </div>
                 )}
               </div>
             ))}
@@ -172,7 +208,7 @@ export const ProjectsSection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                   {projectPhases.filter(phase => project[phase.key as keyof Project]).map(phase => (
                     <div key={phase.key} className="bg-muted rounded-lg p-4 flex flex-col items-start border border-border shadow-sm">
-                      <div className="text-2xl mb-2">{phase.icon}</div>
+                      <div className="text-2xl mb-2 flex items-center justify-center">{phase.icon}</div>
                       <div className="font-semibold text-sm mb-1">{phase.title}</div>
                       <div className="text-xs text-muted-foreground mb-2">{phase.description}</div>
                       <a
