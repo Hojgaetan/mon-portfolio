@@ -11,6 +11,7 @@ import Admin from "./pages/Admin";
 import ArticlePage from "./pages/ArticlePage";
 import BlogPage from "./pages/BlogPage";
 import ProjectsPage from "./pages/ProjectsPage";
+import { Footer } from "@/components/Footer";
 
 const queryClient = new QueryClient();
 
@@ -21,16 +22,21 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/article/:slug" element={<ArticlePage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/projets" element={<ProjectsPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/article/:slug" element={<ArticlePage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/projets" element={<ProjectsPage />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>
