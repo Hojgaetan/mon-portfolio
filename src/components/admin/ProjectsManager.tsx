@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Edit, Plus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Project {
   id: string;
@@ -19,10 +20,11 @@ interface Project {
   github_url: string | null;
   technologies: string[] | null;
   featured: boolean | null;
-  planning_url: string | null; // nouveau champ
-  analysis_url: string | null; // nouveau champ
-  design_url: string | null; // nouveau champ
-  prototype_url: string | null; // nouveau champ
+  planning_url: string | null;
+  analysis_url: string | null;
+  design_url: string | null;
+  prototype_url: string | null;
+  category: "personnel" | "professionnel" | "academique";
   created_at: string;
   updated_at: string;
 }
@@ -46,6 +48,7 @@ export function ProjectsManager() {
     prototype_url: "", // nouveau champ
     technologies: "",
     featured: false,
+    category: "professionnel" as "personnel" | "professionnel" | "academique",
   });
 
   useEffect(() => {
@@ -74,6 +77,7 @@ export function ProjectsManager() {
           prototype_url: project.prototype_url ?? "",
           technologies: project.technologies ?? [],
           featured: project.featured ?? false,
+          category: project.category ?? "professionnel",
           created_at: project.created_at,
           updated_at: project.updated_at,
         }))
@@ -102,6 +106,7 @@ export function ProjectsManager() {
       prototype_url: "",
       technologies: "",
       featured: false,
+      category: "professionnel" as "personnel" | "professionnel" | "academique",
     });
     setEditingProject(null);
     setIsCreating(false);
@@ -121,6 +126,7 @@ export function ProjectsManager() {
       prototype_url: project.prototype_url || "",
       technologies: project.technologies?.join(", ") || "",
       featured: project.featured || false,
+      category: project.category || "professionnel",
     });
     setIsCreating(false);
   };
@@ -147,6 +153,7 @@ export function ProjectsManager() {
           ? formData.technologies.split(",").map(tech => tech.trim()).filter(Boolean)
           : null,
         featured: formData.featured,
+        category: formData.category,
       };
 
       if (editingProject) {
@@ -337,7 +344,24 @@ export function ProjectsManager() {
                   placeholder="React, TypeScript, Tailwind CSS"
                 />
               </div>
-              
+
+              <div className="space-y-2">
+                <Label htmlFor="category">Catégorie</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as any }))}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Sélectionner une catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="professionnel">Professionnel</SelectItem>
+                    <SelectItem value="personnel">Personnel</SelectItem>
+                    <SelectItem value="academique">Académique</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="flex items-center space-x-2">
                 <Switch
                   id="featured"
@@ -371,6 +395,7 @@ export function ProjectsManager() {
                     {project.featured && (
                       <Badge variant="secondary">En vedette</Badge>
                     )}
+                    <Badge variant="outline" className="capitalize">{project.category}</Badge>
                   </CardTitle>
                   <CardDescription>{project.description}</CardDescription>
                 </div>

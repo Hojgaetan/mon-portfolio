@@ -18,13 +18,20 @@ interface Project {
   modelisation_url?: string | null;
   charte_url?: string | null;
   prototype_url?: string | null;
+  category: "personnel" | "professionnel" | "academique";
 }
 
+const projectCategories: Record<string, string> = {
+  professionnel: "Projets professionnels",
+  personnel: "Projets personnels",
+  academique: "Projets académiques",
+};
+
 export const ProjectsSection = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [groupedProjects, setGroupedProjects] = useState<Record<string, Project[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [openProjects, setOpenProjects] = useState<Record<string, boolean>>({});
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
 
   useEffect(() => {
     fetchProjects();
@@ -34,12 +41,28 @@ export const ProjectsSection = () => {
     try {
       const { data, error } = await supabase
         .from("projects")
-        .select("*")
-        .order("featured", { ascending: false })
+        .select("*, category")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProjects(data || []);
+
+      const grouped = (data || []).reduce((acc, project) => {
+        const category = project.category || "personnel";
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(project);
+        return acc;
+      }, {} as Record<string, Project[]>);
+
+      setGroupedProjects(grouped);
+
+      if (data && data.length > 0) {
+        const professionalProjects = grouped.professionnel || [];
+        const firstProject = professionalProjects.length > 0 ? professionalProjects[0] : data[0];
+        setSelectedProject(firstProject.id);
+        setOpenFolders(prev => ({ ...prev, [firstProject.category]: true }));
+      }
     } catch (error) {
       console.error("Erreur lors du chargement des projets:", error);
     } finally {
@@ -81,17 +104,12 @@ export const ProjectsSection = () => {
     },
   ];
 
-  // Set first project as selected and open when projects load
-  useEffect(() => {
-    if (projects.length > 0 && !selectedProject) {
-      setSelectedProject(projects[0].id);
-      setOpenProjects({ [projects[0].id]: true });
-    }
-  }, [projects, selectedProject]);
+  const toggleFolder = (folderName: string) => {
+    setOpenFolders(prev => ({ ...prev, [folderName]: !prev[folderName] }));
+  };
 
-  const toggleProject = (projectId: string) => {
+  const handleProjectClick = (projectId: string) => {
     setSelectedProject(projectId);
-    setOpenProjects(prev => ({ [projectId]: !prev[projectId] }));
   };
 
   if (loading) {
@@ -105,7 +123,7 @@ export const ProjectsSection = () => {
     );
   }
 
-  if (projects.length === 0) {
+  if (Object.keys(groupedProjects).length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
         <span className="text-muted-foreground font-mono">// aucun projet disponible</span>
@@ -113,50 +131,50 @@ export const ProjectsSection = () => {
     );
   }
 
+  const allProjects = Object.values(groupedProjects).flat();
+
   return (
     <div className="flex flex-col lg:flex-row h-full font-sans">
       {/* Sidebar */}
       <div className="w-full lg:w-64 bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border flex flex-col font-sans">
         <div className="p-4">
-          <div className="space-y-2">
+          <div className="space-y-1">
             <div className="text-sidebar-foreground font-sans text-sm mb-4">_projets</div>
-            {projects.map((project) => (
-              <div key={project.id}>
+            {Object.entries(projectCategories).map(([categoryKey, categoryName]) => (
+              <div key={categoryKey}>
                 <div
-                  className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
-                  onClick={() => toggleProject(project.id)}
+                  className="flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none hover:bg-accent/10"
+                  onClick={() => toggleFolder(categoryKey)}
                 >
-                  {openProjects[project.id] ? (
+                  {openFolders[categoryKey] ? (
                     <ChevronDown className="w-4 h-4 text-sidebar-foreground" />
                   ) : (
                     <ChevronRight className="w-4 h-4 text-sidebar-foreground" />
                   )}
-                  {openProjects[project.id] ? (
+                  {openFolders[categoryKey] ? (
                     <FolderOpen className="w-5 h-5 text-sidebar-foreground" />
                   ) : (
                     <Folder className="w-5 h-5 text-sidebar-foreground" />
                   )}
-                  <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.title}</span>
-                  {project.featured && (
-                    <Badge variant="secondary" className="text-xs">★</Badge>
-                  )}
+                  <span className="text-sidebar-foreground font-sans text-sm">{categoryName}</span>
                 </div>
-                {openProjects[project.id] && (
-                  <div className="ml-6 mt-1 space-y-1 border-l border-sidebar-border pl-4">
-                    {projectPhases
-                      .filter(phase => project[phase.key as keyof Project])
-                      .map(phase => (
-                        <a
-                          key={phase.key}
-                          href={project[phase.key as keyof Project] as string}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center space-x-2 py-1 px-2 rounded cursor-pointer hover:bg-accent/10"
+                {openFolders[categoryKey] && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-4">
+                    {(groupedProjects[categoryKey] || []).map((project) => (
+                      <div key={project.id}>
+                        <div
+                          className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
+                          onClick={() => handleProjectClick(project.id)}
                         >
-                          <span className="text-lg flex items-center justify-center w-4 h-4">{phase.icon}</span>
-                          <span className="text-xs text-muted-foreground">{phase.title}</span>
-                        </a>
-                      ))}
+                          <div className="w-4 h-4" />
+                          <Folder className="w-5 h-5 text-sidebar-foreground" />
+                          <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.title}</span>
+                          {project.featured && (
+                            <Badge variant="secondary" className="text-xs">★</Badge>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -171,14 +189,14 @@ export const ProjectsSection = () => {
           <div className="flex items-center">
             <div className="px-4 py-2 bg-background border-r border-border">
               <span className="font-sans text-sm text-foreground">
-                {projects.find(p => p.id === selectedProject)?.title || selectedProject}
+                {allProjects.find(p => p.id === selectedProject)?.title || "Sélectionnez un projet"}
               </span>
             </div>
           </div>
         </div>
         <div className="p-4 sm:p-6">
           {/* Affiche uniquement le projet sélectionné */}
-          {projects.filter(p => p.id === selectedProject).map((project) => (
+          {allProjects.filter(p => p.id === selectedProject).map((project) => (
             <div key={project.id} className="bg-card border border-border rounded-lg overflow-hidden">
               {project.image_url && (
                 <div className="h-32 sm:h-48 bg-muted">
