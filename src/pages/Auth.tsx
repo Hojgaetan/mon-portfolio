@@ -26,7 +26,7 @@ export default function Auth() {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         // Redirect authenticated users to admin
         if (session?.user) {
           navigate("/admin");
@@ -159,17 +159,17 @@ export default function Auth() {
               />
             </div>
             <div className="space-y-2">
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={loading}
               >
                 {loading ? "Connexion..." : "Se connecter"}
               </Button>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full" 
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
                 onClick={handleSignUp}
                 disabled={loading}
               >

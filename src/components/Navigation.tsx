@@ -83,7 +83,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
           {/* Mobile menu button and Theme Toggle */}
           <div className="flex items-center space-x-2">
-            <a href="/path-to-your-cv.pdf" download className="hidden lg:block">
+            <a href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf" download className="hidden lg:block">
                 <Button variant="ghost" className="h-12 rounded-none bg-[#df3821] hover:bg-[#df3821]/90 text-white px-3 py-2 flex items-center">
                     <PdfIcon className="h-5 w-5 mr-2" />
                     _telecharger-le-cv

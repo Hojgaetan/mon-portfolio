@@ -27,7 +27,7 @@ export const Footer = () => {
 
 						<div className="flex flex-col items-center gap-6 border-b border-[#262833] pb-6 md:flex-row md:gap-4 md:border-b-0 md:border-r md:pb-0 md:pr-4">
 							<a
-								href="/path-to-your-cv.pdf"
+								href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf"
 								download
 								className="flex items-center space-x-2 rounded-md bg-accent-red px-4 py-2 text-primary-foreground hover:bg-accent-red/90"
 							>

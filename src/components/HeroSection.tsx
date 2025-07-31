@@ -11,32 +11,32 @@ export const HeroSection = () => {
   return (
     <main className="min-h-screen relative overflow-hidden">
       {/* Background with blur effect */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${backgroundImageLogo})` }}
       />
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
-      
+
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 font-sans">
         <div className="max-w-4xl w-full">
           <div className="space-y-8">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-muted-foreground font-sans text-lg">Salut, Je suis</p>
+              <p className="text-muted-foreground font-sans text-lg">web_data-science_ia_machine-learning_et_automatisation</p>
 
               {/* Name */}
               <h1 className="text-6xl md:text-7xl font-bold text-primary leading-tight">
-                Joel Gaetan
+                Joel-Gaetan
                 <br />
-                <span className="text-foreground">HASSAM OBAH</span>
+                <span className="text-foreground">HASSAM-OBAH</span>
               </h1>
               
               {/* Title */}
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
                 <p className="text-xl md:text-2xl text-muted-foreground font-sans">
-                    Web, Data, IA et Machine Learning programmeur
+                    etudiant_en_informatique
                     <br />
                 </p>
               </div>
