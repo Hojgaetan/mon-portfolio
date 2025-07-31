@@ -4,7 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, MessageCircle, Heart, Share2, Calendar, User } from "lucide-react";
+import { Eye, MessageCircle, Heart, Share2, Calendar, User, ChevronRight, ChevronDown, Folder, FolderOpen, FileText } from "lucide-react";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Types pour les tables blog (remplaçant les types Supabase manquants)
 interface BlogPost {
@@ -48,23 +52,24 @@ interface ArticleStats {
 }
 
 export const BlogSection: React.FC = () => {
-  const [posts, setPosts] = useState<BlogPostWithRelations[]>([]);
+  const [groupedPosts, setGroupedPosts] = useState<Record<string, BlogPostWithRelations[]>>({});
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [articleStats, setArticleStats] = useState<Record<string, ArticleStats>>({});
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
+  const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchCategories();
-    fetchPosts();
+    const fetchInitialData = async () => {
+      setLoading(true);
+      const categoriesData = await fetchCategories();
+      await fetchAllPosts(categoriesData);
+      setLoading(false);
+    };
+    fetchInitialData();
   }, []);
-
-  useEffect(() => {
-    if (posts.length > 0) {
-      fetchArticleStats(posts.map(post => post.id));
-    }
-  }, [posts]);
 
   const fetchCategories = async () => {
     try {
@@ -72,251 +77,218 @@ export const BlogSection: React.FC = () => {
         .from("categories")
         .select("*")
         .order("name");
-
       if (error) throw error;
-      setCategories(data || []);
+      const fetchedCategories = data || [];
+      setCategories(fetchedCategories);
+      return fetchedCategories;
     } catch (error) {
       console.error("Erreur lors du chargement des catégories:", error);
+      return [];
     }
   };
 
-  const fetchPosts = async () => {
+  const fetchAllPosts = async (fetchedCategories: Category[]) => {
     try {
-      let query = supabase
+      const { data, error } = await supabase
         .from("blog_posts")
-        .select(`
-          *,
-          categories (
-            id,
-            name,
-            slug,
-            description,
-            color
-          )
-        `)
+        .select(`*, categories(*)`)
         .eq("published", true)
         .order("created_at", { ascending: false });
 
-      if (selectedCategory) {
-        query = query.eq("category_id", selectedCategory);
-      }
-
-      const { data, error } = await query;
-
       if (error) throw error;
-      setPosts(data as BlogPostWithRelations[] || []);
 
-      // Fetch stats for each post
-      if (data && data.length > 0) {
-        await fetchArticleStats(data.map((post: BlogPost) => post.id));
+      const allPostsData = data || [];
+
+      const grouped = allPostsData.reduce((acc, post) => {
+        const categoryId = post.category_id || "uncategorized";
+        if (!acc[categoryId]) {
+          acc[categoryId] = [];
+        }
+        acc[categoryId].push(post as BlogPostWithRelations);
+        return acc;
+      }, {} as Record<string, BlogPostWithRelations[]>);
+
+      setGroupedPosts(grouped);
+
+      // By default, select the category of the most recent post
+      if (allPostsData.length > 0) {
+        const mostRecentPost = allPostsData[0];
+        if (mostRecentPost.category_id) {
+          setSelectedCategory(mostRecentPost.category_id);
+          setOpenCategories({ [mostRecentPost.category_id]: true });
+        }
+      } else if (fetchedCategories.length > 0) {
+        // Fallback to the first category if no posts exist
+        setSelectedCategory(fetchedCategories[0].id);
+        setOpenCategories({ [fetchedCategories[0].id]: true });
       }
     } catch (error) {
       console.error("Erreur lors du chargement des articles:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const fetchArticleStats = async (postIds: string[]) => {
-    try {
-      // Fetch views
-      const { data: viewsData } = await supabase
-        .from("article_views")
-        .select("article_id")
-        .in("article_id", postIds);
+  const toggleCategoryFolder = (categoryId: string) => {
+    setOpenCategories(prev => ({ ...prev, [categoryId]: !prev[categoryId] }));
+  };
 
-      // Fetch likes
-      const { data: likesData } = await supabase
-        .from("article_likes")
-        .select("article_id")
-        .in("article_id", postIds);
+  const handlePostClick = (postId: string) => {
+    setSelectedPostId(postId);
+  };
 
-      // Fetch comments
-      const { data: commentsData } = await supabase
-        .from("article_comments")
-        .select("article_id")
-        .eq("approved", true)
-        .in("article_id", postIds);
-
-      // Fetch shares
-      const { data: sharesData } = await supabase
-        .from("article_shares")
-        .select("article_id")
-        .in("article_id", postIds);
-
-      // Aggregate stats
-      const statsMap: Record<string, ArticleStats> = {};
-      postIds.forEach(id => {
-        statsMap[id] = {
-          views: viewsData?.filter((v) => v.article_id === id).length || 0,
-          likes: likesData?.filter((l) => l.article_id === id).length || 0,
-          comments: commentsData?.filter((c) => c.article_id === id).length || 0,
-          shares: sharesData?.filter((s) => s.article_id === id).length || 0,
-        };
-      });
-
-      setArticleStats(statsMap);
-    } catch (error) {
-      console.error("Erreur lors du chargement des statistiques:", error);
+  const handleCategoryClick = (categoryId: string | "all") => {
+    setSelectedCategory(categoryId);
+    if (categoryId !== "all") {
+      const postsInCategory = groupedPosts[categoryId];
+      if (postsInCategory && postsInCategory.length > 0) {
+        setSelectedPostId(postsInCategory[0].id);
+        setOpenCategories(prev => ({ ...prev, [categoryId]: true }));
+      }
     }
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, [selectedCategory]);
+  const allPosts = Object.values(groupedPosts).flat();
+  const currentPost = allPosts.find(p => p.id === selectedPostId);
 
   if (loading) {
     return (
-      <section id="blog" className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Chargement des articles...</p>
-          </div>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement du blog...</p>
         </div>
-      </section>
+      </div>
     );
   }
 
+  if (allPosts.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-muted-foreground font-mono">// Aucun article disponible</span>
+      </div>
+    );
+  }
+
+  const renderArticlePreview = (post: BlogPostWithRelations) => (
+    <div className="prose prose-sm dark:prose-invert max-w-none">
+        <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+        {post.categories && (
+            <Badge
+                variant="secondary"
+                className="mb-4"
+                style={{ backgroundColor: `${post.categories.color}20`, color: post.categories.color }}
+            >
+                {post.categories.name}
+            </Badge>
+        )}
+        <p className="text-sm text-muted-foreground mb-4">
+            Publié le {new Date(post.created_at).toLocaleDateString("fr-FR")}
+        </p>
+        {post.image_url && (
+            <img src={post.image_url} alt={post.title} className="rounded-lg object-cover w-full h-auto aspect-video mb-6 shadow-lg" />
+        )}
+        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <Button onClick={() => navigate(`/article/${post.slug}`)} className="mt-6">
+            Lire l'article complet
+        </Button>
+    </div>
+  );
+
   return (
-    <section id="blog" className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <aside className="w-full lg:w-80 shrink-0 mb-8 lg:mb-0">
-            <div className="lg:sticky lg:top-8 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Catégories</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button
-                    variant={selectedCategory === null ? "default" : "ghost"}
-                    className="w-full justify-start"
-                    onClick={() => setSelectedCategory(null)}
-                  >
-                    Tous les articles
-                  </Button>
+    <section id="blog" className="bg-background font-sans">
+      <div className="border-t">
+        <ResizablePanelGroup
+          direction={isMobile ? "vertical" : "horizontal"}
+          className="min-h-screen"
+        >
+          <ResizablePanel defaultSize={isMobile ? 40 : 20} minSize={isMobile ? 30 : 15}>
+            <div className="p-4 h-full">
+              <h3 className="text-lg mb-4 pl-2">Catégories</h3>
+              <ScrollArea className="h-[calc(100%-40px)]">
+                <ul className="space-y-1 pr-2">
                   {categories.map((category) => (
-                    <Button
-                      key={category.id}
-                      variant={selectedCategory === category.id ? "default" : "ghost"}
-                      className="w-full justify-start"
-                      onClick={() => setSelectedCategory(category.id)}
-                    >
-                      <div
-                        className="w-3 h-3 rounded-full mr-2"
-                        style={{ backgroundColor: category.color }}
-                      />
-                      {category.name}
-                    </Button>
+                    (groupedPosts[category.id] && groupedPosts[category.id].length > 0) && (
+                      <li key={category.id}>
+                        <div
+                          className="flex items-center cursor-pointer p-2 rounded-md hover:bg-muted"
+                          onClick={() => {
+                            toggleCategoryFolder(category.id);
+                            handleCategoryClick(category.id);
+                          }}
+                        >
+                          {openCategories[category.id] ? <ChevronDown className="h-4 w-4 mr-2" /> : <ChevronRight className="h-4 w-4 mr-2" />}
+                          {openCategories[category.id] ? <FolderOpen className="h-5 w-5 mr-2 text-primary" /> : <Folder className="h-5 w-5 mr-2 text-primary" />}
+                          <span>{category.name}</span>
+                        </div>
+                        {openCategories[category.id] && (
+                          <ul className="pl-6 mt-1 border-l border-dashed border-muted-foreground/30">
+                            {(groupedPosts[category.id] || []).map((post) => (
+                              <li key={post.id}>
+                                <div
+                                  className={`flex items-center cursor-pointer p-2 rounded-md text-sm ${selectedPostId === post.id ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                                  onClick={() => handlePostClick(post.id)}
+                                >
+                                  <FileText className="h-4 w-4 mr-2 flex-shrink-0" />
+                                  <span className="truncate">{post.title}</span>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    )
                   ))}
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-semibold">À propos du blog</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Découvrez mes articles sur le développement web, la data science, 
-                    l'intelligence artificielle et le machine learning.
-                  </p>
-                </CardContent>
-              </Card>
+                </ul>
+              </ScrollArea>
             </div>
-          </aside>
-
-          {/* Main content */}
-          <main className="flex-1 min-w-0">
-            <div className="mb-8">
-              <h1 className="text-4xl font-bold mb-4">Blog</h1>
-              <p className="text-xl text-muted-foreground">
-                {selectedCategory 
-                  ? categories.find(c => c.id === selectedCategory)?.description 
-                  : "Explorez mes derniers articles et réflexions sur la tech"
-                }
-              </p>
-            </div>
-
-            {posts.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground font-mono">
-                  // aucun article {selectedCategory ? "dans cette catégorie" : "publié"} pour le moment
-                </p>
-              </div>
-            ) : (
-              <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
-                {posts.map((post) => {
-                  const stats = articleStats[post.id] || { views: 0, likes: 0, comments: 0, shares: 0 };
-                  return (
-                    <Card key={post.id} className="group hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate(`/article/${post.slug}`)}>
-                      {post.image_url && (
-                        <div className="aspect-video w-full overflow-hidden rounded-t-lg">
-                          <img 
-                            src={post.image_url} 
-                            alt={post.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          {!isMobile && (
+            <>
+              <ResizablePanel defaultSize={30} minSize={25}>
+                <ScrollArea className="h-full p-4">
+                  <h3 className="text-lg mb-4">
+                    {categories.find(c => c.id === selectedCategory)?.name || 'Articles'}
+                  </h3>
+                  <div className="space-y-4">
+                    {(groupedPosts[selectedCategory] || []).map(post => (
+                      <Card
+                        key={post.id}
+                        className={`cursor-pointer transition-all hover:shadow-md ${currentPost?.id === post.id ? 'shadow-lg border-primary' : ''}`}
+                        onClick={() => handlePostClick(post.id)}
+                      >
+                        <CardHeader>
+                          <CardTitle className="text-base font-normal">{post.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
                           {post.categories && (
-                            <Badge 
-                              variant="secondary" 
-                              className="text-xs"
-                              style={{ backgroundColor: `${post.categories.color}20`, color: post.categories.color }}
-                            >
-                              {post.categories.name}
-                            </Badge>
+                              <Badge
+                                variant="secondary"
+                                className="text-xs mt-2"
+                                style={{ backgroundColor: `${post.categories.color}20`, color: post.categories.color }}
+                              >
+                                {post.categories.name}
+                              </Badge>
                           )}
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
-                            {new Date(post.created_at).toLocaleDateString("fr-FR")}
-                          </span>
-                        </div>
-                        
-                        <h3 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
-                          {post.title}
-                        </h3>
-                        
-                        <p className="text-muted-foreground mb-4 line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                        
-                        <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-y-2">
-                          <div className="flex items-center gap-4">
-                            <span className="flex items-center gap-1">
-                              <Eye className="w-3 h-3" />
-                              {stats.views}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Heart className="w-3 h-3" />
-                              {stats.likes}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MessageCircle className="w-3 h-3" />
-                              {stats.comments}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Share2 className="w-3 h-3" />
-                              {stats.shares}
-                            </span>
-                          </div>
-                          <span className="text-primary font-medium group-hover:underline">
-                            Lire plus →
-                          </span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </main>
-        </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+            </>
+          )}
+          <ResizablePanel defaultSize={isMobile ? 60 : 50} minSize={30}>
+            <ScrollArea className="h-full p-6">
+              {currentPost ? renderArticlePreview(currentPost) : (
+                <div className="flex items-center justify-center h-full">
+                  <span className="text-muted-foreground">Sélectionnez un article pour le lire</span>
+                </div>
+              )}
+            </ScrollArea>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </section>
   );

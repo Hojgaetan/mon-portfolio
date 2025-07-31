@@ -52,7 +52,7 @@ export function BlogManager() {
     published: false,
     category_id: "",
   });
-
+  
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -246,22 +246,22 @@ export function BlogManager() {
           Nouvel article
         </Button>
       </div>
-
+      
       <div className="flex gap-2 mb-4">
-        <Button
-          variant={filter === 'all' ? "default" : "outline"}
+        <Button 
+          variant={filter === 'all' ? "default" : "outline"} 
           onClick={() => setFilter('all')}
         >
           Tous ({posts.length})
         </Button>
-        <Button
-          variant={filter === 'published' ? "default" : "outline"}
+        <Button 
+          variant={filter === 'published' ? "default" : "outline"} 
           onClick={() => setFilter('published')}
         >
           Publiés ({posts.filter(p => p.published).length})
         </Button>
-        <Button
-          variant={filter === 'draft' ? "default" : "outline"}
+        <Button 
+          variant={filter === 'draft' ? "default" : "outline"} 
           onClick={() => setFilter('draft')}
         >
           Brouillons ({posts.filter(p => !p.published).length})
