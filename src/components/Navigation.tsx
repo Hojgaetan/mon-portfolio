@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { Menu, X } from "lucide-react";
+import { Menu, Settings, X } from "lucide-react";
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
@@ -71,12 +71,11 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 </Button>
             </a>
             <ThemeToggle />
-            <span className="hidden md:inline text-sidebar-foreground font-mono text-sm">_@Hojgaetan</span>
-            <a 
-              href="/auth" 
-              className="text-accent hover:text-accent/80 text-xs sm:text-sm font-mono hidden md:inline"
+            <a
+              href="/auth"
+              className="p-2 text-accent hover:text-accent/80 hidden md:inline-block"
             >
-              admin
+              <Settings className="h-5 w-5" />
             </a>
             
             {/* Mobile Menu Button */}
