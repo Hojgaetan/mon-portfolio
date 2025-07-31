@@ -8,6 +8,10 @@ export const AboutSection = () => {
   const [selectedInfo, setSelectedInfo] = useState("bio");
   const [infoOpen, setInfoOpen] = useState(true);
   const [contactsOpen, setContactsOpen] = useState(false);
+  const [educationOpen, setEducationOpen] = useState(false);
+  const [experiencesOpen, setExperiencesOpen] = useState(false);
+  const [stagesOpen, setStagesOpen] = useState(false);
+  const [emploisOpen, setEmploisOpen] = useState(false);
 
   const infoContents: Record<string, JSX.Element> = {
     bio: (
@@ -215,9 +219,6 @@ export const AboutSection = () => {
                     {[
                       { icon: <FileText className="w-4 h-4" />, label: "bio", color: "text-sidebar-foreground" },
                       { icon: <FileMusic className="w-4 h-4" />, label: "centres-d_intérêts", color: "text-sidebar-foreground" },
-                      { icon: <FileCode className="w-4 h-4" />, label: "éducation", color: "text-sidebar-foreground" },
-                      { icon: <FileStack className="w-4 h-4" />, label: "lycée/collège", color: "text-sidebar-foreground" },
-                      { icon: <FileBarChart2 className="w-4 h-4" />, label: "université", color: "text-sidebar-foreground" },
                     ].map((item) => (
                       <div
                         key={item.label}
@@ -228,6 +229,118 @@ export const AboutSection = () => {
                         <span className={`${item.color} font-sans text-sm`}>{item.label}</span>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+                {/* Éducation */}
+                <div className="mt-4">
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
+                        onClick={() => setEducationOpen((open) => !open)}
+                    >
+                        {educationOpen ? (
+                            <FolderOpen className="w-4 h-4 mr-1" />
+                        ) : (
+                            <Folder className="w-4 h-4 mr-1" />
+                        )}
+                        <span className="font-mono text-sm">_éducation</span>
+                    </Button>
+                    {educationOpen && (
+                        <div className="ml-6 mt-2 space-y-1">
+                            {[
+                                { icon: <FileStack className="w-4 h-4" />, label: "lycée/collège", color: "text-sidebar-foreground" },
+                                { icon: <FileBarChart2 className="w-4 h-4" />, label: "université", color: "text-sidebar-foreground" },
+                            ].map((item) => (
+                                <div
+                                    key={item.label}
+                                    className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === item.label ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
+                                    onClick={() => setSelectedInfo(item.label)}
+                                >
+                                    <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
+                                    <span className={`${item.color} font-sans text-sm`}>{item.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+              {/* Expériences */}
+              <div className="mt-4">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start p-1 h-auto text-sidebar-foreground"
+                  onClick={() => setExperiencesOpen((open) => !open)}
+                >
+                  {experiencesOpen ? (
+                    <FolderOpen className="w-4 h-4 mr-1" />
+                  ) : (
+                    <Folder className="w-4 h-4 mr-1" />
+                  )}
+                  <span className="font-mono text-sm">_experiences</span>
+                </Button>
+                {experiencesOpen && (
+                  <div className="ml-6 mt-2 space-y-1">
+                    {/* Stages */}
+                    <div>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
+                        onClick={() => setStagesOpen((open) => !open)}
+                      >
+                        {stagesOpen ? (
+                          <FolderOpen className="w-4 h-4 mr-1" />
+                        ) : (
+                          <Folder className="w-4 h-4 mr-1" />
+                        )}
+                        <span className="font-mono text-sm">_stages</span>
+                      </Button>
+                      {stagesOpen && (
+                        <div className="ml-6 mt-2 space-y-1">
+                          {/* Fichiers entreprises de stage */}
+                          {["StageEntreprise1", "StageEntreprise2"].map((file) => (
+                            <div
+                              key={file}
+                              className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
+                              onClick={() => setSelectedInfo(file)}
+                            >
+                              <span className="w-4 h-4 flex items-center justify-center"><FileText className="w-4 h-4" /></span>
+                              <span className="text-sidebar-foreground font-sans text-sm">{file}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {/* Emplois */}
+                    <div>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
+                        onClick={() => setEmploisOpen((open) => !open)}
+                      >
+                        {emploisOpen ? (
+                          <FolderOpen className="w-4 h-4 mr-1" />
+                        ) : (
+                          <Folder className="w-4 h-4 mr-1" />
+                        )}
+                        <span className="font-mono text-sm">_emplois</span>
+                      </Button>
+                      {emploisOpen && (
+                        <div className="ml-6 mt-2 space-y-1">
+                          {/* Fichiers entreprises d'emploi */}
+                          {["EmploiEntreprise1", "EmploiEntreprise2"].map((file) => (
+                            <div
+                              key={file}
+                              className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
+                              onClick={() => setSelectedInfo(file)}
+                            >
+                              <span className="w-4 h-4 flex items-center justify-center"><FileText className="w-4 h-4" /></span>
+                              <span className="text-sidebar-foreground font-sans text-sm">{file}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
