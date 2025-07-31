@@ -376,19 +376,12 @@ export const AboutSection = () => {
                   </div>
                 )}
               </div>
-
-              {/* Guide interactif pour l'utilisateur */}
-              <div className="mt-6">
-                <div className="bg-accent/80 text-xs text-foreground px-2 py-1 rounded shadow pointer-events-none select-none animate-pulse w-fit dark:bg-accent/60 dark:text-white text-white">
-                  ↔ Glissez le bord droit pour ajuster la largeur de la barre latérale
-                </div>
-              </div>
             </div>
           </div>
         </div>
       </Resizable>
       {/* Main Content */}
-      <div className="flex-1 flex flex-col xl:flex-row h-full font-sans">
+      <div className="flex-1 flex flex-col xl:flex-row h-full font-sans text-[13px] sm:text-[15px]">
         {/* Code Editor */}
         <div className="flex-1">
           <div className="border-b border-border bg-sidebar-background sticky top-12 z-10">
@@ -398,7 +391,7 @@ export const AboutSection = () => {
               </div>
             </div>
           </div>
-          <div className="p-4 sm:p-6 font-sans text-xs sm:text-sm overflow-x-auto">
+          <div className="p-4 sm:p-6 font-sans text-[13px] sm:text-[15px] overflow-x-auto">
             {infoContents[selectedInfo]}
           </div>
         </div>
