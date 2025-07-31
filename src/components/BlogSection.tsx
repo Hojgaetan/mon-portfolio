@@ -50,13 +50,13 @@ export const BlogSection: React.FC = () => {
 
   useEffect(() => {
     if (posts.length > 0) {
-      fetchArticleStats();
+      fetchArticleStats(posts.map(post => post.id));
     }
   }, [posts]);
 
   const fetchCategories = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("categories")
         .select("*")
         .order("name");
@@ -70,7 +70,7 @@ export const BlogSection: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from("blog_posts")
         .select(`
           *,
@@ -93,6 +93,11 @@ export const BlogSection: React.FC = () => {
 
       if (error) throw error;
       setPosts(data || []);
+
+      // Fetch stats for each post
+      if (data && data.length > 0) {
+        await fetchArticleStats(data.map((post: any) => post.id));
+      }
     } catch (error) {
       console.error("Erreur lors du chargement des articles:", error);
     } finally {
@@ -100,47 +105,45 @@ export const BlogSection: React.FC = () => {
     }
   };
 
-  const fetchArticleStats = async () => {
+  const fetchArticleStats = async (postIds: string[]) => {
     try {
-      const postIds = posts.map(post => post.id);
-      
       // Fetch views
-      const { data: viewsData } = await supabase
+      const { data: viewsData } = await (supabase as any)
         .from("article_views")
         .select("article_id")
         .in("article_id", postIds);
 
       // Fetch likes
-      const { data: likesData } = await supabase
+      const { data: likesData } = await (supabase as any)
         .from("article_likes")
         .select("article_id")
         .in("article_id", postIds);
 
       // Fetch comments
-      const { data: commentsData } = await supabase
+      const { data: commentsData } = await (supabase as any)
         .from("article_comments")
         .select("article_id")
         .eq("approved", true)
         .in("article_id", postIds);
 
       // Fetch shares
-      const { data: sharesData } = await supabase
+      const { data: sharesData } = await (supabase as any)
         .from("article_shares")
         .select("article_id")
         .in("article_id", postIds);
 
-      // Calculate stats for each article
-      const stats: Record<string, ArticleStats> = {};
+      // Aggregate stats
+      const statsMap: Record<string, ArticleStats> = {};
       postIds.forEach(id => {
-        stats[id] = {
-          views: viewsData?.filter(v => v.article_id === id).length || 0,
-          likes: likesData?.filter(l => l.article_id === id).length || 0,
-          comments: commentsData?.filter(c => c.article_id === id).length || 0,
-          shares: sharesData?.filter(s => s.article_id === id).length || 0,
+        statsMap[id] = {
+          views: viewsData?.filter((v: any) => v.article_id === id).length || 0,
+          likes: likesData?.filter((l: any) => l.article_id === id).length || 0,
+          comments: commentsData?.filter((c: any) => c.article_id === id).length || 0,
+          shares: sharesData?.filter((s: any) => s.article_id === id).length || 0,
         };
       });
 
-      setArticleStats(stats);
+      setArticleStats(statsMap);
     } catch (error) {
       console.error("Erreur lors du chargement des statistiques:", error);
     }
