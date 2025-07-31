@@ -166,10 +166,10 @@ export const BlogSection: React.FC = () => {
   return (
     <section id="blog" className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="flex gap-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <aside className="w-80 shrink-0">
-            <div className="sticky top-8 space-y-6">
+          <aside className="w-full lg:w-80 shrink-0 mb-8 lg:mb-0">
+            <div className="lg:sticky lg:top-8 space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg font-semibold">Catégories</CardTitle>
@@ -232,7 +232,7 @@ export const BlogSection: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid gap-8 lg:grid-cols-2">
+              <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
                 {posts.map((post) => {
                   const stats = articleStats[post.id] || { views: 0, likes: 0, comments: 0, shares: 0 };
                   return (
@@ -271,7 +271,7 @@ export const BlogSection: React.FC = () => {
                           {post.excerpt}
                         </p>
                         
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <div className="flex flex-wrap items-center justify-between text-xs text-muted-foreground gap-y-2">
                           <div className="flex items-center gap-4">
                             <span className="flex items-center gap-1">
                               <Eye className="w-3 h-3" />
