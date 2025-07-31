@@ -4,6 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { FigmaIcon } from "@/components/FigmaIcon";
 import { GithubIcon } from "@/components/GithubIcon";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { FileCode } from "lucide-react";
 
 interface Project {
   id: string;
@@ -32,6 +40,8 @@ export const ProjectsSection = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
+  const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchProjects();
@@ -112,6 +122,29 @@ export const ProjectsSection = () => {
     setSelectedProject(projectId);
   };
 
+  const handleCategoryClick = (category: string | "all") => {
+    setSelectedCategory(category);
+    // Automatically select the first project of the new category
+    if (category === "all") {
+      if (allProjects.length > 0) {
+        setSelectedProject(allProjects[0].id);
+      }
+    } else {
+      const projectsInCategory = groupedProjects[category];
+      if (projectsInCategory && projectsInCategory.length > 0) {
+        setSelectedProject(projectsInCategory[0].id);
+      }
+    }
+  };
+
+  const allProjects = Object.values(groupedProjects).flat();
+
+  const filteredProjects = selectedCategory === "all"
+    ? allProjects
+    : (groupedProjects[selectedCategory] || []);
+
+  const currentProject = allProjects.find(p => p.id === selectedProject);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -126,125 +159,161 @@ export const ProjectsSection = () => {
   if (Object.keys(groupedProjects).length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
-        <span className="text-muted-foreground font-mono">// aucun projet disponible</span>
+        <span className="text-muted-foreground font-mono">// Aucun projet disponible</span>
       </div>
     );
   }
 
-  const allProjects = Object.values(groupedProjects).flat();
-
   return (
-    <div className="flex flex-col lg:flex-row h-full font-sans">
-      {/* Sidebar */}
-      <div className="w-full lg:w-64 bg-sidebar-background border-b lg:border-b-0 lg:border-r border-sidebar-border flex flex-col font-sans">
-        <div className="p-4">
-          <div className="space-y-1">
-            <div className="text-sidebar-foreground font-sans text-sm mb-4">_projets</div>
-            {Object.entries(projectCategories).map(([categoryKey, categoryName]) => (
-              <div key={categoryKey}>
-                <div
-                  className="flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none hover:bg-accent/10"
-                  onClick={() => toggleFolder(categoryKey)}
-                >
-                  {openFolders[categoryKey] ? (
-                    <ChevronDown className="w-4 h-4 text-sidebar-foreground" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 text-sidebar-foreground" />
-                  )}
-                  {openFolders[categoryKey] ? (
-                    <FolderOpen className="w-5 h-5 text-sidebar-foreground" />
-                  ) : (
-                    <Folder className="w-5 h-5 text-sidebar-foreground" />
-                  )}
-                  <span className="text-sidebar-foreground font-sans text-sm">{categoryName}</span>
-                </div>
-                {openFolders[categoryKey] && (
-                  <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-border pl-4">
-                    {(groupedProjects[categoryKey] || []).map((project) => (
-                      <div key={project.id}>
+    <section id="projects" className="bg-background font-sans">
+      <div className="border-t">
+        <ResizablePanelGroup
+          direction={isMobile ? "vertical" : "horizontal"}
+          className="min-h-screen"
+        >
+          <ResizablePanel defaultSize={isMobile ? 40 : 20} minSize={isMobile ? 30 : 15}>
+            <div className="p-4 h-full">
+              <h3 className="text-lg mb-4 pl-2">Explorateur</h3>
+              <ScrollArea className="h-[calc(100%-40px)]">
+                <ul className="space-y-1 pr-2">
+                  {Object.entries(projectCategories).map(([key, value]) => (
+                    (groupedProjects[key] && groupedProjects[key].length > 0) && (
+                      <li key={key}>
                         <div
-                          className={`flex items-center space-x-2 py-1 px-2 rounded cursor-pointer transition-colors duration-150 select-none ${selectedProject === project.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent-red active:bg-accent-red/80"}`}
+                          className="flex items-center cursor-pointer p-2 rounded-md hover:bg-muted"
+                          onClick={() => {
+                            toggleFolder(key);
+                            handleCategoryClick(key);
+                          }}
+                        >
+                          {openFolders[key] ? <ChevronDown className="h-4 w-4 mr-2" /> : <ChevronRight className="h-4 w-4 mr-2" />}
+                          {openFolders[key] ? <FolderOpen className="h-5 w-5 mr-2 text-primary" /> : <Folder className="h-5 w-5 mr-2 text-primary" />}
+                          <span>{value}</span>
+                        </div>
+                        {openFolders[key] && (
+                          <ul className="pl-6 mt-1 border-l border-dashed border-muted-foreground/30">
+                            {(groupedProjects[key] || []).map((project: Project) => (
+                              <li key={project.id}>
+                                <div
+                                  className={`flex items-center cursor-pointer p-2 rounded-md text-sm ${selectedProject === project.id ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                                  onClick={() => handleProjectClick(project.id)}
+                                >
+                                  <FileCode className="h-4 w-4 mr-2 flex-shrink-0" />
+                                  <span className="truncate">{project.title}</span>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </li>
+                    )
+                  ))}
+                </ul>
+              </ScrollArea>
+            </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          {!isMobile && (
+            <>
+              <ResizablePanel defaultSize={30} minSize={25}>
+                <ScrollArea className="h-full p-4">
+                  <h3 className="text-lg mb-4">
+                    {selectedCategory === 'all' ? 'Tous les projets' : projectCategories[selectedCategory]}
+                  </h3>
+                  {loading ? (
+                    <div className="space-y-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Card key={i}><CardHeader><Skeleton className="h-5 w-3/4" /></CardHeader><CardContent><Skeleton className="h-4 w-full" /></CardContent></Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {filteredProjects.map(project => (
+                        <Card
+                          key={project.id}
+                          className={`cursor-pointer transition-all hover:shadow-md ${currentProject?.id === project.id ? 'shadow-lg' : ''}`}
                           onClick={() => handleProjectClick(project.id)}
                         >
-                          <div className="w-4 h-4" />
-                          <Folder className="w-5 h-5 text-sidebar-foreground" />
-                          <span className="text-sidebar-foreground font-sans text-xs sm:text-sm truncate">{project.title}</span>
-                          {project.featured && (
-                            <Badge variant="secondary" className="text-xs">★</Badge>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+                          <CardHeader>
+                            <CardTitle className="text-base font-normal">{project.title}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+                            {project.technologies && project.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-2">
+                                {project.technologies.map(tech => (
+                                  <Badge key={tech} variant="secondary">{tech}</Badge>
+                                ))}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+            </>
+          )}
+          <ResizablePanel defaultSize={isMobile ? 60 : 50} minSize={30}>
+            <ScrollArea className="h-full p-6">
+              {currentProject ? (
+                <div>
+                  <h3 className="text-2xl mb-2">{currentProject.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{projectCategories[currentProject.category]}</p>
 
-      {/* Main Content */}
-      <div className="flex-1 bg-background">
-        <div className="border-b border-border bg-sidebar-background">
-          <div className="flex items-center">
-            <div className="px-4 py-2 bg-background border-r border-border">
-              <span className="font-sans text-sm text-foreground">
-                {allProjects.find(p => p.id === selectedProject)?.title || "Sélectionnez un projet"}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 sm:p-6">
-          {/* Affiche uniquement le projet sélectionné */}
-          {allProjects.filter(p => p.id === selectedProject).map((project) => (
-            <div key={project.id} className="bg-card border border-border rounded-lg overflow-hidden">
-              {project.image_url && (
-                <div className="h-32 sm:h-48 bg-muted">
-                  <img
-                    src={project.image_url}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={currentProject.image_url || '/placeholder.svg'} alt={currentProject.title} className="rounded-lg object-cover w-full h-auto aspect-video mb-6 shadow-lg" />
+
+                  {isMobile && currentProject.technologies && currentProject.technologies.length > 0 && (
+                    <div className="mb-6">
+                      <h4 className="text-lg mb-3">Technologies utilisées</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {currentProject.technologies.map(tech => (
+                          <Badge key={tech} variant="secondary">{tech}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="prose prose-sm dark:prose-invert max-w-none mb-6">
+                    <p>{currentProject.description}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-lg mb-3 border-b pb-2">Phases & Ressources</h4>
+                    <ul className="space-y-3">
+                      {projectPhases.map(phase => {
+                        const url = currentProject[phase.key as keyof Project] as string | undefined;
+                        if (url) {
+                          return (
+                            <li key={phase.key}>
+                              <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-start p-3 rounded-lg hover:bg-muted transition-colors -mx-3">
+                                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-lg mr-4 mt-1">{phase.icon}</div>
+                                <div className="flex-grow">
+                                  <p>{phase.title}</p>
+                                  <p className="text-sm text-muted-foreground">{phase.description}</p>
+                                </div>
+                              </a>
+                            </li>
+                          );
+                        }
+                        return null;
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                  <div className="text-4xl mb-4">🖼️</div>
+                  <h3 className="text-lg">Sélectionnez un projet</h3>
+                  <p className="text-sm">Choisissez un projet pour voir ses détails ici.</p>
                 </div>
               )}
-              <div className="p-3 sm:p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-sans text-xs sm:text-sm text-accent break-words">{project.title}</h3>
-                </div>
-                <p className="text-muted-foreground text-xs mb-4">{project.description}</p>
-                {/* Affichage des technologies utilisées */}
-                {project.technologies && project.technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech, idx) => (
-                      <span key={idx} className="bg-accent/10 text-accent px-2 py-1 rounded text-xs font-mono border border-accent/20">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {/* Grille des phases du projet */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {projectPhases.filter(phase => project[phase.key as keyof Project]).map(phase => (
-                    <div key={phase.key} className="bg-muted rounded-lg p-4 flex flex-col items-start border border-border shadow-sm">
-                      <div className="text-2xl mb-2 flex items-center justify-center">{phase.icon}</div>
-                      <div className="font-semibold text-sm mb-1">{phase.title}</div>
-                      <div className="text-xs text-muted-foreground mb-2">{phase.description}</div>
-                      <a
-                        href={project[phase.key as keyof Project] as string}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary underline text-xs mt-auto"
-                      >
-                        Voir le lien
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            </ScrollArea>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
-    </div>
+    </section>
   );
 };
