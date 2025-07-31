@@ -1,37 +1,48 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Trash2, Edit, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { RichTextEditor } from "./RichTextEditor";
+import { Plus, Edit, Trash2, Eye } from "lucide-react";
 
+// Types pour les tables blog (à défaut des types Supabase)
 interface BlogPost {
   id: string;
+  created_at: string;
   title: string;
   content: string;
-  excerpt: string | null;
-  image_url: string | null;
-  slug: string | null;
-  published: boolean | null;
+  excerpt?: string;
+  image_url?: string;
+  slug?: string;
+  published: boolean;
+  category_id?: string;
+  author_id?: string;
+}
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  color: string;
   created_at: string;
   updated_at: string;
 }
 
 export function BlogManager() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const { toast } = useToast();
 
-  const [categories, setCategories] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -42,11 +53,12 @@ export function BlogManager() {
     category_id: "",
   });
 
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
-    fetchCategories();
     fetchPosts();
+    fetchCategories();
   }, []);
 
   const fetchCategories = async () => {
@@ -67,17 +79,16 @@ export function BlogManager() {
     try {
       const { data, error } = await supabase
         .from("blog_posts")
-        .select("*")
+        .select(`
+          *,
+          categories(name, color)
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setPosts(data || []);
+      setPosts(data as BlogPost[] || []);
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les articles.",
-        variant: "destructive",
-      });
+      console.error("Erreur lors du chargement des articles:", error);
     } finally {
       setLoading(false);
     }
@@ -93,8 +104,8 @@ export function BlogManager() {
       published: false,
       category_id: "",
     });
-    setEditingPost(null);
-    setIsCreating(false);
+    setEditingId(null);
+    setShowForm(false);
   };
 
   const generateSlug = (title: string) => {
@@ -111,7 +122,7 @@ export function BlogManager() {
   };
 
   const handleEdit = (post: BlogPost) => {
-    setEditingPost(post);
+    setEditingId(post.id);
     setFormData({
       title: post.title,
       content: post.content,
@@ -119,14 +130,14 @@ export function BlogManager() {
       image_url: post.image_url || "",
       slug: post.slug || "",
       published: post.published || false,
-      category_id: (post as any).category_id || "",
+      category_id: post.category_id || "",
     });
-    setIsCreating(false);
+    setShowForm(true);
   };
 
   const handleCreate = () => {
     resetForm();
-    setIsCreating(true);
+    setShowForm(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -145,11 +156,11 @@ export function BlogManager() {
         category_id: formData.category_id || null,
       };
 
-      if (editingPost) {
+      if (editingId) {
         const { error } = await supabase
           .from("blog_posts")
           .update(postData)
-          .eq("id", editingPost.id);
+          .eq("id", editingId);
 
         if (error) throw error;
         
@@ -209,16 +220,22 @@ export function BlogManager() {
     }
   };
 
-  const filteredPosts = posts.filter(post => {
-    if (filter === 'all') return true;
-    if (filter === 'published') return post.published;
-    if (filter === 'draft') return !post.published;
-    return true;
-  });
-
   if (loading) {
     return <div className="text-center">Chargement des articles...</div>;
   }
+
+  // Filtrer les posts selon le filtre sélectionné
+  const filteredPosts = posts.filter(post => {
+    switch (filter) {
+      case 'published':
+        return post.published;
+      case 'draft':
+        return !post.published;
+      case 'all':
+      default:
+        return true;
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -229,16 +246,33 @@ export function BlogManager() {
           Nouvel article
         </Button>
       </div>
+
       <div className="flex gap-2 mb-4">
-        <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>Tous</Button>
-        <Button variant={filter === 'published' ? 'default' : 'outline'} onClick={() => setFilter('published')}>Publiés</Button>
-        <Button variant={filter === 'draft' ? 'default' : 'outline'} onClick={() => setFilter('draft')}>Brouillons</Button>
+        <Button
+          variant={filter === 'all' ? "default" : "outline"}
+          onClick={() => setFilter('all')}
+        >
+          Tous ({posts.length})
+        </Button>
+        <Button
+          variant={filter === 'published' ? "default" : "outline"}
+          onClick={() => setFilter('published')}
+        >
+          Publiés ({posts.filter(p => p.published).length})
+        </Button>
+        <Button
+          variant={filter === 'draft' ? "default" : "outline"}
+          onClick={() => setFilter('draft')}
+        >
+          Brouillons ({posts.filter(p => !p.published).length})
+        </Button>
       </div>
-      {(isCreating || editingPost) && (
+
+      {showForm && (
         <Card>
           <CardHeader>
             <CardTitle>
-              {editingPost ? "Modifier l'article" : "Nouvel article"}
+              {editingId ? "Modifier l'article" : "Nouvel article"}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -334,7 +368,7 @@ export function BlogManager() {
               
               <div className="flex space-x-2">
                 <Button type="submit">
-                  {editingPost ? "Mettre à jour" : "Créer"}
+                  {editingId ? "Mettre à jour" : "Créer"}
                 </Button>
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Annuler

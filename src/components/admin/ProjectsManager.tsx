@@ -1,18 +1,20 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Trash2, Edit, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Plus, Edit, Trash2, ExternalLink, Github } from "lucide-react";
 
+// Types pour les projets (remplaçant les types Supabase manquants)
 interface Project {
   id: string;
+  created_at: string;
   title: string;
   description: string | null;
   image_url: string | null;
@@ -21,16 +23,30 @@ interface Project {
   technologies: string[] | null;
   featured: boolean | null;
   planning_url: string | null;
-  analysis_url: string | null;
-  design_url: string | null;
+  modelisation_url: string | null;
+  charte_url: string | null;
   prototype_url: string | null;
   category: "personnel" | "professionnel" | "academique";
-  created_at: string;
-  updated_at: string;
+}
+
+interface FormProject {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  project_url: string;
+  github_url: string;
+  planning_url: string;
+  modelisation_url: string;
+  charte_url: string;
+  prototype_url: string;
+  technologies: string[];
+  featured: boolean;
+  category: "personnel" | "professionnel" | "academique";
 }
 
 export function ProjectsManager() {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<FormProject[]>([]);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -42,10 +58,10 @@ export function ProjectsManager() {
     image_url: "",
     project_url: "",
     github_url: "",
-    planning_url: "", // nouveau champ
-    analysis_url: "", // nouveau champ
-    design_url: "", // nouveau champ
-    prototype_url: "", // nouveau champ
+    planning_url: "",
+    modelisation_url: "",
+    charte_url: "",
+    prototype_url: "",
     technologies: "",
     featured: false,
     category: "professionnel" as "personnel" | "professionnel" | "academique",
@@ -64,7 +80,7 @@ export function ProjectsManager() {
 
       if (error) throw error;
       setProjects(
-        (data || []).map((project: any) => ({
+        (data || []).map((project: Project) => ({
           id: project.id,
           title: project.title,
           description: project.description ?? "",
@@ -72,22 +88,16 @@ export function ProjectsManager() {
           project_url: project.project_url ?? "",
           github_url: project.github_url ?? "",
           planning_url: project.planning_url ?? "",
-          analysis_url: project.analysis_url ?? "",
-          design_url: project.design_url ?? "",
+          modelisation_url: project.modelisation_url ?? "",
+          charte_url: project.charte_url ?? "",
           prototype_url: project.prototype_url ?? "",
           technologies: project.technologies ?? [],
           featured: project.featured ?? false,
           category: project.category ?? "professionnel",
-          created_at: project.created_at,
-          updated_at: project.updated_at,
         }))
       );
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les projets.",
-        variant: "destructive",
-      });
+      console.error("Erreur lors du chargement des projets:", error);
     } finally {
       setLoading(false);
     }
@@ -101,8 +111,8 @@ export function ProjectsManager() {
       project_url: "",
       github_url: "",
       planning_url: "",
-      analysis_url: "",
-      design_url: "",
+      modelisation_url: "",
+      charte_url: "",
       prototype_url: "",
       technologies: "",
       featured: false,
@@ -112,8 +122,25 @@ export function ProjectsManager() {
     setIsCreating(false);
   };
 
-  const handleEdit = (project: Project) => {
-    setEditingProject(project);
+  const handleEdit = (project: FormProject) => {
+    // Convertir FormProject vers un Project temporaire pour l'état
+    setEditingProject({
+      id: project.id,
+      created_at: new Date().toISOString(), // Valeur temporaire
+      title: project.title,
+      description: project.description,
+      image_url: project.image_url,
+      project_url: project.project_url,
+      github_url: project.github_url,
+      planning_url: project.planning_url,
+      modelisation_url: project.modelisation_url,
+      charte_url: project.charte_url,
+      prototype_url: project.prototype_url,
+      technologies: project.technologies,
+      featured: project.featured,
+      category: project.category,
+    } as Project);
+
     setFormData({
       title: project.title,
       description: project.description || "",
@@ -121,8 +148,8 @@ export function ProjectsManager() {
       project_url: project.project_url || "",
       github_url: project.github_url || "",
       planning_url: project.planning_url || "",
-      analysis_url: project.analysis_url || "",
-      design_url: project.design_url || "",
+      modelisation_url: project.modelisation_url || "",
+      charte_url: project.charte_url || "",
       prototype_url: project.prototype_url || "",
       technologies: project.technologies?.join(", ") || "",
       featured: project.featured || false,
@@ -146,8 +173,8 @@ export function ProjectsManager() {
         project_url: formData.project_url || null,
         github_url: formData.github_url || null,
         planning_url: formData.planning_url || null,
-        analysis_url: formData.analysis_url || null,
-        design_url: formData.design_url || null,
+        modelisation_url: formData.modelisation_url || null,
+        charte_url: formData.charte_url || null,
         prototype_url: formData.prototype_url || null,
         technologies: formData.technologies
           ? formData.technologies.split(",").map(tech => tech.trim()).filter(Boolean)
@@ -306,22 +333,22 @@ export function ProjectsManager() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="analysis_url">URL de l'analyse</Label>
+                <Label htmlFor="modelisation_url">URL de la modélisation</Label>
                 <Input
-                  id="analysis_url"
+                  id="modelisation_url"
                   type="url"
-                  value={formData.analysis_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, analysis_url: e.target.value }))}
+                  value={formData.modelisation_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, modelisation_url: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="design_url">URL du design</Label>
+                <Label htmlFor="charte_url">URL de la charte</Label>
                 <Input
-                  id="design_url"
+                  id="charte_url"
                   type="url"
-                  value={formData.design_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, design_url: e.target.value }))}
+                  value={formData.charte_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, charte_url: e.target.value }))}
                 />
               </div>
 
@@ -349,7 +376,7 @@ export function ProjectsManager() {
                 <Label htmlFor="category">Catégorie</Label>
                 <Select
                   value={formData.category}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as any }))}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as "personnel" | "professionnel" | "academique" }))}
                 >
                   <SelectTrigger id="category">
                     <SelectValue placeholder="Sélectionner une catégorie" />
@@ -458,24 +485,24 @@ export function ProjectsManager() {
                     Planning
                   </a>
                 )}
-                {project.analysis_url && (
+                {project.modelisation_url && (
                   <a
-                    href={project.analysis_url}
+                    href={project.modelisation_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
                   >
-                    Analyse
+                    Modélisation
                   </a>
                 )}
-                {project.design_url && (
+                {project.charte_url && (
                   <a
-                    href={project.design_url}
+                    href={project.charte_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
                   >
-                    Design
+                    Charte
                   </a>
                 )}
                 {project.prototype_url && (

@@ -103,10 +103,11 @@ export function UsersManager() {
 
       resetForm();
       fetchUsers();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Une erreur s'est produite lors de la création.";
       toast({
         title: "Erreur",
-        description: error.message || "Une erreur s'est produite lors de la création.",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -128,10 +129,11 @@ export function UsersManager() {
       });
       
       fetchUsers();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Impossible de supprimer l'utilisateur.";
       toast({
         title: "Erreur",
-        description: error.message || "Impossible de supprimer l'utilisateur.",
+        description: errorMessage,
         variant: "destructive",
       });
     }

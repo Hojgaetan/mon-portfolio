@@ -6,27 +6,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, MessageCircle, Heart, Share2, Calendar, User } from "lucide-react";
 
+// Types pour les tables blog (remplaçant les types Supabase manquants)
+interface BlogPost {
+  id: string;
+  created_at: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  image_url?: string;
+  slug?: string;
+  published: boolean;
+  category_id?: string;
+  author_id?: string;
+}
+
 interface Category {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
+  description?: string;
   color: string;
+  created_at: string;
 }
 
-interface BlogPost {
+interface Profile {
   id: string;
-  title: string;
-  content: string;
-  excerpt: string | null;
-  image_url: string | null;
-  slug: string | null;
-  published: boolean | null;
-  created_at: string;
-  updated_at: string;
-  category_id: string | null;
-  categories?: Category;
+  full_name?: string;
+  avatar_url?: string;
 }
+
+type BlogPostWithRelations = BlogPost & {
+  categories: Category | null;
+  profiles: Profile | null;
+};
 
 interface ArticleStats {
   views: number;
@@ -36,7 +48,7 @@ interface ArticleStats {
 }
 
 export const BlogSection: React.FC = () => {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPostWithRelations[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +68,7 @@ export const BlogSection: React.FC = () => {
 
   const fetchCategories = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("categories")
         .select("*")
         .order("name");
@@ -70,7 +82,7 @@ export const BlogSection: React.FC = () => {
 
   const fetchPosts = async () => {
     try {
-      let query = (supabase as any)
+      let query = supabase
         .from("blog_posts")
         .select(`
           *,
@@ -92,11 +104,11 @@ export const BlogSection: React.FC = () => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setPosts(data || []);
+      setPosts(data as BlogPostWithRelations[] || []);
 
       // Fetch stats for each post
       if (data && data.length > 0) {
-        await fetchArticleStats(data.map((post: any) => post.id));
+        await fetchArticleStats(data.map((post: BlogPost) => post.id));
       }
     } catch (error) {
       console.error("Erreur lors du chargement des articles:", error);
@@ -108,26 +120,26 @@ export const BlogSection: React.FC = () => {
   const fetchArticleStats = async (postIds: string[]) => {
     try {
       // Fetch views
-      const { data: viewsData } = await (supabase as any)
+      const { data: viewsData } = await supabase
         .from("article_views")
         .select("article_id")
         .in("article_id", postIds);
 
       // Fetch likes
-      const { data: likesData } = await (supabase as any)
+      const { data: likesData } = await supabase
         .from("article_likes")
         .select("article_id")
         .in("article_id", postIds);
 
       // Fetch comments
-      const { data: commentsData } = await (supabase as any)
+      const { data: commentsData } = await supabase
         .from("article_comments")
         .select("article_id")
         .eq("approved", true)
         .in("article_id", postIds);
 
       // Fetch shares
-      const { data: sharesData } = await (supabase as any)
+      const { data: sharesData } = await supabase
         .from("article_shares")
         .select("article_id")
         .in("article_id", postIds);
@@ -136,10 +148,10 @@ export const BlogSection: React.FC = () => {
       const statsMap: Record<string, ArticleStats> = {};
       postIds.forEach(id => {
         statsMap[id] = {
-          views: viewsData?.filter((v: any) => v.article_id === id).length || 0,
-          likes: likesData?.filter((l: any) => l.article_id === id).length || 0,
-          comments: commentsData?.filter((c: any) => c.article_id === id).length || 0,
-          shares: sharesData?.filter((s: any) => s.article_id === id).length || 0,
+          views: viewsData?.filter((v) => v.article_id === id).length || 0,
+          likes: likesData?.filter((l) => l.article_id === id).length || 0,
+          comments: commentsData?.filter((c) => c.article_id === id).length || 0,
+          shares: sharesData?.filter((s) => s.article_id === id).length || 0,
         };
       });
 

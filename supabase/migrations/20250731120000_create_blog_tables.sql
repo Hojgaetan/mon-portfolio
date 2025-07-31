@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS public.categories (
 );
 
 -- Add category_id to blog_posts
-ALTER TABLE public.blog_posts
+ALTER TABLE public.blog_posts 
 ADD COLUMN IF NOT EXISTS category_id UUID REFERENCES public.categories(id);
 
 -- Create article interactions tables
@@ -54,9 +54,9 @@ ALTER TABLE public.article_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.article_shares ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public read access
-CREATE POLICY "Categories are publicly readable"
-ON public.categories
-FOR SELECT
+CREATE POLICY "Categories are publicly readable" 
+ON public.categories 
+FOR SELECT 
 USING (true);
 
 CREATE POLICY "Article views are publicly readable"

@@ -6,194 +6,161 @@ import { Resizable } from "re-resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TechIcon } from "@/components/TechIcon";
 
+// Types pour une meilleure structure des données
+interface SidebarItem {
+  id: string;
+  label: string;
+  icon: JSX.Element;
+  content: JSX.Element;
+}
+
+interface SidebarSection {
+  id: string;
+  label: string;
+  icon: { closed: JSX.Element; open: JSX.Element };
+  items: SidebarItem[];
+}
+
 export const AboutSection = () => {
   const isMobile = useIsMobile();
   const [selectedInfo, setSelectedInfo] = useState("bio");
-  const [infoOpen, setInfoOpen] = useState(true);
-  const [contactsOpen, setContactsOpen] = useState(false);
-  const [educationOpen, setEducationOpen] = useState(false);
-  const [experiencesOpen, setExperiencesOpen] = useState(false);
-  const [stagesOpen, setStagesOpen] = useState(false);
-  const [emploisOpen, setEmploisOpen] = useState(false);
+  const [openSections, setOpenSections] = useState({
+    info: true,
+    education: false,
+    experiences: false,
+    stages: false,
+    emplois: false,
+    contacts: false,
+  });
 
-  const infoContents: Record<string, JSX.Element> = {
-    bio: (
+  // Helper function pour basculer l'état d'ouverture des sections
+  const toggleSection = (sectionId: string) => {
+    setOpenSections(prev => ({
+      ...prev,
+      [sectionId]: !prev[sectionId as keyof typeof prev]
+    }));
+  };
+
+  // Fonction helper pour créer le contenu formaté
+  const createFormattedContent = (title: string, content: Array<{ type: 'comment' | 'text' | 'highlight' | 'emphasis', text: string }>) => {
+    return (
       <div className="space-y-2 min-w-max font-sans">
         <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1</span>
+          <span className="text-muted-foreground mr-4 select-none w-6">1.</span>
           <span className="text-code-comment">/**</span>
         </div>
         <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">. Bio</span>
+          <span className="text-muted-foreground mr-4 select-none w-6">2.</span>
+          <span className="text-code-comment">* {title}</span>
         </div>
         <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-code-comment">. **/</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">. </span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">5</span>
-          <span className="text-foreground">. </span>
-          <span className="text-foreground"> Passionné par le développement web et l'expérience utilisateur,</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">6</span>
-          <span className="text-foreground">. </span>
-          <span className="text-foreground"> je suis Developpeur web dans la création de sites internet et d'applications web responsives.</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">7</span>
-          <span className="text-foreground">. </span>
-          <span className="text-foreground"> Ma maîtrise des technologies HTML, CSS et JavaScript, combinée à une connaissance approfondie des frameworks modernes,</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">8</span>
-          <span className="text-foreground">. </span>
-            <span className="text-foreground"> me permet de transformer des maquettes graphiques en interfaces web performantes et esthétiques.</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">9</span>
-          <span className="text-foreground">.</span>
-            <span className="text-foreground"> Toujours à l'affût des dernières tendances et des meilleures pratiques en matière.</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">10</span>
+          <span className="text-muted-foreground mr-4 select-none w-6">3.</span>
           <span className="text-code-comment">*/</span>
         </div>
+        {content.map((item, index) => (
+          <div key={index} className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">{index + 4}.</span>
+            <span className={
+              item.type === 'comment' ? 'text-code-comment' :
+              item.type === 'highlight' ? 'text-[#38b6ff]' :
+              item.type === 'emphasis' ? 'text-[#df3821]' :
+              'text-foreground'
+            }>
+              {item.text}
+            </span>
+          </div>
+        ))}
       </div>
-    ),
-    "centres-d_intérêts": (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1</span>
-          <span className="text-code-comment">/**</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">* Centres d'intérêts</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-foreground">- Programmation</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">- Musique</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">5</span>
-          <span className="text-foreground">- Lecture</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">6</span>
-          <span className="text-foreground">- Sport</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">7</span>
-          <span className="text-code-comment">*/</span>
-        </div>
-      </div>
-    ),
-    "éducation": (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1</span>
-          <span className="text-code-comment">/**</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">* Éducation</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-foreground">- Bachelor en conception et développement de solutions digitales</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">- Formation continue en développement web</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">5</span>
-          <span className="text-code-comment">*/</span>
-        </div>
-      </div>
-    ),
-    "lycée/collège": (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1</span>
-          <span className="text-code-comment">/**</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">* Lycée / Collège</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-foreground">- Lycée d'Akwa Nord - Douala, Cameroun (2007 - 2010)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">- Lycée de Nkolnda, Nsimalen - Yaounde, Cameroun (2010 - 2011)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">5</span>
-          <span className="text-foreground">- College Ndi Samba - Yaounde, Cameroun (2011 - 2013)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">6</span>
-          <span className="text-foreground">- Lycée de Nkolndongo - Yaounde, Cameroun (2013 - 2015)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">7</span>
-          <span className="text-foreground">- Lycée d'Akwa Nord - Douala, Cameroun (2015 - 2017) - <strong>Baccalaureat</strong></span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">8</span>
-          <span className="text-code-comment">*/</span>
-        </div>
-      </div>
-    ),
-    "université": (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1</span>
-          <span className="text-code-comment">/**</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">* Université</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-foreground">- Université de Douala, Cameroun (Mathematiques)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">- IUT de Douala, Cameroun (Genie Electrique et Informatique Industrielle)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">5</span>
-          <span className="text-foreground">- ISM Dakar, Senegal (En cours)</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-code-comment">*/</span>
-        </div>
-      </div>
-    ),
-    "Developpeur Web / Responsable SEO": (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
-        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Developpeur Web / Responsable SEO - MAJORANTS Academy </span></div>
+    );
+  };
+
+  // Configuration des données de la sidebar
+  const sidebarData: SidebarSection[] = [
+    {
+      id: "info",
+      label: "_informations-personnelles",
+      icon: {
+        closed: <Folder className="w-4 h-4 mr-1" />,
+        open: <FolderOpen className="w-4 h-4 mr-1" />
+      },
+      items: [
+        {
+          id: "bio",
+          label: "bio",
+          icon: <FileText className="w-4 h-4" />,
+          content: createFormattedContent("Bio", [
+            { type: 'text', text: ' ' },
+            { type: 'text', text: ' Passionné par le développement web et l\'expérience utilisateur,' },
+            { type: 'text', text: ' je suis Developpeur web dans la création de sites internet et d\'applications web responsives.' },
+            { type: 'text', text: ' Ma maîtrise des technologies HTML, CSS et JavaScript, combinée à une connaissance approfondie des frameworks modernes,' },
+            { type: 'text', text: ' me permet de transformer des maquettes graphiques en interfaces web performantes et esthétiques.' },
+            { type: 'text', text: ' Toujours à l\'affût des dernières tendances et des meilleures pratiques en matière.' },
+          ])
+        },
+        {
+          id: "centres-d_intérêts",
+          label: "centres-d_intérêts",
+          icon: <FileMusic className="w-4 h-4" />,
+          content: createFormattedContent("Centres d'intérêts", [
+            { type: 'text', text: '- Programmation' },
+            { type: 'text', text: '- Musique' },
+            { type: 'text', text: '- Lecture' },
+            { type: 'text', text: '- Sport' },
+          ])
+        }
+      ]
+    },
+    {
+      id: "education",
+      label: "_éducation",
+      icon: {
+        closed: <Folder className="w-4 h-4 mr-1" />,
+        open: <FolderOpen className="w-4 h-4 mr-1" />
+      },
+      items: [
+        {
+          id: "lycée/collège",
+          label: "lycée/collège",
+          icon: <FileStack className="w-4 h-4" />,
+          content: createFormattedContent("Lycée / Collège", [
+            { type: 'text', text: '- Lycée d\'Akwa Nord - Douala, Cameroun (2007 - 2010)' },
+            { type: 'text', text: '- Lycée de Nkolnda, Nsimalen - Yaounde, Cameroun (2010 - 2011)' },
+            { type: 'text', text: '- College Ndi Samba - Yaounde, Cameroun (2011 - 2013)' },
+            { type: 'text', text: '- Lycée de Nkolndongo - Yaounde, Cameroun (2013 - 2015)' },
+            { type: 'text', text: '- Lycée d\'Akwa Nord - Douala, Cameroun (2015 - 2017) - Baccalaureat' },
+          ])
+        },
+        {
+          id: "université",
+          label: "université",
+          icon: <FileBarChart2 className="w-4 h-4" />,
+          content: createFormattedContent("Université", [
+            { type: 'text', text: '- Université de Douala, Cameroun (Mathematiques)' },
+            { type: 'text', text: '- IUT de Douala, Cameroun (Genie Electrique et Informatique Industrielle)' },
+            { type: 'text', text: '- ISM Dakar, Senegal (En cours)' },
+          ])
+        }
+      ]
+    }
+  ];
+
+  // Trouver le contenu sélectionné
+  const getSelectedContent = () => {
+    for (const section of sidebarData) {
+      const item = section.items.find(item => item.id === selectedInfo);
+      if (item) return item.content;
+    }
+
+    // Fallback pour les anciens contenus non migrés
+    const legacyContent: Record<string, JSX.Element> = {
+      "Developpeur Web / Responsable SEO": (
+        <div className="space-y-2 min-w-max font-sans">
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Developpeur Web / Responsable SEO - MAJORANTS Academy </span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
-        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Stage pre-Emploi | Douala, Cameroun | Juin 2023 - Août 2023 | CDD</i></span></div>
-        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Stage pre-Emploi | Douala, Cameroun | Juin 2023 - Août 2023 | CDD</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Maintenance et optimisation du site web : </span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Mise à jour régulière du contenu et des plugins WordPress pour garantir une disponibilité à 99,9%.</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Stratégie SEO et visibilité : </span></div>
@@ -203,22 +170,25 @@ export const AboutSection = () => {
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">13</span><span className="text-foreground text-[#38b6ff]">Projets techniques : </span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">14</span><span className="text-foreground">Migration du site vers un hébergement plus performant (Hostinger), diminuant le temps de chargement de 2,5s à 0,8s.</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">15</span><span className="text-foreground">Intégration de maquettes responsive pour mobile, augmentant le trafic mobile de 40%.</span></div>
-      </div>
-    ),
-      "Responsable Informatique": (
-          <div className="space-y-2 min-w-max font-sans">
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Responsable Informatique- MAJORANTS Academy </span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Travail a distance | Douala, Cameroun | Depuis Septembre 2023 | CDD</i></span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Management d’équipe à distance : </span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
-              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
-          </div>
+        </div>
       ),
+      "Responsable Informatique": (
+        <div className="space-y-2 min-w-max font-sans">
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Responsable Informatique- MAJORANTS Academy </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Travail a distance | Douala, Cameroun | Depuis Septembre 2023 | CDD</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Management d’équipe à distance : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
+        </div>
+      )
+    };
+
+    return legacyContent[selectedInfo] || <div>Contenu non trouvé</div>;
   };
 
   return (
@@ -235,124 +205,83 @@ export const AboutSection = () => {
         <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col font-sans">
           <div className="space-y-2">
             <div className="space-y-2 sticky top-12 z-20 bg-sidebar-background">
-              {/* Informations personnelles */}
-              <div>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                  onClick={() => setInfoOpen((open) => !open)}
-                >
-                  {infoOpen ? (
-                    <ChevronDown className="w-4 h-4 mr-1" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 mr-1" />
-                  )}
-                  {infoOpen ? (
-                    <FolderOpen className="w-4 h-4 mr-1" />
-                  ) : (
-                    <Folder className="w-4 h-4 mr-1" />
-                  )}
-                  <span className="font-mono text-sm">_informations-personnelles</span>
-                </Button>
-                {infoOpen && (
-                  <div className="ml-6 mt-2 space-y-1">
-                    {[
-                      { icon: <FileText className="w-4 h-4" />, label: "bio", color: "text-sidebar-foreground" },
-                      { icon: <FileMusic className="w-4 h-4" />, label: "centres-d_intérêts", color: "text-sidebar-foreground" },
-                    ].map((item) => (
-                      <div
-                        key={item.label}
-                        className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === item.label ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
-                        onClick={() => setSelectedInfo(item.label)}
-                      >
-                        <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
-                        <span className={`${item.color} font-sans text-sm`}>{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-                {/* Éducation */}
-                <div className="mt-4">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                        onClick={() => setEducationOpen((open) => !open)}
-                    >
-                        {educationOpen ? (
-                            <ChevronDown className="w-4 h-4 mr-1" />
-                        ) : (
-                            <ChevronRight className="w-4 h-4 mr-1" />
-                        )}
-                        {educationOpen ? (
-                            <FolderOpen className="w-4 h-4 mr-1" />
-                        ) : (
-                            <Folder className="w-4 h-4 mr-1" />
-                        )}
-                        <span className="font-mono text-sm">_éducation</span>
-                    </Button>
-                    {educationOpen && (
-                        <div className="ml-6 mt-2 space-y-1">
-                            {[
-                                { icon: <FileStack className="w-4 h-4" />, label: "lycée/collège", color: "text-sidebar-foreground" },
-                                { icon: <FileBarChart2 className="w-4 h-4" />, label: "université", color: "text-sidebar-foreground" },
-                            ].map((item) => (
-                                <div
-                                    key={item.label}
-                                    className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === item.label ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
-                                    onClick={() => setSelectedInfo(item.label)}
-                                >
-                                    <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
-                                    <span className={`${item.color} font-sans text-sm`}>{item.label}</span>
-                                </div>
-                            ))}
-                        </div>
+              {/* Sections dynamiques */}
+              {sidebarData.map((section) => (
+                <div key={section.id}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start p-1 h-auto text-sidebar-foreground"
+                    onClick={() => toggleSection(section.id)}
+                  >
+                    {openSections[section.id as keyof typeof openSections] ? (
+                      <ChevronDown className="w-4 h-4 mr-1" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4 mr-1" />
                     )}
+                    {openSections[section.id as keyof typeof openSections] ? section.icon.open : section.icon.closed}
+                    <span className="font-mono text-sm">{section.label}</span>
+                  </Button>
+                  {openSections[section.id as keyof typeof openSections] && (
+                    <div className="ml-6 mt-2 space-y-1">
+                      {section.items.map((item) => (
+                        <div
+                          key={item.id}
+                          className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${
+                            selectedInfo === item.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"
+                          }`}
+                          onClick={() => setSelectedInfo(item.id)}
+                        >
+                          <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
+                          <span className="text-sidebar-foreground font-sans text-sm">{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
+              ))}
 
-              {/* Expériences */}
+              {/* Expériences (ancienne structure maintenue pour compatibilité) */}
               <div className="mt-4">
                 <Button
                   variant="ghost"
                   className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                  onClick={() => setExperiencesOpen((open) => !open)}
+                  onClick={() => toggleSection("experiences")}
                 >
-                  {experiencesOpen ? (
+                  {openSections.experiences ? (
                     <ChevronDown className="w-4 h-4 mr-1" />
                   ) : (
                     <ChevronRight className="w-4 h-4 mr-1" />
                   )}
-                  {experiencesOpen ? (
+                  {openSections.experiences ? (
                     <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
                     <Folder className="w-4 h-4 mr-1" />
                   )}
                   <span className="font-mono text-sm">_experiences</span>
                 </Button>
-                {experiencesOpen && (
+                {openSections.experiences && (
                   <div className="ml-6 mt-2 space-y-1">
                     {/* Stages */}
                     <div>
                       <Button
                         variant="ghost"
                         className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                        onClick={() => setStagesOpen((open) => !open)}
+                        onClick={() => toggleSection("stages")}
                       >
-                        {stagesOpen ? (
+                        {openSections.stages ? (
                           <ChevronDown className="w-4 h-4 mr-1" />
                         ) : (
                           <ChevronRight className="w-4 h-4 mr-1" />
                         )}
-                        {stagesOpen ? (
+                        {openSections.stages ? (
                           <FolderOpen className="w-4 h-4 mr-1" />
                         ) : (
                           <Folder className="w-4 h-4 mr-1" />
                         )}
                         <span className="font-mono text-sm">_stages</span>
                       </Button>
-                      {stagesOpen && (
+                      {openSections.stages && (
                         <div className="ml-6 mt-2 space-y-1">
-                          {/* Fichiers entreprises de stage */}
                           {["Developpeur Web / Responsable SEO"].map((file) => (
                             <div
                               key={file}
@@ -371,23 +300,22 @@ export const AboutSection = () => {
                       <Button
                         variant="ghost"
                         className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                        onClick={() => setEmploisOpen((open) => !open)}
+                        onClick={() => toggleSection("emplois")}
                       >
-                        {emploisOpen ? (
+                        {openSections.emplois ? (
                           <ChevronDown className="w-4 h-4 mr-1" />
                         ) : (
                           <ChevronRight className="w-4 h-4 mr-1" />
                         )}
-                        {emploisOpen ? (
+                        {openSections.emplois ? (
                           <FolderOpen className="w-4 h-4 mr-1" />
                         ) : (
                           <Folder className="w-4 h-4 mr-1" />
                         )}
                         <span className="font-mono text-sm">_emplois</span>
                       </Button>
-                      {emploisOpen && (
+                      {openSections.emplois && (
                         <div className="ml-6 mt-2 space-y-1">
-                          {/* Fichiers entreprises d'emploi */}
                           {["Responsable Informatique"].map((file) => (
                             <div
                               key={file}
@@ -410,21 +338,21 @@ export const AboutSection = () => {
                 <Button
                   variant="ghost"
                   className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                  onClick={() => setContactsOpen((open) => !open)}
+                  onClick={() => toggleSection("contacts")}
                 >
-                  {contactsOpen ? (
+                  {openSections.contacts ? (
                     <ChevronDown className="w-4 h-4 mr-1" />
                   ) : (
                     <ChevronRight className="w-4 h-4 mr-1" />
                   )}
-                  {contactsOpen ? (
+                  {openSections.contacts ? (
                     <FolderOpen className="w-4 h-4 mr-1" />
                   ) : (
                     <Folder className="w-4 h-4 mr-1" />
                   )}
                   <span className="font-mono text-sm">_contacts</span>
                 </Button>
-                {contactsOpen && (
+                {openSections.contacts && (
                   <div className="ml-6 mt-2 space-y-2">
                     <div className="flex items-center space-x-2">
                       <span className="w-4 h-4 flex items-center justify-center">📧</span>
@@ -445,6 +373,7 @@ export const AboutSection = () => {
           </div>
         </div>
       </Resizable>
+
       {/* Main Content */}
       <div className="flex-1 flex flex-col xl:flex-row h-full font-sans text-[13px] sm:text-[15px]">
         {/* Code Editor */}
@@ -457,9 +386,10 @@ export const AboutSection = () => {
             </div>
           </div>
           <div className="p-4 sm:p-6 font-sans text-[13px] sm:text-[15px] overflow-x-auto">
-            {infoContents[selectedInfo]}
+            {getSelectedContent()}
           </div>
         </div>
+
         {/* Skills Panel */}
         <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border font-sans">
           <div className="p-4">
@@ -478,8 +408,8 @@ export const AboutSection = () => {
                 { name: "Node.js", checked: true },
                 { name: "Express", checked: false },
                 { name: "MongoDB", checked: false },
-                { name: "Next.js", checked: false },
-                { name: "Vue.js", checked: false },
+                { name: "Next.js", checked: true },
+                { name: "Vue.js", checked: true },
                 { name: "Angular", checked: false },
               ].map((skill) => (
                 <div key={skill.name} className="flex items-center space-x-3">

@@ -24,9 +24,9 @@ export function AdminSettings() {
   
   const [settings, setSettings] = useState({
     siteName: "Joel Gaetan HASSAM OBAH - Portfolio",
-    siteDescription: "Portfolio de Joel Gaetan Hassam Obah, Étudiant Développeur Web/Mobile",
+    siteDescription: "Portfolio de Joel Gaetan Hassam Obah, Étudiant en Informatique",
     emailNotifications: true,
-    commentModeration: true,
+    commentModeration: false,
     publicRegistration: false,
     maintenanceMode: false,
   });
@@ -77,7 +77,7 @@ export function AdminSettings() {
                       key={option.value}
                       variant={theme === option.value ? "default" : "outline"}
                       className="justify-start"
-                      onClick={() => setTheme(option.value as any)}
+                      onClick={() => setTheme(option.value as "light" | "dark" | "system")}
                     >
                       <Icon className="h-4 w-4 mr-2" />
                       {option.label}
