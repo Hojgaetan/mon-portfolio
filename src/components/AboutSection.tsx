@@ -22,41 +22,40 @@ export const AboutSection = () => {
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">2</span>
-          <span className="text-code-comment">* À propos de joel-gaetan-hassam-obah</span>
+          <span className="text-code-comment">. Bio</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">3</span>
-          <span className="text-code-comment">. Bienvenue dans mon portfolio</span>
+          <span className="text-code-comment">. **/</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">4</span>
-          <span className="text-foreground">.</span>
+          <span className="text-foreground">. </span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">5</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Nom & Prenoms]</span>
-            <span className="text-foreground"> Joel Gaetan <strong>HASSAM OBAH</strong></span>
+          <span className="text-foreground"> Passionné par le développement web et l'expérience utilisateur,</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">6</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Date & Lieu de Naissance]</span>
-          <span className="text-foreground"> Nee le 28 Decembre 1997 a Douala, Cameroun</span>
+          <span className="text-foreground"> je suis Developpeur web avec dans la création de sites internet et d'applications web responsives.</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">7</span>
           <span className="text-foreground">. </span>
-          <span className="text-orange-500">[Lieu de Residence]</span>
-          <span className="text-foreground"> Colobane - Dakar, Senegal</span>
+          <span className="text-foreground"> Ma maîtrise des technologies HTML, CSS et JavaScript, combinée à une connaissance approfondie des frameworks modernes,</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">8</span>
           <span className="text-foreground">. </span>
+            <span className="text-foreground"> me permet de transformer des maquettes graphiques en interfaces web performantes et esthétiques.</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">9</span>
           <span className="text-foreground">.</span>
+            <span className="text-foreground"> Toujours à l'affût des dernières tendances et des meilleures pratiques en matière.</span>
         </div>
         <div className="flex">
           <span className="text-muted-foreground mr-4 select-none w-6">10</span>
@@ -184,6 +183,39 @@ export const AboutSection = () => {
         </div>
       </div>
     ),
+    "Developpeur Web / Responsable SEO": (
+      <div className="space-y-2 min-w-max font-sans">
+        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
+        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Developpeur Web / Responsable SEO - MAJORANTS Academy </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
+        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
+        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Stage pre-Emploi | Douala, Cameroun | Juin 2023 - Août 2023 | CDD</i></span></div>
+        <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Maintenance et optimisation du site web : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Mise à jour régulière du contenu et des plugins WordPress pour garantir une disponibilité à 99,9%.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9.</span><span className="text-foreground text-[#38b6ff]">Stratégie SEO et visibilité : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10.</span><span className="text-foreground">Audit technique et optimisation des balises meta/titles (+50% de clics organiques en 02 mois).</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">11.</span><span className="text-foreground text-[#38b6ff]">Collaboration cross-fonctionnelle : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">12.</span><span className="text-foreground">Refonte de l’UI/UX avec le designer (Figma), réduisant le taux de rebond de 30%.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">13.</span><span className="text-foreground text-[#38b6ff]">Projets techniques : </span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">14.</span><span className="text-foreground">Migration du site vers un hébergement plus performant (Hostinger), diminuant le temps de chargement de 2,5s à 0,8s.</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">15.</span><span className="text-foreground">Intégration de maquettes responsive pour mobile, augmentant le trafic mobile de 40%.</span></div>
+      </div>
+    ),
+      "Responsable Informatique": (
+          <div className="space-y-2 min-w-max font-sans">
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Responsable Informatique- MAJORANTS Academy </span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Travail a distance | Douala, Cameroun | Depuis Septembre 2023 | CDD</i></span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Management d’équipe à distance : </span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9.</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
+              <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10.</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
+          </div>
+      ),
   };
 
   return (
@@ -298,7 +330,7 @@ export const AboutSection = () => {
                       {stagesOpen && (
                         <div className="ml-6 mt-2 space-y-1">
                           {/* Fichiers entreprises de stage */}
-                          {["StageEntreprise1", "StageEntreprise2"].map((file) => (
+                          {["Developpeur Web / Responsable SEO"].map((file) => (
                             <div
                               key={file}
                               className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
@@ -328,7 +360,7 @@ export const AboutSection = () => {
                       {emploisOpen && (
                         <div className="ml-6 mt-2 space-y-1">
                           {/* Fichiers entreprises d'emploi */}
-                          {["EmploiEntreprise1", "EmploiEntreprise2"].map((file) => (
+                          {["Responsable Informatique"].map((file) => (
                             <div
                               key={file}
                               className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
@@ -384,9 +416,9 @@ export const AboutSection = () => {
       <div className="flex-1 flex flex-col xl:flex-row h-full font-sans text-[13px] sm:text-[15px]">
         {/* Code Editor */}
         <div className="flex-1">
-          <div className="border-b border-border bg-sidebar-background sticky top-12 z-10">
+          <div className="border-b border-border bg-sidebar-background sticky top-1 z-10">
             <div className="flex items-center">
-              <div className="px-4 py-2 bg-background border-r border-border">
+              <div className="px-4 py-1 bg-background border-r border-border">
                 <span className="font-mono text-sm text-foreground">{selectedInfo}</span>
               </div>
             </div>
