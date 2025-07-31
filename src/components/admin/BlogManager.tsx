@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Edit, Plus } from "lucide-react";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface BlogPost {
   id: string;
@@ -280,16 +281,12 @@ export function BlogManager() {
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="content">Contenu *</Label>
-                <Textarea
-                  id="content"
-                  value={formData.content}
-                  onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                  rows={10}
-                  required
-                />
-              </div>
+              <RichTextEditor
+                value={formData.content}
+                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                placeholder="Écrivez le contenu de votre article..."
+                label="Contenu"
+              />
               
               <div className="space-y-2">
                 <Label htmlFor="image_url">URL de l'image</Label>
