@@ -39,7 +39,7 @@ export const ProjectsSection = () => {
   const [groupedProjects, setGroupedProjects] = useState<Record<string, Project[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
   const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
   const isMobile = useIsMobile();
 
@@ -67,11 +67,12 @@ export const ProjectsSection = () => {
 
       setGroupedProjects(grouped);
 
+      // On page load, show all projects, but select none.
+      // Open the "professionnel" folder by default if it exists.
       if (data && data.length > 0) {
-        const professionalProjects = grouped.professionnel || [];
-        const firstProject = professionalProjects.length > 0 ? professionalProjects[0] : data[0];
-        setSelectedProject(firstProject.id);
-        setOpenFolders(prev => ({ ...prev, [firstProject.category]: true }));
+          if (grouped.professionnel) {
+              setOpenFolders({ professionnel: true });
+          }
       }
     } catch (error) {
       console.error("Erreur lors du chargement des projets:", error);
@@ -124,17 +125,9 @@ export const ProjectsSection = () => {
 
   const handleCategoryClick = (category: string | "all") => {
     setSelectedCategory(category);
-    // Automatically select the first project of the new category
-    if (category === "all") {
-      if (allProjects.length > 0) {
-        setSelectedProject(allProjects[0].id);
-      }
-    } else {
-      const projectsInCategory = groupedProjects[category];
-      if (projectsInCategory && projectsInCategory.length > 0) {
-        setSelectedProject(projectsInCategory[0].id);
-      }
-    }
+    // Don't automatically select a project when a category is clicked.
+    // The user must explicitly click on a project card or file.
+    setSelectedProject(null);
   };
 
   const allProjects = Object.values(groupedProjects).flat();
@@ -304,10 +297,8 @@ export const ProjectsSection = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                  <div className="text-4xl mb-4">🖼️</div>
-                  <h3 className="text-lg">Sélectionnez un projet</h3>
-                  <p className="text-sm">Choisissez un projet pour voir ses détails ici.</p>
+                <div className="flex items-center justify-center h-full">
+                    <span className="text-muted-foreground">Sélectionnez un projet pour voir les détails</span>
                 </div>
               )}
             </ScrollArea>
