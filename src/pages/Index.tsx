@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/HeroSection";
 import { AboutSection } from "@/components/AboutSection";
@@ -8,6 +9,13 @@ import { ContactSection } from "@/components/ContactSection";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("hello");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      setActiveTab(location.state.scrollTo);
+    }
+  }, [location.state]);
 
   const renderContent = () => {
     switch (activeTab) {

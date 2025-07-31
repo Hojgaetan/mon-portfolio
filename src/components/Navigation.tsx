@@ -6,6 +6,7 @@ import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
 import { PdfIcon } from "./PdfIcon";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface NavigationProps {
   activeTab: string;
@@ -15,8 +16,8 @@ interface NavigationProps {
 const navItems = [
   { id: "hello", label: "_hello", icon: <span role="img" aria-label="hello">👋</span> },
   { id: "about", label: "_à-propos", icon: <span role="img" aria-label="à-propos">🧑‍💼</span> },
-  { id: "projects", label: "_projets", icon: <span role="img" aria-label="projets">🛠️</span> },
-  { id: "blog", label: "_blog", icon: <span role="img" aria-label="blog">📝</span> },
+  { id: "projects", label: "_projets", icon: <span role="img" aria-label="projets">🛠️</span>, path: "/projets" },
+  { id: "blog", label: "_blog", icon: <span role="img" aria-label="blog">📝</span>, path: "/blog" },
   { id: "formations", label: "_formations", icon: <span role="img" aria-label="formations">🎓</span> },
   { id: "services", label: "_services", icon: <span role="img" aria-label="services">💼</span> },
   { id: "contact", label: "_me-contacter", icon: <span role="img" aria-label="contact">✉️</span> },
@@ -25,6 +26,21 @@ const navItems = [
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme } = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavClick = (item: (typeof navItems)[0]) => {
+    if (item.path) {
+      navigate(item.path);
+    } else {
+      if (location.pathname !== "/") {
+        navigate("/", { state: { scrollTo: item.id } });
+      } else {
+        setActiveTab(item.id);
+      }
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <nav className="w-full bg-sidebar-background border-b border-sidebar-border">
@@ -45,21 +61,24 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
           {/* Desktop Navigation Tabs */}
           <div className="hidden lg:flex items-center font-sans">
-            {navItems.map((item) => (
-              <Button
-                key={item.id}
-                variant="ghost"
-                className={`font-sans text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border ${
-                  activeTab === item.id
-                    ? "bg-background text-foreground border-b-2 border-accent"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                }`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <span className="mr-2">{item.icon}</span>
-                {item.label}
-              </Button>
-            ))}
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id || (item.path && location.pathname.startsWith(item.path));
+              return (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={`font-sans text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border ${
+                    isActive
+                      ? "bg-background text-foreground border-b-2 border-accent"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  }`}
+                  onClick={() => handleNavClick(item)}
+                >
+                  <span className="mr-2">{item.icon}</span>
+                  {item.label}
+                </Button>
+              );
+            })}
           </div>
 
           {/* Mobile menu button and Theme Toggle */}
@@ -94,24 +113,24 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-sidebar-border bg-sidebar-background font-sans">
             <div className="py-2 space-y-1">
-              {navItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`w-full justify-start font-sans text-sm px-4 py-3 rounded-none ${
-                    activeTab === item.id
-                      ? "bg-background text-foreground border-l-2 border-accent"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  }`}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  <span className="mr-2">{item.icon}</span>
-                  {item.label}
-                </Button>
-              ))}
+              {navItems.map((item) => {
+                const isActive = activeTab === item.id || (item.path && location.pathname.startsWith(item.path));
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`w-full justify-start font-sans text-sm px-4 py-3 rounded-none ${
+                      isActive
+                        ? "bg-background text-foreground border-l-2 border-accent"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                    onClick={() => handleNavClick(item)}
+                  >
+                    <span className="mr-2">{item.icon}</span>
+                    {item.label}
+                  </Button>
+                );
+              })}
               <a href="/path-to-your-cv.pdf" download className="w-full">
                 <Button
                   variant="ghost"
