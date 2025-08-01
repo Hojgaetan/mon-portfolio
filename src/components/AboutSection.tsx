@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Resizable } from "re-resizable";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TechIcon } from "@/components/TechIcon";
 import { supabase } from "@/integrations/supabase/client";
@@ -228,136 +229,156 @@ export const AboutSection = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Chargement des informations...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (aboutSections.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <span className="text-muted-foreground font-mono">// Aucune information disponible</span>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col xl:flex-row h-full w-full font-sans">
-      {/* Sidebar */}
-      <Resizable
-        size={isMobile ? { width: "100%", height: "auto" } : { width: 260, height: "100%" }}
-        minWidth={isMobile ? "100%" : 140}
-        maxWidth={isMobile ? "100%" : 480}
-        enable={isMobile ? {} : { right: true }}
-        handleStyles={isMobile ? {} : { right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
-        className="relative h-full min-h-0 min-w-0 xl:h-full"
-      >
-        <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col font-sans">
-          <div className="space-y-2">
-            <div className="space-y-2 sticky top-12 z-20 bg-sidebar-background">
-              {/* Sections dynamiques depuis la DB */}
-              {sidebarData.map((section) => (
-                <div key={section.id}>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                    onClick={() => toggleSection(section.id)}
-                  >
-                    {openSections[section.id as keyof typeof openSections] ? (
-                      <ChevronDown className="w-4 h-4 mr-1" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4 mr-1" />
-                    )}
-                    {openSections[section.id as keyof typeof openSections] ? section.icon.open : section.icon.closed}
-                    <span className="font-mono text-sm">{section.label}</span>
-                  </Button>
-                  {openSections[section.id as keyof typeof openSections] && (
-                    <div className="ml-6 mt-2 space-y-1">
-                      {section.items.map((item) => (
-                        <div
-                          key={item.id}
-                          className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${
-                            selectedInfo === item.id ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"
-                          }`}
-                          onClick={() => setSelectedInfo(item.id)}
-                        >
-                          <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
-                          <span className="text-sidebar-foreground font-sans text-sm">{item.label}</span>
+    <section id="about" className="bg-background font-sans">
+      <div className="border-t">
+        <ResizablePanelGroup
+          direction={isMobile ? "vertical" : "horizontal"}
+          className="min-h-screen"
+        >
+          {/* Sidebar Panel */}
+          <ResizablePanel defaultSize={isMobile ? 30 : 20} minSize={isMobile ? 25 : 15}>
+            <div className="h-full bg-sidebar-background border-r border-sidebar-border">
+              <ScrollArea className="h-full p-4">
+                <h3 className="text-lg mb-4 pl-2">Explorateur</h3>
+                <div className="space-y-2">
+                  {/* Sections dynamiques depuis la DB */}
+                  {sidebarData.map((section) => (
+                    <div key={section.id}>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start p-2 h-auto text-sidebar-foreground hover:bg-muted"
+                        onClick={() => toggleSection(section.id)}
+                      >
+                        {openSections[section.id as keyof typeof openSections] ? (
+                          <ChevronDown className="w-4 h-4 mr-2" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 mr-2" />
+                        )}
+                        {openSections[section.id as keyof typeof openSections] ? section.icon.open : section.icon.closed}
+                        <span className="font-mono text-sm">{section.label}</span>
+                      </Button>
+                      {openSections[section.id as keyof typeof openSections] && (
+                        <div className="ml-6 mt-2 space-y-1">
+                          {section.items.map((item) => (
+                            <div
+                              key={item.id}
+                              className={`flex items-center space-x-2 cursor-pointer rounded px-2 py-1 transition-colors duration-150 text-sm ${
+                                selectedInfo === item.id ? "bg-muted text-foreground font-semibold" : "hover:bg-muted/50 text-muted-foreground"
+                              }`}
+                              onClick={() => setSelectedInfo(item.id)}
+                            >
+                              <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
+                              <span className="font-sans truncate">{item.label}</span>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))}
 
-              {/* Contacts */}
-              <div className="mt-4">
-                <div className="flex items-center space-x-2 px-2 py-1">
-                  <span className="font-mono text-sm text-sidebar-foreground">_contacts</span>
+                  {/* Contacts */}
+                  <div className="mt-6 pt-4 border-t border-border">
+                    <div className="flex items-center space-x-2 px-2 py-1">
+                      <span className="font-mono text-sm text-sidebar-foreground">_contacts</span>
+                    </div>
+                    <div className="ml-6 mt-2 space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <span className="w-4 h-4 flex items-center justify-center">📧</span>
+                        <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.com</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="w-4 h-4 flex items-center justify-center">📱</span>
+                        <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="w-4 h-4 flex items-center justify-center">📱</span>
+                        <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="ml-6 mt-2 space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                    <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.com</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                    <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                    <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
+              </ScrollArea>
+            </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          {/* Code Editor Panel */}
+          <ResizablePanel defaultSize={isMobile ? 40 : 50} minSize={30}>
+            <div className="h-full flex flex-col">
+              <div className="border-b border-border bg-sidebar-background">
+                <div className="flex items-center">
+                  <div className="px-4 py-2 bg-background border-r border-border">
+                    <span className="font-mono text-sm text-foreground">{selectedInfo}</span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </Resizable>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col xl:flex-row h-full font-sans text-[13px] sm:text-[15px]">
-        {/* Code Editor */}
-        <div className="flex-1">
-          <div className="border-b border-border bg-sidebar-background sticky top-1 z-10">
-            <div className="flex items-center">
-              <div className="px-4 py-1 bg-background border-r border-border">
-                <span className="font-mono text-sm text-foreground">{selectedInfo}</span>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 sm:p-6 font-sans text-[13px] sm:text-[15px] overflow-x-auto">
-            {getSelectedContent()}
-          </div>
-        </div>
-
-        {/* Skills Panel */}
-        <div className="w-full xl:w-80 bg-background border-t xl:border-t-0 xl:border-l border-border font-sans">
-          <div className="p-4">
-            <div className="text-foreground font-sans text-xs sm:text-sm mb-4">
-              // les langages de programmation que je maitrise et ceux que j'apprends encore
-            </div>
-            <div className="space-y-3">
-              {[
-                { name: "HTML", checked: true },
-                { name: "CSS", checked: true },
-                { name: "JavaScript", checked: true },
-                { name: "TypeScript", checked: true },
-                { name: "React", checked: true },
-                { name: "Python", checked: true },
-                { name: "Git", checked: true },
-                { name: "Node.js", checked: true },
-                { name: "Express", checked: false },
-                { name: "MongoDB", checked: false },
-                { name: "Next.js", checked: true },
-                { name: "Vue.js", checked: true },
-                { name: "Angular", checked: false },
-              ].map((skill) => (
-                <div key={skill.name} className="flex items-center space-x-3">
-                  <Checkbox
-                    checked={skill.checked}
-                    className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                  />
-                  <TechIcon tech={skill.name} />
-                  <span className="text-foreground font-sans text-xs sm:text-sm">{skill.name}</span>
+              <ScrollArea className="flex-1 p-4 sm:p-6">
+                <div className="font-sans text-[13px] sm:text-[15px]">
+                  {getSelectedContent()}
                 </div>
-              ))}
+              </ScrollArea>
             </div>
-          </div>
-        </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle />
+
+          {/* Skills Panel */}
+          <ResizablePanel defaultSize={isMobile ? 30 : 30} minSize={isMobile ? 25 : 20}>
+            <div className="h-full bg-background border-l border-border">
+              <ScrollArea className="h-full p-4">
+                <div className="text-foreground font-sans text-xs sm:text-sm mb-4">
+                  // les langages de programmation que je maitrise et ceux que j'apprends encore
+                </div>
+                <div className="space-y-3">
+                  {[
+                    { name: "HTML", checked: true },
+                    { name: "CSS", checked: true },
+                    { name: "JavaScript", checked: true },
+                    { name: "TypeScript", checked: true },
+                    { name: "React", checked: true },
+                    { name: "Python", checked: true },
+                    { name: "Git", checked: true },
+                    { name: "Node.js", checked: true },
+                    { name: "Express", checked: false },
+                    { name: "MongoDB", checked: false },
+                    { name: "Next.js", checked: true },
+                    { name: "Vue.js", checked: true },
+                    { name: "Angular", checked: false },
+                  ].map((skill) => (
+                    <div key={skill.name} className="flex items-center space-x-3">
+                      <Checkbox
+                        checked={skill.checked}
+                        className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                      />
+                      <TechIcon tech={skill.name} />
+                      <span className="text-foreground font-sans text-xs sm:text-sm">{skill.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
-    </div>
+    </section>
   );
 };
+
