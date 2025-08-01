@@ -28,7 +28,8 @@ export const AboutSection = () => {
   const [selectedInfo, setSelectedInfo] = useState("bio");
   const [aboutSections, setAboutSections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // État pour contrôler l'affichage du sidebar sur mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [expandedFoldersInOverlay, setExpandedFoldersInOverlay] = useState<string[]>([]); // Nouvel état pour les dossiers ouverts dans l'overlay
 
   // État d'ouverture des sections calculé dynamiquement basé sur le fichier sélectionné
   const getOpenSections = () => {
@@ -45,6 +46,23 @@ export const AboutSection = () => {
   };
 
   const openSections = getOpenSections();
+
+  // Fonction pour obtenir le nom du dossier actif
+  const getActiveFolderName = () => {
+    const selectedSection = aboutSections.find(section => section.section_key === selectedInfo);
+    const sectionType = selectedSection?.section_type;
+
+    switch (sectionType) {
+      case 'info':
+        return '_informations-personnelles';
+      case 'education':
+        return '_éducation';
+      case 'experience':
+        return '_experiences';
+      default:
+        return '_dossier';
+    }
+  };
 
   useEffect(() => {
     fetchAboutSections();
@@ -231,13 +249,32 @@ export const AboutSection = () => {
     })) : []
   }));
 
-  // Trouver le contenu sélectionné
+  // Trouver le contenu sélectionn��
   const getSelectedContent = () => {
     for (const section of sidebarData) {
       const item = section.items.find((item: any) => item.id === selectedInfo);
       if (item) return item.content;
     }
     return <div>Contenu non trouvé</div>;
+  };
+
+  // Fonction pour obtenir les fichiers du dossier actif seulement
+  const getActiveFolderFiles = () => {
+    const selectedSection = aboutSections.find(section => section.section_key === selectedInfo);
+    const selectedSectionType = selectedSection?.section_type;
+
+    // Trouver la section correspondante dans sidebarData
+    const activeSection = sidebarData.find(section => section.id === selectedSectionType);
+    return activeSection ? activeSection.items : [];
+  };
+
+  // Fonction pour basculer l'état d'ouverture d'un dossier dans l'overlay
+  const toggleFolderInOverlay = (folderId: string) => {
+    setExpandedFoldersInOverlay(prev =>
+      prev.includes(folderId)
+        ? prev.filter(id => id !== folderId)
+        : [...prev, folderId]
+    );
   };
 
   if (loading) {
@@ -264,58 +301,97 @@ export const AboutSection = () => {
       <div className="border-t">
         {isMobile ? (
           // Layout mobile optimisé avec navigation par onglets
-          <div className="min-h-screen flex flex-col">
-            {/* Header mobile avec sélection de fichier */}
-            <div className="bg-sidebar-background border-b border-sidebar-border p-3">
+          <div className="min-h-screen flex flex-col relative">
+            {/* Header mobile avec sélection de dossier */}
+            <div className="bg-sidebar-background border-b border-sidebar-border p-3 relative z-10">
               <div className="flex items-center justify-between">
                 <button
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                  className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded text-sm"
+                  className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded text-sm hover:bg-muted transition-colors"
                 >
-                  <Folder className="w-4 h-4" />
-                  <span className="font-mono">{selectedInfo}</span>
+                  <FolderOpen className="w-4 h-4" />
+                  <span className="font-mono">{getActiveFolderName()}</span>
                   <ChevronDown className={`w-4 h-4 transition-transform ${isSidebarOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <span className="text-xs text-muted-foreground">Explorateur</span>
               </div>
+            </div>
 
-              {/* Sidebar mobile en overlay */}
-              {isSidebarOpen && (
-                <div className="absolute top-0 left-0 right-0 z-50 bg-sidebar-background border-b border-sidebar-border max-h-[60vh] overflow-y-auto">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold">Explorateur</h3>
+            {/* Overlay avec flou quand la navigation est ouverte */}
+            {isSidebarOpen && (
+              <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
+            )}
+
+            {/* Sidebar mobile en overlay plein écran */}
+            {isSidebarOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div className="bg-sidebar-background border border-sidebar-border rounded-lg shadow-2xl max-w-md w-full max-h-[80vh] overflow-hidden">
+                  {/* Header de la navigation */}
+                  <div className="bg-background border-b border-border p-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        <FolderOpen className="w-5 h-5" />
+                        Explorateur
+                      </h3>
                       <button
                         onClick={() => setIsSidebarOpen(false)}
-                        className="p-1 hover:bg-muted rounded"
+                        className="p-2 hover:bg-muted rounded-full transition-colors"
                       >
                         ✕
                       </button>
                     </div>
-                    <div className="space-y-2">
+                  </div>
+
+                  {/* Contenu de la navigation - Dossiers cliquables avec exploration progressive */}
+                  <div className="overflow-y-auto max-h-[60vh] p-4">
+                    <div className="space-y-3">
                       {sidebarData.map((section) => (
-                        <div key={section.id}>
-                          <div className="flex items-center gap-2 p-2 font-mono text-sm text-sidebar-foreground">
-                            {openSections[section.id as keyof typeof openSections] ? section.icon.open : section.icon.closed}
-                            <span>{section.label}</span>
-                          </div>
-                          {openSections[section.id as keyof typeof openSections] && (
-                            <div className="ml-6 space-y-1">
+                        <div key={section.id} className="space-y-2">
+                          {/* Header du dossier - cliquable pour révéler le contenu */}
+                          <button
+                            onClick={() => toggleFolderInOverlay(section.id)}
+                            className="w-full flex items-center gap-2 p-3 bg-muted/80 rounded-lg font-mono text-sm text-foreground border border-border hover:bg-muted hover:shadow-md transition-all duration-200"
+                          >
+                            {expandedFoldersInOverlay.includes(section.id) ? (
+                              <ChevronDown className="w-4 h-4 text-primary" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                            )}
+                            {expandedFoldersInOverlay.includes(section.id) ? (
+                              <FolderOpen className="w-4 h-4 text-primary" />
+                            ) : (
+                              <Folder className="w-4 h-4 text-muted-foreground" />
+                            )}
+                            <span className="font-medium text-foreground flex-1 text-left">{section.label}</span>
+                            <div className="text-xs bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20">
+                              {section.items.length} fichier{section.items.length > 1 ? 's' : ''}
+                            </div>
+                          </button>
+
+                          {/* Fichiers du dossier - visibles seulement si le dossier est ouvert */}
+                          {expandedFoldersInOverlay.includes(section.id) && (
+                            <div className="ml-2 space-y-1 animate-in slide-in-from-top-2 duration-300">
+                              <div className="text-xs text-muted-foreground ml-6 mb-2 italic">
+                                📂 Contenu de {section.label}
+                              </div>
                               {section.items.map((item) => (
                                 <button
                                   key={item.id}
-                                  className={`flex items-center space-x-2 w-full text-left rounded px-2 py-2 transition-colors text-sm ${
+                                  className={`flex items-center space-x-3 w-full text-left rounded-lg px-3 py-2.5 transition-all duration-200 text-sm ml-6 ${
                                     selectedInfo === item.id 
-                                      ? "bg-accent-blue/10 text-accent-blue font-semibold border-l-2 border-accent-blue" 
-                                      : "hover:bg-accent-sky/10 text-muted-foreground hover:text-accent-sky"
+                                      ? "bg-primary/15 text-primary font-medium border border-primary/40 shadow-sm scale-[1.02]" 
+                                      : "hover:bg-muted/60 text-foreground hover:text-primary border border-transparent hover:border-border hover:scale-[1.01]"
                                   }`}
                                   onClick={() => {
                                     setSelectedInfo(item.id);
                                     setIsSidebarOpen(false);
                                   }}
                                 >
-                                  <span className="w-4 h-4 flex items-center justify-center">{item.icon}</span>
-                                  <span className="font-sans">{item.label}</span>
+                                  <span className="w-4 h-4 flex items-center justify-center text-muted-foreground">{item.icon}</span>
+                                  <span className="font-sans flex-1">{item.label}</span>
+                                  {selectedInfo === item.id && (
+                                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                  )}
                                 </button>
                               ))}
                             </div>
@@ -324,14 +400,42 @@ export const AboutSection = () => {
                       ))}
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
 
-            {/* Contenu principal mobile */}
-            <div className="flex-1 flex flex-col lg:flex-row">
+                  {/* Footer avec info - plus engageant */}
+                  <div className="bg-muted/50 border-t border-border p-3">
+                    <div className="text-xs text-foreground/70 text-center">
+                      🗂️ Cliquez sur un dossier pour découvrir son contenu
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contenu principal mobile (avec flou conditionnel) */}
+            <div className={`flex-1 flex flex-col transition-all duration-200 ${isSidebarOpen ? 'blur-sm' : ''}`}>
+
+              {/* Navigation rapide en haut pour mobile - seulement les fichiers du dossier actif */}
+              <div className="bg-sidebar-background border-b border-sidebar-border p-2">
+                <div className="flex gap-1 overflow-x-auto">
+                  {getActiveFolderFiles().map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedInfo(item.id)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${
+                        selectedInfo === item.id 
+                          ? "bg-primary/15 text-primary border border-primary/30" 
+                          : "bg-background text-muted-foreground border border-border hover:bg-muted/60"
+                      }`}
+                    >
+                      <span className="w-3 h-3 flex items-center justify-center">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Code Editor - prend toute la largeur sur mobile */}
-              <div className="flex-1 lg:flex-[2] flex flex-col">
+              <div className="flex-1 flex flex-col">
                 <div className="border-b border-border bg-sidebar-background">
                   <div className="flex items-center">
                     <div className="px-3 py-2 bg-background border-r border-border">
@@ -346,15 +450,35 @@ export const AboutSection = () => {
                 </div>
               </div>
 
-              {/* Skills Panel - Collapsible sur mobile */}
-              <div className="lg:flex-1 border-t lg:border-t-0 lg:border-l border-border">
-                <div className="bg-sidebar-background border-b border-border">
-                  <details className="lg:hidden">
-                    <summary className="px-3 py-2 cursor-pointer text-sm font-medium flex items-center justify-between">
+              {/* Navigation rapide en bas pour mobile - seulement les fichiers du dossier actif */}
+              <div className="bg-sidebar-background border-t border-sidebar-border p-2">
+                <div className="flex gap-1 overflow-x-auto">
+                  {getActiveFolderFiles().map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setSelectedInfo(item.id)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${
+                        selectedInfo === item.id 
+                          ? "bg-primary/15 text-primary border border-primary/30" 
+                          : "bg-background text-muted-foreground border border-border hover:bg-muted/60"
+                      }`}
+                    >
+                      <span className="w-3 h-3 flex items-center justify-center">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Skills Panel - Collapsible sur mobile après la navigation */}
+              <div className="border-t border-border">
+                <div className="bg-sidebar-background">
+                  <details>
+                    <summary className="px-3 py-2 cursor-pointer text-sm font-medium flex items-center justify-between hover:bg-muted/50 transition-colors">
                       <span>Compétences</span>
                       <ChevronDown className="w-4 h-4" />
                     </summary>
-                    <div className="p-3 bg-background max-h-60 overflow-y-auto">
+                    <div className="p-3 bg-background max-h-60 overflow-y-auto border-t border-border">
                       <div className="text-xs mb-3 text-foreground">
                         // langages de programmation
                       </div>
@@ -386,62 +510,7 @@ export const AboutSection = () => {
                       </div>
                     </div>
                   </details>
-                  <div className="hidden lg:block h-full">
-                    <ScrollArea className="h-full p-4">
-                      <div className="text-foreground font-sans text-sm mb-4">
-                        // les langages de programmation que je maitrise et ceux que j'apprends encore
-                      </div>
-                      <div className="space-y-3">
-                        {[
-                          { name: "HTML", checked: true },
-                          { name: "CSS", checked: true },
-                          { name: "JavaScript", checked: true },
-                          { name: "TypeScript", checked: true },
-                          { name: "React", checked: true },
-                          { name: "Python", checked: true },
-                          { name: "Git", checked: true },
-                          { name: "Node.js", checked: true },
-                          { name: "Express", checked: false },
-                          { name: "MongoDB", checked: false },
-                          { name: "Next.js", checked: true },
-                          { name: "Vue.js", checked: true },
-                          { name: "Angular", checked: false },
-                        ].map((skill) => (
-                          <div key={skill.name} className="flex items-center space-x-3">
-                            <Checkbox
-                              checked={skill.checked}
-                              className="border-accent data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                            />
-                            <TechIcon tech={skill.name} />
-                            <span className="text-foreground font-sans text-sm">{skill.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Navigation rapide en bas pour mobile */}
-            <div className="bg-sidebar-background border-t border-sidebar-border p-2">
-              <div className="flex gap-1 overflow-x-auto">
-                {sidebarData.map((section) =>
-                  section.items.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => setSelectedInfo(item.id)}
-                      className={`flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${
-                        selectedInfo === item.id 
-                          ? "bg-accent-blue/20 text-accent-blue border border-accent-blue" 
-                          : "bg-background text-muted-foreground border border-border"
-                      }`}
-                    >
-                      <span className="w-3 h-3 flex items-center justify-center">{item.icon}</span>
-                      <span>{item.label}</span>
-                    </button>
-                  ))
-                )}
               </div>
             </div>
           </div>
