@@ -23,7 +23,7 @@ export const HeroSection = () => {
           <div className="space-y-8">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-muted-foreground font-sans text-lg">web_data-science_ia_machine-learning_et_automatisation</p>
+              <p className="text-muted-foreground font-sans text-lg">web_data_ia_machine-learning_et_automatisation</p>
 
               {/* Name */}
               <h1 className="text-6xl md:text-7xl font-bold text-primary leading-tight">
@@ -50,7 +50,7 @@ export const HeroSection = () => {
                 <span className="text-code-keyword">var</span>
                 <span className="text-foreground">bio</span>
                 <span className="text-foreground">=</span>
-                <span className="text-code-string">"Passionne par les nouvelles technologies, l'i.a, la data Science et l'automatisme"</span>
+                <span className="text-code-string">"Passionne par les nouvelles technologies, le web, l'i.a, la data, le machine learning et l'automatisation"</span>
                 <span className="text-foreground">;</span>
               </div>
 
@@ -69,7 +69,7 @@ export const HeroSection = () => {
                 <span className="text-code-keyword">const</span>
                 <span className="text-foreground">e-mail</span>
                 <span className="text-foreground">=</span>
-                <span className="text-code-string">"contact@joelhassam.me"</span>
+                <span className="text-code-string">"contact@joelhassam.com"</span>
                 <span className="text-foreground">;</span>
               </div>
             </div>

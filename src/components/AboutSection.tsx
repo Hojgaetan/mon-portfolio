@@ -290,7 +290,7 @@ export const AboutSection = () => {
                 <div className="ml-6 mt-2 space-y-2">
                   <div className="flex items-center space-x-2">
                     <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                    <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.me</span>
+                    <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.com</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="w-4 h-4 flex items-center justify-center">📱</span>
