@@ -109,10 +109,10 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 <Button
                   key={item.id}
                   variant="ghost"
-                  className={`font-sans text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border ${
+                  className={`font-sans text-sm px-3 py-2 h-12 rounded-none border-r border-sidebar-border transition-all duration-200 ${
                     isActive
-                      ? "bg-background text-foreground border-b-2 border-accent"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                      ? "bg-background text-accent-blue border-b-2 border-accent-blue hover:bg-accent-blue/10"
+                      : "text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky"
                   }`}
                   onClick={() => handleNavClick(item)}
                 >
@@ -126,7 +126,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
           {/* Mobile menu button and Theme Toggle */}
           <div className="flex items-center space-x-2">
             <a href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf" download className="hidden lg:block">
-                <Button variant="ghost" className="h-12 rounded-none bg-[#df3821] hover:bg-[#df3821]/90 text-white px-3 py-2 flex items-center">
+                <Button variant="accent-red" className="h-12 rounded-none px-3 py-2 flex items-center">
                     <PdfIcon className="h-5 w-5 mr-2" />
                     _telecharger-le-cv
                 </Button>
@@ -137,7 +137,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden h-10 w-10"
+              className="lg:hidden h-10 w-10 hover:bg-accent-sky/10 hover:text-accent-sky"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -167,10 +167,10 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   </Button>
                 );
               })}
-              <a href="/path-to-your-cv.pdf" download className="w-full">
+              <a href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf" download className="w-full">
                 <Button
-                  variant="ghost"
-                  className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none bg-[#df3821] hover:bg-[#df3821]/90 text-white"
+                  variant="accent-red"
+                  className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none"
                 >
                   <PdfIcon className="h-5 w-5 mr-2" />
                   _télécharger-cv

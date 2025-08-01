@@ -18,6 +18,18 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Nouvelles variantes avec les couleurs d'accent
+        "accent-red": "bg-accent-red text-white hover:bg-accent-red/90 active:bg-accent-red/80",
+        "accent-blue": "bg-accent-blue text-white hover:bg-accent-blue/90 active:bg-accent-blue/80",
+        "accent-sky": "bg-accent-sky text-white hover:bg-accent-sky/90 active:bg-accent-sky/80",
+        "accent-green": "bg-accent-green text-gray-900 hover:bg-accent-green/90 active:bg-accent-green/80",
+        "accent-yellow": "bg-accent-yellow text-gray-900 hover:bg-accent-yellow/90 active:bg-accent-yellow/80",
+        // Variantes outline avec les couleurs d'accent
+        "outline-red": "border-2 border-accent-red text-accent-red bg-transparent hover:bg-accent-red hover:text-white",
+        "outline-blue": "border-2 border-accent-blue text-accent-blue bg-transparent hover:bg-accent-blue hover:text-white",
+        "outline-sky": "border-2 border-accent-sky text-accent-sky bg-transparent hover:bg-accent-sky hover:text-white",
+        "outline-green": "border-2 border-accent-green text-accent-green bg-transparent hover:bg-accent-green hover:text-gray-900",
+        "outline-yellow": "border-2 border-accent-yellow text-accent-yellow bg-transparent hover:bg-accent-yellow hover:text-gray-900",
       },
       size: {
         default: "h-10 px-4 py-2",

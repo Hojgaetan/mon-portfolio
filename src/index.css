@@ -31,6 +31,13 @@ All colors MUST be HSL.
     --accent: 0 3% 13%;
     --accent-foreground: 0 0% 100%;
 
+    /* Nouvelles couleurs d'accent */
+    --accent-red: 0 73% 50%;    /* #df3821 */
+    --accent-blue: 225 91% 45%; /* #0652e9 */
+    --accent-sky: 202 100% 61%; /* #38b6ff */
+    --accent-green: 78 52% 72%; /* #b9e185 */
+    --accent-yellow: 56 92% 73%; /* #fbeb78 */
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
@@ -48,19 +55,12 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -85,6 +85,13 @@ All colors MUST be HSL.
 
     --accent: 0 0% 94%;
     --accent-foreground: 232 35% 9%;
+
+    /* Couleurs d'accent pour le mode sombre */
+    --accent-red: 0 73% 60%;    /* Plus clair en mode sombre */
+    --accent-blue: 225 91% 55%; /* Plus clair en mode sombre */
+    --accent-sky: 202 100% 71%; /* Plus clair en mode sombre */
+    --accent-green: 78 52% 82%; /* Plus clair en mode sombre */
+    --accent-yellow: 56 92% 83%; /* Plus clair en mode sombre */
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;

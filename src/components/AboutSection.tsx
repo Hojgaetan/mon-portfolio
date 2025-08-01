@@ -280,7 +280,9 @@ export const AboutSection = () => {
                             <div
                               key={item.id}
                               className={`flex items-center space-x-2 cursor-pointer rounded px-2 py-1 transition-colors duration-150 text-sm ${
-                                selectedInfo === item.id ? "bg-muted text-foreground font-semibold" : "hover:bg-muted/50 text-muted-foreground"
+                                selectedInfo === item.id 
+                                  ? "bg-accent-blue/10 text-accent-blue font-semibold border-l-2 border-accent-blue" 
+                                  : "hover:bg-accent-sky/10 text-muted-foreground hover:text-accent-sky"
                               }`}
                               onClick={() => setSelectedInfo(item.id)}
                             >
@@ -381,4 +383,3 @@ export const AboutSection = () => {
     </section>
   );
 };
-

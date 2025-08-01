@@ -36,7 +36,7 @@ const projectCategories: Record<string, string> = {
 };
 
 export const ProjectsSection = () => {
-  const [groupedProjects, setGroupedProjects] = useState<Record<string, Project[]>>({});
+  const [groupedProjects, setGroupedProjects] = useState<Record<string, Project>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
@@ -91,7 +91,7 @@ export const ProjectsSection = () => {
     },
     {
       key: "modelisation_url",
-      title: "Mod��lisation & Analyse",
+      title: "Mod������lisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
       icon: "🧩",
     },
@@ -188,7 +188,11 @@ export const ProjectsSection = () => {
                             {(groupedProjects[key] || []).map((project: Project) => (
                               <li key={project.id}>
                                 <div
-                                  className={`flex items-center cursor-pointer p-2 rounded-md text-sm ${selectedProject === project.id ? 'bg-muted' : 'hover:bg-muted/50'}`}
+                                  className={`flex items-center cursor-pointer p-2 rounded-md text-sm transition-colors ${
+                                    selectedProject === project.id 
+                                      ? 'bg-accent-blue/10 text-accent-blue border-l-2 border-accent-blue' 
+                                      : 'hover:bg-accent-sky/10 hover:text-accent-sky'
+                                  }`}
                                   onClick={() => handleProjectClick(project.id)}
                                 >
                                   <FileCode className="h-4 w-4 mr-2 flex-shrink-0" />

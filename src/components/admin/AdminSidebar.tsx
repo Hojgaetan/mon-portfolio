@@ -69,10 +69,10 @@ export function AdminSidebar({
               <Button
                 key={item.id}
                 variant={activeSection === item.id ? "secondary" : "ghost"}
-                className={`w-full justify-start font-sans text-sm ${
+                className={`w-full justify-start font-sans text-sm transition-colors ${
                   activeSection === item.id
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    ? "bg-accent-blue/10 text-accent-blue border-l-2 border-accent-blue"
+                    : "text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky"
                 }`}
                 onClick={() => setActiveSection(item.id)}
               >
@@ -88,7 +88,7 @@ export function AdminSidebar({
       <div className="p-4 border-t border-sidebar-border space-y-2">
         <Button
           variant="ghost"
-          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="w-full justify-start text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky transition-colors"
           onClick={onNavigateHome}
         >
           <Home className="w-4 h-4 mr-3" />
@@ -96,7 +96,7 @@ export function AdminSidebar({
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="w-full justify-start text-accent-red hover:bg-accent-red/10 hover:text-accent-red transition-colors"
           onClick={onSignOut}
         >
           <LogOut className="w-4 h-4 mr-3" />

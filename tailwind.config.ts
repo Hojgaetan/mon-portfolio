@@ -43,7 +43,12 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
+					foreground: 'hsl(var(--accent-foreground))',
+					red: 'hsl(var(--accent-red))',
+					blue: 'hsl(var(--accent-blue))',
+					sky: 'hsl(var(--accent-sky))',
+					green: 'hsl(var(--accent-green))',
+					yellow: 'hsl(var(--accent-yellow))'
 				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
