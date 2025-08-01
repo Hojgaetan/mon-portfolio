@@ -70,7 +70,23 @@ export const AboutSection = () => {
 
   // Fonction helper pour créer le contenu formaté à partir des données de la DB
   const renderContentFromDB = (section: any) => {
-    const { title, content } = section;
+    const { title } = section;
+    let content = section.content;
+    
+    // Ensure content is parsed as object if it's a string
+    if (typeof content === 'string') {
+      try {
+        content = JSON.parse(content);
+      } catch (error) {
+        console.error('Error parsing content JSON:', error);
+        return <div className="text-red-500">Erreur de format du contenu</div>;
+      }
+    }
+    
+    // Validate content structure
+    if (!content || typeof content !== 'object') {
+      return <div className="text-muted-foreground">Contenu non disponible</div>;
+    }
     
     // Handle different content formats
     if (content?.lines && Array.isArray(content.lines)) {
@@ -106,14 +122,18 @@ export const AboutSection = () => {
     }
     
     // Handle experience format
-    if (content?.company) {
+    if (content?.company || content?.description) {
       return (
         <div className="space-y-2 min-w-max font-sans">
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* {title}</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>{content.description}</i></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>{content.period}</i></span></div>
+          {content.description && (
+            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>{content.description}</i></span></div>
+          )}
+          {content.period && (
+            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>{content.period}</i></span></div>
+          )}
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
           {content.tasks && Array.isArray(content.tasks) && content.tasks.map((task: any, index: number) => (
             <div key={index} className="flex">
@@ -131,7 +151,31 @@ export const AboutSection = () => {
       );
     }
     
-    return <div>Contenu non disponible</div>;
+    // Fallback for simple text content
+    if (typeof content === 'string') {
+      return (
+        <div className="space-y-2 min-w-max font-sans">
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">1.</span>
+            <span className="text-code-comment">/**</span>
+          </div>
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">2.</span>
+            <span className="text-code-comment">* {title}</span>
+          </div>
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">3.</span>
+            <span className="text-code-comment">*/</span>
+          </div>
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">4.</span>
+            <span className="text-foreground">{content}</span>
+          </div>
+        </div>
+      );
+    }
+    
+    return <div className="text-muted-foreground">Format de contenu non reconnu</div>;
   };
 
   // Get icon component by name

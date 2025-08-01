@@ -98,22 +98,9 @@ export function AboutManager() {
   const handleContentChange = (content: string) => {
     if (!editingSection) return;
     
-    // Try to parse as JSON first, if it fails, treat as plain text
-    let parsedContent;
-    try {
-      parsedContent = JSON.parse(content);
-    } catch {
-      // If it's not JSON, convert plain text to our format
-      const lines = content.split('\n').map(line => ({
-        type: "text" as const,
-        text: line
-      }));
-      parsedContent = { lines };
-    }
-    
     setEditingSection({
       ...editingSection,
-      content: parsedContent,
+      content: content,
     });
   };
 
@@ -122,11 +109,29 @@ export function AboutManager() {
 
     setSaving(true);
     try {
+      // Parse the content as JSON before saving
+      let parsedContent;
+      try {
+        if (typeof editingSection.content === 'string') {
+          parsedContent = JSON.parse(editingSection.content);
+        } else {
+          parsedContent = editingSection.content;
+        }
+      } catch (error) {
+        toast({
+          title: "Erreur de format",
+          description: "Le contenu JSON n'est pas valide. Veuillez vérifier la syntaxe.",
+          variant: "destructive",
+        });
+        setSaving(false);
+        return;
+      }
+
       const sectionData = {
         section_type: editingSection.section_type!,
         section_key: editingSection.section_key!,
         title: editingSection.title!,
-        content: editingSection.content,
+        content: parsedContent,
         icon_name: editingSection.icon_name,
         order_index: editingSection.order_index!,
         is_active: editingSection.is_active!,
@@ -348,11 +353,18 @@ export function AboutManager() {
 
             <div className="space-y-2">
               <Label>Contenu (JSON)</Label>
-              <RichTextEditor
-                value={JSON.stringify(editingSection.content, null, 2)}
+              <Textarea
+                value={typeof editingSection.content === 'string' 
+                  ? editingSection.content 
+                  : JSON.stringify(editingSection.content, null, 2)}
                 onChange={handleContentChange}
                 placeholder="Contenu au format JSON..."
+                rows={15}
+                className="font-mono text-sm"
               />
+              <p className="text-xs text-muted-foreground">
+                Format attendu : {`{"lines": [{"type": "text", "text": "Votre texte"}]}`}
+              </p>
             </div>
 
             <div className="flex items-center space-x-2">
