@@ -38,7 +38,7 @@ interface RecentPost {
   title: string;
   published: boolean;
   created_at: string;
-  categories?: {
+  categories: {
     name: string;
     color: string;
   } | null;
@@ -104,7 +104,10 @@ export function AdminDashboard() {
       });
 
       setRecentProjects(projects?.slice(0, 5) || []);
-      setRecentPosts(posts?.slice(0, 5) || []);
+      setRecentPosts(posts?.slice(0, 5).map(post => ({
+        ...post,
+        categories: Array.isArray(post.categories) ? post.categories[0] || null : post.categories
+      })) || []);
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);
     } finally {
