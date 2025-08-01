@@ -7,6 +7,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { BlogManager } from "@/components/admin/BlogManager";
+import { AboutManager } from "@/components/admin/AboutManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { Resizable } from "re-resizable";
@@ -80,6 +81,8 @@ export default function Admin() {
         return <ProjectsManager />;
       case "blog":
         return <BlogManager />;
+      case "about":
+        return <AboutManager />;
       case "users":
         return <UsersManager />;
       case "settings":

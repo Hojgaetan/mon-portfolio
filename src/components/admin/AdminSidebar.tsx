@@ -26,6 +26,7 @@ const menuItems = [
   { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { id: "projects", label: "Projets", icon: FolderOpen },
   { id: "blog", label: "Blog", icon: FileText },
+  { id: "about", label: "À propos", icon: UserIcon },
   { id: "users", label: "Utilisateurs", icon: Users },
   { id: "settings", label: "Paramètres", icon: Settings },
 ];

@@ -106,7 +106,7 @@ export function AdminDashboard() {
       setRecentProjects(projects?.slice(0, 5) || []);
       setRecentPosts(posts?.slice(0, 5).map(post => ({
         ...post,
-        categories: Array.isArray(post.categories) ? post.categories[0] || null : post.categories
+        categories: Array.isArray(post.categories) && post.categories.length > 0 ? post.categories[0] : null
       })) || []);
     } catch (error) {
       console.error("Erreur lors du chargement des données:", error);

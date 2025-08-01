@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Resizable } from "re-resizable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TechIcon } from "@/components/TechIcon";
+import { supabase } from "@/integrations/supabase/client";
 
 // Types pour une meilleure structure des données
 interface SidebarItem {
@@ -27,11 +28,37 @@ export const AboutSection = () => {
   const [openSections, setOpenSections] = useState({
     info: true,
     education: false,
-    experiences: false,
-    stages: false,
-    emplois: false,
-    contacts: false,
+    experience: false,
   });
+  const [aboutSections, setAboutSections] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchAboutSections();
+  }, []);
+
+  const fetchAboutSections = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("about_sections")
+        .select("*")
+        .eq("is_active", true)
+        .order("section_type", { ascending: true })
+        .order("order_index", { ascending: true });
+
+      if (error) throw error;
+      setAboutSections(data || []);
+      
+      // Set first available section as default
+      if (data && data.length > 0) {
+        setSelectedInfo(data[0].section_key);
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des sections:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Helper function pour basculer l'état d'ouverture des sections
   const toggleSection = (sectionId: string) => {
@@ -41,155 +68,126 @@ export const AboutSection = () => {
     }));
   };
 
-  // Fonction helper pour créer le contenu formaté
-  const createFormattedContent = (title: string, content: Array<{ type: 'comment' | 'text' | 'highlight' | 'emphasis', text: string }>) => {
-    return (
-      <div className="space-y-2 min-w-max font-sans">
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">1.</span>
-          <span className="text-code-comment">/**</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">2.</span>
-          <span className="text-code-comment">* {title}</span>
-        </div>
-        <div className="flex">
-          <span className="text-muted-foreground mr-4 select-none w-6">3.</span>
-          <span className="text-code-comment">*/</span>
-        </div>
-        {content.map((item, index) => (
-          <div key={index} className="flex">
-            <span className="text-muted-foreground mr-4 select-none w-6">{index + 4}.</span>
-            <span className={
-              item.type === 'comment' ? 'text-code-comment' :
-              item.type === 'highlight' ? 'text-[#38b6ff]' :
-              item.type === 'emphasis' ? 'text-[#df3821]' :
-              'text-foreground'
-            }>
-              {item.text}
-            </span>
+  // Fonction helper pour créer le contenu formaté à partir des données de la DB
+  const renderContentFromDB = (section: any) => {
+    const { title, content } = section;
+    
+    // Handle different content formats
+    if (content?.lines && Array.isArray(content.lines)) {
+      return (
+        <div className="space-y-2 min-w-max font-sans">
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">1.</span>
+            <span className="text-code-comment">/**</span>
           </div>
-        ))}
-      </div>
-    );
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">2.</span>
+            <span className="text-code-comment">* {title}</span>
+          </div>
+          <div className="flex">
+            <span className="text-muted-foreground mr-4 select-none w-6">3.</span>
+            <span className="text-code-comment">*/</span>
+          </div>
+          {content.lines.map((item: any, index: number) => (
+            <div key={index} className="flex">
+              <span className="text-muted-foreground mr-4 select-none w-6">{index + 4}.</span>
+              <span className={
+                item.type === 'comment' ? 'text-code-comment' :
+                item.type === 'highlight' ? 'text-[#38b6ff]' :
+                item.type === 'emphasis' ? 'text-[#df3821]' :
+                'text-foreground'
+              }>
+                {item.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    // Handle experience format
+    if (content?.company) {
+      return (
+        <div className="space-y-2 min-w-max font-sans">
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* {title}</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>{content.description}</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>{content.period}</i></span></div>
+          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
+          {content.tasks && Array.isArray(content.tasks) && content.tasks.map((task: any, index: number) => (
+            <div key={index} className="flex">
+              <span className="text-muted-foreground mr-4 select-none w-6">{index + 7}</span>
+              <span className={
+                task.type === 'highlight' ? 'text-[#38b6ff]' :
+                task.type === 'emphasis' ? 'text-[#df3821]' :
+                'text-foreground'
+              }>
+                {task.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    
+    return <div>Contenu non disponible</div>;
   };
 
-  // Configuration des données de la sidebar
-  const sidebarData: SidebarSection[] = [
-    {
-      id: "info",
-      label: "_informations-personnelles",
-      icon: {
-        closed: <Folder className="w-4 h-4 mr-1" />,
-        open: <FolderOpen className="w-4 h-4 mr-1" />
-      },
-      items: [
-        {
-          id: "bio",
-          label: "bio",
-          icon: <FileText className="w-4 h-4" />,
-          content: createFormattedContent("Bio", [
-            { type: 'text', text: ' ' },
-            { type: 'text', text: ' Passionné par le développement web et l\'expérience utilisateur,' },
-            { type: 'text', text: ' je suis Developpeur web dans la création de sites internet et d\'applications web responsives.' },
-            { type: 'text', text: ' Ma maîtrise des technologies HTML, CSS et JavaScript, combinée à une connaissance approfondie des frameworks modernes,' },
-            { type: 'text', text: ' me permet de transformer des maquettes graphiques en interfaces web performantes et esthétiques.' },
-            { type: 'text', text: ' Toujours à l\'affût des dernières tendances et des meilleures pratiques en matière.' },
-          ])
-        },
-        {
-          id: "centres-d_intérêts",
-          label: "centres-d_intérêts",
-          icon: <FileMusic className="w-4 h-4" />,
-          content: createFormattedContent("Centres d'intérêts", [
-            { type: 'text', text: '- Programmation' },
-            { type: 'text', text: '- Musique' },
-            { type: 'text', text: '- Lecture' },
-            { type: 'text', text: '- Sport' },
-          ])
-        }
-      ]
-    },
-    {
-      id: "education",
-      label: "_éducation",
-      icon: {
-        closed: <Folder className="w-4 h-4 mr-1" />,
-        open: <FolderOpen className="w-4 h-4 mr-1" />
-      },
-      items: [
-        {
-          id: "lycée/collège",
-          label: "lycée/collège",
-          icon: <FileStack className="w-4 h-4" />,
-          content: createFormattedContent("Lycée / Collège", [
-            { type: 'text', text: '- Lycée d\'Akwa Nord - Douala, Cameroun (2007 - 2010)' },
-            { type: 'text', text: '- Lycée de Nkolnda, Nsimalen - Yaounde, Cameroun (2010 - 2011)' },
-            { type: 'text', text: '- College Ndi Samba - Yaounde, Cameroun (2011 - 2013)' },
-            { type: 'text', text: '- Lycée de Nkolndongo - Yaounde, Cameroun (2013 - 2015)' },
-            { type: 'text', text: '- Lycée d\'Akwa Nord - Douala, Cameroun (2015 - 2017) - Baccalaureat' },
-          ])
-        },
-        {
-          id: "université",
-          label: "université",
-          icon: <FileBarChart2 className="w-4 h-4" />,
-          content: createFormattedContent("Université", [
-            { type: 'text', text: '- Université de Douala, Cameroun (Mathematiques)' },
-            { type: 'text', text: '- IUT de Douala, Cameroun (Genie Electrique et Informatique Industrielle)' },
-            { type: 'text', text: '- ISM Dakar, Senegal (En cours)' },
-          ])
-        }
-      ]
+  // Get icon component by name
+  const getIconComponent = (iconName: string | null) => {
+    switch (iconName) {
+      case 'FileText': return <FileText className="w-4 h-4" />;
+      case 'FileMusic': return <FileMusic className="w-4 h-4" />;
+      case 'FileStack': return <FileStack className="w-4 h-4" />;
+      case 'FileBarChart2': return <FileBarChart2 className="w-4 h-4" />;
+      default: return <FileText className="w-4 h-4" />;
     }
-  ];
+  };
+
+  // Group sections by type
+  const groupedSections = aboutSections.reduce((acc, section) => {
+    if (!acc[section.section_type]) {
+      acc[section.section_type] = [];
+    }
+    acc[section.section_type].push(section);
+    return acc;
+  }, {} as Record<string, any[]>);
+
+  // Configuration des données de la sidebar avec données de la DB
+  const sidebarData = Object.entries(groupedSections).map(([type, sections]) => ({
+    id: type,
+    label: type === 'info' ? '_informations-personnelles' : 
+           type === 'education' ? '_éducation' : 
+           type === 'experience' ? '_experiences' : `_${type}`,
+    icon: {
+      closed: <Folder className="w-4 h-4 mr-1" />,
+      open: <FolderOpen className="w-4 h-4 mr-1" />
+    },
+    items: Array.isArray(sections) ? sections.map(section => ({
+      id: section.section_key,
+      label: section.section_key,
+      icon: getIconComponent(section.icon_name),
+      content: renderContentFromDB(section)
+    })) : []
+  }));
 
   // Trouver le contenu sélectionné
   const getSelectedContent = () => {
     for (const section of sidebarData) {
-      const item = section.items.find(item => item.id === selectedInfo);
+      const item = section.items.find((item: any) => item.id === selectedInfo);
       if (item) return item.content;
     }
-
-    // Fallback pour les anciens contenus non migrés
-    const legacyContent: Record<string, JSX.Element> = {
-      "Developpeur Web / Responsable SEO": (
-        <div className="space-y-2 min-w-max font-sans">
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Developpeur Web / Responsable SEO - MAJORANTS Academy </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Stage pre-Emploi | Douala, Cameroun | Juin 2023 - Août 2023 | CDD</i></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Maintenance et optimisation du site web : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8.</span><span className="text-foreground">Mise à jour régulière du contenu et des plugins WordPress pour garantir une disponibilité à 99,9%.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Stratégie SEO et visibilité : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Audit technique et optimisation des balises meta/titles (+50% de clics organiques en 02 mois).</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">11</span><span className="text-foreground text-[#38b6ff]">Collaboration cross-fonctionnelle : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">12</span><span className="text-foreground">Refonte de l’UI/UX avec le designer (Figma), réduisant le taux de rebond de 30%.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">13</span><span className="text-foreground text-[#38b6ff]">Projets techniques : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">14</span><span className="text-foreground">Migration du site vers un hébergement plus performant (Hostinger), diminuant le temps de chargement de 2,5s à 0,8s.</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">15</span><span className="text-foreground">Intégration de maquettes responsive pour mobile, augmentant le trafic mobile de 40%.</span></div>
-        </div>
-      ),
-      "Responsable Informatique": (
-        <div className="space-y-2 min-w-max font-sans">
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* Responsable Informatique- MAJORANTS Academy </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>Entreprise specialise dans la preparation de concours Nationaux au Cameroun</i></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>Travail a distance | Douala, Cameroun | Depuis Septembre 2023 | CDD</i></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">7.</span><span className="text-foreground text-[#38b6ff]">Management d’équipe à distance : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">8</span><span className="text-foreground">Encadrement d’un developpeur en interne en mode remote</span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">9</span><span className="text-foreground text-[#38b6ff]">Innovation et transformation digitale : </span></div>
-          <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">10</span><span className="text-foreground">Déploiement d’outils collaboratifs (Trello) pour améliorer la productivité en télétravail.</span></div>
-        </div>
-      )
-    };
-
-    return legacyContent[selectedInfo] || <div>Contenu non trouvé</div>;
+    return <div>Contenu non trouvé</div>;
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col xl:flex-row h-full w-full font-sans">
@@ -205,7 +203,7 @@ export const AboutSection = () => {
         <div className="h-full min-h-0 min-w-0 bg-sidebar-background border-b border-r border-sidebar-border flex flex-col font-sans">
           <div className="space-y-2">
             <div className="space-y-2 sticky top-12 z-20 bg-sidebar-background">
-              {/* Sections dynamiques */}
+              {/* Sections dynamiques depuis la DB */}
               {sidebarData.map((section) => (
                 <div key={section.id}>
                   <Button
@@ -240,134 +238,25 @@ export const AboutSection = () => {
                 </div>
               ))}
 
-              {/* Expériences (ancienne structure maintenue pour compatibilité) */}
-              <div className="mt-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                  onClick={() => toggleSection("experiences")}
-                >
-                  {openSections.experiences ? (
-                    <ChevronDown className="w-4 h-4 mr-1" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 mr-1" />
-                  )}
-                  {openSections.experiences ? (
-                    <FolderOpen className="w-4 h-4 mr-1" />
-                  ) : (
-                    <Folder className="w-4 h-4 mr-1" />
-                  )}
-                  <span className="font-mono text-sm">_experiences</span>
-                </Button>
-                {openSections.experiences && (
-                  <div className="ml-6 mt-2 space-y-1">
-                    {/* Stages */}
-                    <div>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                        onClick={() => toggleSection("stages")}
-                      >
-                        {openSections.stages ? (
-                          <ChevronDown className="w-4 h-4 mr-1" />
-                        ) : (
-                          <ChevronRight className="w-4 h-4 mr-1" />
-                        )}
-                        {openSections.stages ? (
-                          <FolderOpen className="w-4 h-4 mr-1" />
-                        ) : (
-                          <Folder className="w-4 h-4 mr-1" />
-                        )}
-                        <span className="font-mono text-sm">_stages</span>
-                      </Button>
-                      {openSections.stages && (
-                        <div className="ml-6 mt-2 space-y-1">
-                          {["Developpeur Web / Responsable SEO"].map((file) => (
-                            <div
-                              key={file}
-                              className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
-                              onClick={() => setSelectedInfo(file)}
-                            >
-                              <span className="w-4 h-4 flex items-center justify-center"><FileText className="w-4 h-4" /></span>
-                              <span className="text-sidebar-foreground font-sans text-sm">{file}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    {/* Emplois */}
-                    <div>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                        onClick={() => toggleSection("emplois")}
-                      >
-                        {openSections.emplois ? (
-                          <ChevronDown className="w-4 h-4 mr-1" />
-                        ) : (
-                          <ChevronRight className="w-4 h-4 mr-1" />
-                        )}
-                        {openSections.emplois ? (
-                          <FolderOpen className="w-4 h-4 mr-1" />
-                        ) : (
-                          <Folder className="w-4 h-4 mr-1" />
-                        )}
-                        <span className="font-mono text-sm">_emplois</span>
-                      </Button>
-                      {openSections.emplois && (
-                        <div className="ml-6 mt-2 space-y-1">
-                          {["Responsable Informatique"].map((file) => (
-                            <div
-                              key={file}
-                              className={`flex items-center space-x-2 cursor-pointer rounded px-1 py-0.5 transition-colors duration-150 ${selectedInfo === file ? "bg-accent/20 text-accent font-semibold" : "hover:bg-accent/10"}`}
-                              onClick={() => setSelectedInfo(file)}
-                            >
-                              <span className="w-4 h-4 flex items-center justify-center"><FileText className="w-4 h-4" /></span>
-                              <span className="text-sidebar-foreground font-sans text-sm">{file}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Contacts */}
               <div className="mt-4">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-1 h-auto text-sidebar-foreground"
-                  onClick={() => toggleSection("contacts")}
-                >
-                  {openSections.contacts ? (
-                    <ChevronDown className="w-4 h-4 mr-1" />
-                  ) : (
-                    <ChevronRight className="w-4 h-4 mr-1" />
-                  )}
-                  {openSections.contacts ? (
-                    <FolderOpen className="w-4 h-4 mr-1" />
-                  ) : (
-                    <Folder className="w-4 h-4 mr-1" />
-                  )}
-                  <span className="font-mono text-sm">_contacts</span>
-                </Button>
-                {openSections.contacts && (
-                  <div className="ml-6 mt-2 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                      <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.me</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                      <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                      <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
-                    </div>
+                <div className="flex items-center space-x-2 px-2 py-1">
+                  <span className="font-mono text-sm text-sidebar-foreground">_contacts</span>
+                </div>
+                <div className="ml-6 mt-2 space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-4 h-4 flex items-center justify-center">📧</span>
+                    <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.me</span>
                   </div>
-                )}
+                  <div className="flex items-center space-x-2">
+                    <span className="w-4 h-4 flex items-center justify-center">📱</span>
+                    <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="w-4 h-4 flex items-center justify-center">📱</span>
+                    <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
