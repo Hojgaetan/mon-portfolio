@@ -26,13 +26,24 @@ interface SidebarSection {
 export const AboutSection = () => {
   const isMobile = useIsMobile();
   const [selectedInfo, setSelectedInfo] = useState("bio");
-  const [openSections, setOpenSections] = useState({
-    info: true,
-    education: false,
-    experience: false,
-  });
   const [aboutSections, setAboutSections] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // État d'ouverture des sections calculé dynamiquement basé sur le fichier sélectionné
+  const getOpenSections = () => {
+    // Trouver la section qui contient le fichier sélectionné
+    const selectedSection = aboutSections.find(section => section.section_key === selectedInfo);
+    const selectedSectionType = selectedSection?.section_type;
+
+    // Ouvrir seulement la section qui contient le fichier sélectionné
+    return {
+      info: selectedSectionType === 'info',
+      education: selectedSectionType === 'education',
+      experience: selectedSectionType === 'experience',
+    };
+  };
+
+  const openSections = getOpenSections();
 
   useEffect(() => {
     fetchAboutSections();
@@ -61,12 +72,14 @@ export const AboutSection = () => {
     }
   };
 
-  // Helper function pour basculer l'état d'ouverture des sections
-  const toggleSection = (sectionId: string) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [sectionId]: !prev[sectionId as keyof typeof prev]
-    }));
+  // Helper function pour gérer le clic sur une section
+  // Sélectionne le premier fichier de la section, ce qui ouvrira automatiquement le bon dossier
+  const handleSectionClick = (sectionId: string) => {
+    // Trouver le premier fichier dans cette section
+    const section = sidebarData.find(s => s.id === sectionId);
+    if (section && section.items.length > 0) {
+      setSelectedInfo(section.items[0].id);
+    }
   };
 
   // Fonction helper pour créer le contenu formaté à partir des données de la DB
@@ -264,7 +277,7 @@ export const AboutSection = () => {
                       <Button
                         variant="ghost"
                         className="w-full justify-start p-2 h-auto text-sidebar-foreground hover:bg-muted"
-                        onClick={() => toggleSection(section.id)}
+                        onClick={() => handleSectionClick(section.id)}
                       >
                         {openSections[section.id as keyof typeof openSections] ? (
                           <ChevronDown className="w-4 h-4 mr-2" />
@@ -332,11 +345,12 @@ export const AboutSection = () => {
                   </div>
                 </div>
               </div>
-              <ScrollArea className="flex-1 p-4 sm:p-6">
-                <div className="font-sans text-[13px] sm:text-[15px]">
+              {/* Défilement horizontal forcé sur mobile pour le code editor */}
+              <div className="flex-1 overflow-auto">
+                <div className={`p-4 sm:p-6 font-sans text-[13px] sm:text-[15px] ${isMobile ? 'min-w-max' : ''}`}>
                   {getSelectedContent()}
                 </div>
-              </ScrollArea>
+              </div>
             </div>
           </ResizablePanel>
 
