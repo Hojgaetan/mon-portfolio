@@ -2,11 +2,21 @@ import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useContext } from "react";
 import { ThemeProviderContext } from "./theme-provider";
+import { useTypewriter } from "@/hooks/use-typewriter";
 
 export const HeroSection = () => {
   const { theme } = useContext(ThemeProviderContext);
   const isDark = (theme === "dark") || (theme === "system" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const backgroundImageLogo = isDark ? logoNuit : logoBeige;
+
+  // Animation de frappe pour le greeting
+  const typewriterText = useTypewriter({
+    words: ["developpement_web", "data_science", "intelligence-artificielle", "machine-learning", "automatisation"],
+    typeSpeed: 150,
+    deleteSpeed: 100,
+    delayBetweenWords: 2000,
+    loop: true
+  });
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -23,7 +33,11 @@ export const HeroSection = () => {
           <div className="space-y-8">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-muted-foreground font-sans text-lg">web_data_ia_machine-learning_et_automatisation</p>
+              <p className="text-muted-foreground font-sans text-lg">
+                _{typewriterText}
+                <span className="animate-pulse">|</span>
+
+              </p>
 
               {/* Name */}
               <h1 className="text-6xl md:text-7xl font-bold text-primary leading-tight">
