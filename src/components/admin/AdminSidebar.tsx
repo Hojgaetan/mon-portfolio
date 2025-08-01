@@ -9,7 +9,8 @@ import {
   Settings, 
   LogOut, 
   Home,
-  User as UserIcon
+  User as UserIcon,
+  Mail
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
@@ -27,6 +28,7 @@ const menuItems = [
   { id: "projects", label: "Projets", icon: FolderOpen },
   { id: "blog", label: "Blog", icon: FileText },
   { id: "about", label: "À propos", icon: UserIcon },
+  { id: "messages", label: "Messages", icon: Mail },
   { id: "users", label: "Utilisateurs", icon: Users },
   { id: "settings", label: "Paramètres", icon: Settings },
 ];

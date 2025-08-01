@@ -267,6 +267,45 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          ip_address: unknown | null
+          message: string
+          name: string
+          read: boolean | null
+          replied: boolean | null
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown | null
+          message: string
+          name: string
+          read?: boolean | null
+          replied?: boolean | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown | null
+          message?: string
+          name?: string
+          read?: boolean | null
+          replied?: boolean | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           analysis_url: string | null
@@ -350,7 +389,7 @@ export type Tables<
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

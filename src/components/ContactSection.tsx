@@ -1,17 +1,71 @@
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setForm({ name: "", email: "", message: "" });
+    setLoading(true);
+
+    try {
+      // Validation côté client
+      if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+        throw new Error("Tous les champs sont requis");
+      }
+
+      // Obtenir l'adresse IP et user agent (optionnel)
+      let ipData = null;
+      try {
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        ipData = await ipResponse.json();
+      } catch (ipError) {
+        console.warn('Impossible d\'obtenir l\'adresse IP:', ipError);
+      }
+
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          message: form.message.trim(),
+          ip_address: ipData?.ip || null,
+          user_agent: navigator.userAgent || null
+        });
+
+      if (error) {
+        console.error('Erreur Supabase:', error);
+        throw new Error(`Erreur base de données: ${error.message}`);
+      }
+
+      setSent(true);
+      setForm({ name: "", email: "", message: "" });
+      toast({
+        title: "Message envoyé !",
+        description: "Votre message a été envoyé avec succès. Je vous répondrai rapidement.",
+      });
+
+      // Reset après 5 secondes
+      setTimeout(() => setSent(false), 5000);
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi du message:', error);
+      const errorMessage = error instanceof Error ? error.message : "Une erreur inconnue est survenue";
+      toast({
+        title: "Erreur",
+        description: `Impossible d'envoyer le message: ${errorMessage}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,15 +114,15 @@ export const ContactSection = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-2 rounded bg-accent text-accent-foreground font-semibold hover:bg-accent-red transition-colors"
-            disabled={sent}
+            className="w-full py-2 rounded bg-accent text-accent-foreground font-semibold hover:bg-accent-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={sent || loading}
           >
-            {sent ? "Message envoyé !" : "Envoyer"}
+            {loading ? "Envoi en cours..." : sent ? "Message envoyé !" : "Envoyer"}
           </button>
         </form>
         <div className="border-t border-border pt-6 flex flex-col gap-2 text-xs text-muted-foreground">
           <div>
-            <span className="font-semibold text-foreground">Email :</span> contact@joelhassam.me
+            <span className="font-semibold text-foreground">Email :</span> contact@joelhassam.com
           </div>
           <div>
             <span className="font-semibold text-foreground">Téléphone :</span> 221 77 202 04 30
