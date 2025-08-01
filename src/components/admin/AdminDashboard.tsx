@@ -41,7 +41,7 @@ interface RecentPost {
   categories?: {
     name: string;
     color: string;
-  };
+  } | null;
 }
 
 export function AdminDashboard() {
