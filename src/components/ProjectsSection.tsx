@@ -39,7 +39,7 @@ export const ProjectsSection = () => {
   const [groupedProjects, setGroupedProjects] = useState<Record<string, Project[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
-  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
+  const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
   const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
   const isMobile = useIsMobile();
 
@@ -91,7 +91,7 @@ export const ProjectsSection = () => {
     },
     {
       key: "modelisation_url",
-      title: "Modélisation & Analyse",
+      title: "Mod��lisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
       icon: "🧩",
     },
@@ -298,7 +298,11 @@ export const ProjectsSection = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
-                    <span className="text-muted-foreground">Sélectionnez un projet pour voir les détails</span>
+                  <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
+                    <div className="text-4xl mb-4">🖼️</div>
+                    <h3 className="text-lg">Sélectionnez un projet</h3>
+                    <p className="text-sm">Choisissez un projet pour voir ses détails ici.</p>
+                  </div>
                 </div>
               )}
             </ScrollArea>

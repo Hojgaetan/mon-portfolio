@@ -95,12 +95,24 @@ export function AboutManager() {
     setEditingSection(null);
   };
 
-  const handleContentChange = (content: string) => {
+  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (!editingSection) return;
     
+    const content = event.target.value;
+
+    // Try to parse as JSON first, if it fails, treat as plain text
+    let parsedContent;
+    try {
+      parsedContent = JSON.parse(content);
+    } catch {
+      // If it's not JSON, it's just plain text.
+      // We'll keep it as a string and let the save function wrap it if needed.
+      parsedContent = content;
+    }
+
     setEditingSection({
       ...editingSection,
-      content: content,
+      content: parsedContent,
     });
   };
 
