@@ -132,12 +132,6 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 </Button>
             </a>
             <ThemeToggle />
-            <a
-              href="/auth"
-              className="p-2 text-accent hover:text-accent/80 hidden md:inline-block"
-            >
-              <Settings className="h-5 w-5" />
-            </a>
 
             {/* Mobile Menu Button */}
             <Button
