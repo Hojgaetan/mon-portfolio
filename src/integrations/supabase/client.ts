@@ -14,3 +14,35 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     autoRefreshToken: true,
   }
 });
+// Handle refresh token errors by clearing invalid tokens
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'TOKEN_REFRESHED' && !session) {
+    // Clear invalid tokens from localStorage
+    const keys = Object.keys(localStorage);
+    keys.forEach(key => {
+      if (key.startsWith('sb-')) {
+        localStorage.removeItem(key);
+      }
+    });
+  }
+});
+
+// Clear invalid tokens on initialization if refresh fails
+const clearInvalidTokens = () => {
+  const keys = Object.keys(localStorage);
+  keys.forEach(key => {
+    if (key.startsWith('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
+// Listen for auth errors and clear tokens if needed
+window.addEventListener('unhandledrejection', (event) => {
+  if (event.reason?.message?.includes('Invalid Refresh Token') || 
+      event.reason?.message?.includes('refresh_token_not_found')) {
+    clearInvalidTokens();
+    // Optionally reload the page to restart auth flow
+    window.location.reload();
+  }
+});
