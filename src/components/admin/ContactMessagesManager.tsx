@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,15 @@ import {
   EyeOff
 } from "lucide-react";
 
-type ContactMessage = Tables<"contact_messages">;
+interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  read: boolean;
+  replied: boolean;
+  created_at: string;
+}
 
 export function ContactMessagesManager() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);

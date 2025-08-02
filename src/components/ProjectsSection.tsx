@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, ChevronDown, Folder, FolderOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { FigmaIcon } from "@/components/FigmaIcon";
 import { GithubIcon } from "@/components/GithubIcon";
@@ -29,19 +30,21 @@ interface Project {
   category: "personnel" | "professionnel" | "academique";
 }
 
-const projectCategories: Record<string, string> = {
-  professionnel: "Projets professionnels",
-  personnel: "Projets personnels",
-  academique: "Projets académiques",
-};
 
 export const ProjectsSection = () => {
-  const [groupedProjects, setGroupedProjects] = useState<Record<string, Project>>({});
+  const [groupedProjects, setGroupedProjects] = useState<Record<string, Project[]>>({});
   const [loading, setLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ professionnel: true });
   const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
+
+  const projectCategories: Record<string, string> = {
+    professionnel: t('projects.categories.professionnel'),
+    personnel: t('projects.categories.personnel'),
+    academique: t('projects.categories.academique'),
+  };
 
   useEffect(() => {
     fetchProjects();
@@ -143,7 +146,7 @@ export const ProjectsSection = () => {
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement des projets...</p>
+          <p className="text-muted-foreground">{t('projects.loading')}</p>
         </div>
       </div>
     );
@@ -152,7 +155,7 @@ export const ProjectsSection = () => {
   if (Object.keys(groupedProjects).length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
-        <span className="text-muted-foreground font-mono">// Aucun projet disponible</span>
+        <span className="text-muted-foreground font-mono">{t('projects.no_projects')}</span>
       </div>
     );
   }
@@ -166,7 +169,7 @@ export const ProjectsSection = () => {
         >
           <ResizablePanel defaultSize={isMobile ? 40 : 20} minSize={isMobile ? 30 : 15}>
             <div className="p-4 h-full">
-              <h3 className="text-lg mb-4 pl-2">Explorateur</h3>
+              <h3 className="text-lg mb-4 pl-2">{t('projects.explorer')}</h3>
               <ScrollArea className="h-[calc(100%-40px)]">
                 <ul className="space-y-1 pr-2">
                   {Object.entries(projectCategories).map(([key, value]) => (
@@ -215,7 +218,7 @@ export const ProjectsSection = () => {
               <ResizablePanel defaultSize={30} minSize={25}>
                 <ScrollArea className="h-full p-4">
                   <h3 className="text-lg mb-4">
-                    {selectedCategory === 'all' ? 'Tous les projets' : projectCategories[selectedCategory]}
+                    {selectedCategory === 'all' ? t('projects.all_projects') : projectCategories[selectedCategory]}
                   </h3>
                   {loading ? (
                     <div className="space-y-4">
@@ -264,7 +267,7 @@ export const ProjectsSection = () => {
 
                   {isMobile && currentProject.technologies && currentProject.technologies.length > 0 && (
                     <div className="mb-6">
-                      <h4 className="text-lg mb-3">Technologies utilisées</h4>
+                      <h4 className="text-lg mb-3">{t('projects.technologies_used')}</h4>
                       <div className="flex flex-wrap gap-2">
                         {currentProject.technologies.map(tech => (
                           <Badge key={tech} variant="secondary">{tech}</Badge>
@@ -278,7 +281,7 @@ export const ProjectsSection = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-lg mb-3 border-b pb-2">Phases & Ressources</h4>
+                    <h4 className="text-lg mb-3 border-b pb-2">{t('projects.phases_resources')}</h4>
                     <ul className="space-y-3">
                       {projectPhases.map(phase => {
                         const url = currentProject[phase.key as keyof Project] as string | undefined;
@@ -304,8 +307,8 @@ export const ProjectsSection = () => {
                 <div className="flex items-center justify-center h-full">
                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                     <div className="text-4xl mb-4">🖼️</div>
-                    <h3 className="text-lg">Sélectionnez un projet</h3>
-                    <p className="text-sm">Choisissez un projet pour voir ses détails ici.</p>
+                    <h3 className="text-lg">{t('projects.select_project')}</h3>
+                    <p className="text-sm">{t('projects.select_project_desc')}</p>
                   </div>
                 </div>
               )}
