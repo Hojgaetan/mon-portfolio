@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -30,6 +30,14 @@ export const AboutSection = () => {
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedFoldersInOverlay, setExpandedFoldersInOverlay] = useState<string[]>([]); // Nouvel état pour les dossiers ouverts dans l'overlay
+  const [isSkillsPanelGlowing, setIsSkillsPanelGlowing] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsSkillsPanelGlowing(false);
+    }, 5000); // L'animation s'arrête après 5 secondes
+    return () => clearTimeout(timer);
+  }, []);
 
   // État d'ouverture des sections calculé dynamiquement basé sur le fichier sélectionné
   const getOpenSections = () => {
@@ -474,7 +482,7 @@ export const AboutSection = () => {
               <div className="border-t border-border">
                 <div className="bg-sidebar-background">
                   <details>
-                    <summary className="px-3 py-2 cursor-pointer text-sm font-medium flex items-center justify-between hover:bg-muted/50 transition-colors">
+                    <summary className={`px-3 py-2 cursor-pointer text-sm font-medium flex items-center justify-between hover:bg-muted/50 transition-colors rounded-md ${isSkillsPanelGlowing ? 'animate-glow border' : 'border-transparent'}`}>
                       <span>Compétences</span>
                       <ChevronDown className="w-4 h-4" />
                     </summary>
@@ -569,18 +577,18 @@ export const AboutSection = () => {
                         <span className="font-mono text-sm text-sidebar-foreground">_contacts</span>
                       </div>
                       <div className="ml-6 mt-2 space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <span className="w-4 h-4 flex items-center justify-center">📧</span>
-                          <span className="text-sidebar-foreground font-sans text-xs break-all">contact@joelhassam.com</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                          <span className="text-sidebar-foreground font-sans text-xs">+221 77 202 04 30</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="w-4 h-4 flex items-center justify-center">📱</span>
-                          <span className="text-sidebar-foreground font-sans text-xs">+221 70 818 40 10</span>
-                        </div>
+                        <a href="mailto:contact@joelhassam.com" className="flex items-center space-x-2 group">
+                          <Mail className="w-4 h-4 text-muted-foreground group-hover:text-accent-sky transition-colors" />
+                          <span className="text-sidebar-foreground font-sans text-xs break-all group-hover:text-accent-sky transition-colors">contact@joelhassam.com</span>
+                        </a>
+                        <a href="tel:+221772020430" className="flex items-center space-x-2 group">
+                          <Phone className="w-4 h-4 text-muted-foreground group-hover:text-accent-sky transition-colors" />
+                          <span className="text-sidebar-foreground font-sans text-xs group-hover:text-accent-sky transition-colors">+221 77 202 04 30</span>
+                        </a>
+                        <a href="tel:+221708184010" className="flex items-center space-x-2 group">
+                          <Phone className="w-4 h-4 text-muted-foreground group-hover:text-accent-sky transition-colors" />
+                          <span className="text-sidebar-foreground font-sans text-xs group-hover:text-accent-sky transition-colors">+221 70 818 40 10</span>
+                        </a>
                       </div>
                     </div>
                   </div>
