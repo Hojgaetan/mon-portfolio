@@ -3,15 +3,21 @@ import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useContext } from "react";
 import { ThemeProviderContext } from "./theme-provider";
 import { useTypewriter } from "@/hooks/use-typewriter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const HeroSection = () => {
   const { theme } = useContext(ThemeProviderContext);
+  const { language } = useLanguage();
   const isDark = (theme === "dark") || (theme === "system" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const backgroundImageLogo = isDark ? logoNuit : logoBeige;
 
   // Animation de frappe pour le greeting
+  const typewriterWords = language === 'fr' 
+    ? ["developpement_web", "data_science", "intelligence-artificielle", "machine-learning", "automatisation"]
+    : ["web_development", "data_science", "artificial-intelligence", "machine-learning", "automation"];
+    
   const typewriterText = useTypewriter({
-    words: ["developpement_web", "data_science", "intelligence-artificielle", "machine-learning", "automatisation"],
+    words: typewriterWords,
     typeSpeed: 150,
     deleteSpeed: 100,
     delayBetweenWords: 2000,
@@ -50,7 +56,7 @@ export const HeroSection = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
                 <p className="text-xl md:text-2xl text-muted-foreground font-sans">
-                    etudiant_en_informatique
+                    {language === 'fr' ? 'etudiant_en_informatique' : 'computer_science_student'}
                     <br />
                 </p>
               </div>
@@ -64,11 +70,11 @@ export const HeroSection = () => {
                 <span className="text-code-keyword">var</span>
                 <span className="text-foreground">bio</span>
                 <span className="text-foreground">=</span>
-                <span className="text-code-string">"Passionne par les nouvelles technologies, le web, l'i.a, la data, le machine learning et l'automatisation"</span>
+                <span className="text-code-string">"{language === 'fr' ? 'Passionne par les nouvelles technologies, le web, l\'i.a, la data, le machine learning et l\'automatisation' : 'Passionate about new technologies, web, A.I, data, machine learning and automation'}"</span>
                 <span className="text-foreground">;</span>
               </div>
 
-              <div className="text-code-comment">// mes-contacts</div>
+              <div className="text-code-comment">// {language === 'fr' ? 'mes-contacts' : 'my-contacts'}</div>
               
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword">const</span>
@@ -78,7 +84,7 @@ export const HeroSection = () => {
                 <span className="text-foreground">;</span>
               </div>
               
-              <div className="text-code-comment">// mon mail</div>
+              <div className="text-code-comment">// {language === 'fr' ? 'mon mail' : 'my email'}</div>
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword">const</span>
                 <span className="text-foreground">e-mail</span>

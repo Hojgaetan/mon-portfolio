@@ -1,8 +1,10 @@
 import { Github, Linkedin, User } from "lucide-react";
 import { PdfIcon } from "./PdfIcon";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
 	const currentYear = new Date().getFullYear();
+	const { t } = useLanguage();
 
 	return (
 		<footer className="border-t border-[#3A5818] bg-background p-4">
@@ -12,7 +14,7 @@ export const Footer = () => {
 					<div className="flex flex-col items-center gap-4 w-full md:w-auto md:flex-row md:gap-6">
 						{/* Liens sociaux */}
 						<div className="flex flex-col items-center gap-3 pb-4 border-b border-[#262833] md:flex-row md:gap-2 md:border-b-0 md:border-r md:pb-0 md:pr-6">
-							<span className="text-sm whitespace-nowrap">mes-liens-sociaux:</span>
+							<span className="text-sm whitespace-nowrap">{t('footer.social_links')}:</span>
 							<div className="flex items-center gap-3">
                                 <a href="https://www.linkedin.com/in/joel-gaetan-hassam-obah/" target="_blank" rel="noopener noreferrer" className="p-2 bg-card/60 backdrop-blur-sm rounded border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -35,13 +37,13 @@ export const Footer = () => {
 								className="flex items-center space-x-2 rounded-md bg-accent-red px-3 py-2 text-primary-foreground hover:bg-accent-red/90 text-sm"
 							>
 								<PdfIcon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-								<span className="whitespace-nowrap">_telecharger-mon-cv</span>
+								<span className="whitespace-nowrap">{t('footer.download_cv')}</span>
 							</a>
 						</div>
 
 						{/* Copyright */}
 						<div className="pb-4 md:pb-0">
-							<p className="text-sm">&copy;_{currentYear} Hojgaetan_tous-droits-reserves.</p>
+							<p className="text-sm">&copy;_{currentYear} Hojgaetan_{t('footer.rights_reserved')}.</p>
 						</div>
 					</div>
 

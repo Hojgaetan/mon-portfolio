@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import {
 	Briefcase,
 	FolderKanban,
@@ -16,6 +17,7 @@ import {
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { PdfIcon } from "./PdfIcon";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -31,43 +33,45 @@ interface NavItem {
 	path?: string;
 }
 
-const navItems: NavItem[] = [
-	{ id: "hello", label: "_hello", icon: <Hand className="h-4 w-4" /> },
-	{ id: "about", label: "_à-propos", icon: <User className="h-4 w-4" /> },
-	/* {
-		id: "projects",
-		label: "_projets",
-		icon: <FolderKanban className="h-4 w-4" />,
-		path: "/projets",
-	},
-	{
-		id: "blog",
-		label: "_blog",
-		icon: <Newspaper className="h-4 w-4" />,
-		path: "/blog",
-	},
-	{
-		id: "formations",
-		label: "_formations",
-		icon: <GraduationCap className="h-4 w-4" />,
-	},
-	{
-		id: "services",
-		label: "_services",
-		icon: <Briefcase className="h-4 w-4" />,
-	}, */
-	{
-		id: "contact",
-		label: "_me-contacter",
-		icon: <Mail className="h-4 w-4" />,
-	},
-];
-
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { theme } = useTheme();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const navItems: NavItem[] = [
+    { id: "hello", label: t('nav.hello'), icon: <Hand className="h-4 w-4" /> },
+    { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" /> },
+    /* {
+      id: "projects",
+      label: t('nav.projects'),
+      icon: <FolderKanban className="h-4 w-4" />,
+      path: "/projets",
+    },
+    {
+      id: "blog",
+      label: t('nav.blog'),
+      icon: <Newspaper className="h-4 w-4" />,
+      path: "/blog",
+    },
+    {
+      id: "formations",
+      label: t('nav.formations'),
+      icon: <GraduationCap className="h-4 w-4" />,
+    },
+    {
+      id: "services",
+      label: t('nav.services'),
+      icon: <Briefcase className="h-4 w-4" />,
+    }, */
+    {
+      id: "contact",
+      label: t('nav.contact'),
+      icon: <Mail className="h-4 w-4" />,
+    },
+  ];
+
 
   const handleLogoClick = () => {
     if (location.pathname !== "/") {
@@ -104,8 +108,8 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 className="w-8 h-8 object-contain"
               />
             </div>
-            <span className="hidden sm:inline text-sidebar-foreground font-sans text-sm">joel-gaetan-hassam-obah</span>
-            <span className="sm:hidden text-sidebar-foreground font-sans text-sm">JG</span>
+            <span className="hidden sm:inline text-sidebar-foreground font-sans text-sm">{t('nav.username')}</span>
+            <span className="sm:hidden text-sidebar-foreground font-sans text-sm">{t('nav.username_short')}</span>
           </div>
 
           {/* Desktop Navigation Tabs */}
@@ -135,10 +139,13 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
             <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="hidden lg:block">
                 <Button variant="accent-red" className="h-12 rounded-none px-3 py-2 flex items-center">
                     <PdfIcon className="h-5 w-5 mr-2" />
-                    _telecharger-le-cv
+                    {t('nav.download_cv')}
                 </Button>
             </a>
-            <ThemeToggle />
+            <div className="flex items-center space-x-1">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
 
             {/* Mobile Menu Button */}
             <Button
@@ -180,7 +187,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none"
                 >
                   <PdfIcon className="h-5 w-5 mr-2" />
-                  _télécharger-cv
+                  {t('nav.download_cv_mobile')}
                 </Button>
               </a>
             </div>
