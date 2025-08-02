@@ -132,7 +132,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
           {/* Mobile menu button and Theme Toggle */}
           <div className="flex items-center space-x-2">
-            <a href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf" download className="hidden lg:block">
+            <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="hidden lg:block">
                 <Button variant="accent-red" className="h-12 rounded-none px-3 py-2 flex items-center">
                     <PdfIcon className="h-5 w-5 mr-2" />
                     _telecharger-le-cv
@@ -174,7 +174,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   </Button>
                 );
               })}
-              <a href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf" download className="w-full">
+              <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="w-full">
                 <Button
                   variant="accent-red"
                   className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none"

@@ -30,7 +30,7 @@ export const Footer = () => {
 						{/* Bouton CV */}
 						<div className="pb-4 border-b border-[#262833] md:border-b-0 md:border-r md:pb-0 md:pr-6">
 							<a
-								href="/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf"
+								href="/CV__Joel Gaetan_HASSAM OBAH.pdf"
 								download
 								className="flex items-center space-x-2 rounded-md bg-accent-red px-3 py-2 text-primary-foreground hover:bg-accent-red/90 text-sm"
 							>
