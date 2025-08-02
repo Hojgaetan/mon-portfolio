@@ -24,10 +24,17 @@ interface NavigationProps {
   setActiveTab: (tab: string) => void;
 }
 
-const navItems = [
+interface NavItem {
+	id: string;
+	label: string;
+	icon: React.ReactElement;
+	path?: string;
+}
+
+const navItems: NavItem[] = [
 	{ id: "hello", label: "_hello", icon: <Hand className="h-4 w-4" /> },
 	{ id: "about", label: "_à-propos", icon: <User className="h-4 w-4" /> },
-	{
+	/* {
 		id: "projects",
 		label: "_projets",
 		icon: <FolderKanban className="h-4 w-4" />,
@@ -48,7 +55,7 @@ const navItems = [
 		id: "services",
 		label: "_services",
 		icon: <Briefcase className="h-4 w-4" />,
-	},
+	}, */
 	{
 		id: "contact",
 		label: "_me-contacter",
