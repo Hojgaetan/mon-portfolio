@@ -103,6 +103,7 @@ export function EntrepriseManager() {
 
   const onSubmit = async (data: EntrepriseFormData) => {
     try {
+      console.log("Submitting entreprise data:", data);
       const submitData = {
         ...data,
         categorie_id: data.categorie_id || null,

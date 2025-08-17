@@ -64,6 +64,7 @@ export function CategorieManager() {
 
   const onSubmit = async (data: CategorieFormData) => {
     try {
+      console.log("Submitting categorie data:", data);
       if (editingCategorie) {
         const { error } = await supabase
           .from("categorie")
