@@ -138,9 +138,12 @@ export function CategorieManager() {
             Gérez les catégories pour organiser les entreprises
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setIsDialogOpen(true)}>
+            <Button onClick={() => {
+              console.log("Button clicked, opening dialog");
+              setIsDialogOpen(true);
+            }}>
               <Plus className="mr-2 h-4 w-4" />
               Nouvelle Catégorie
             </Button>
