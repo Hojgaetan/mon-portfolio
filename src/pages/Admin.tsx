@@ -21,6 +21,7 @@ export default function Admin() {
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -157,13 +158,18 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-background flex font-sans">
       {/* Sidebar */}
-      <div className="w-80 h-screen">
+      <div className={`${isCollapsed ? "w-16" : "w-80"} h-screen transition-all duration-200`}>
         <AdminSidebar
           activeSection={activeSection}
-          setActiveSection={setActiveSection}
+          setActiveSection={(section) => {
+            setActiveSection(section);
+            setIsCollapsed(true); // se rétracte après clic
+          }}
           user={user}
           onSignOut={handleSignOut}
           onNavigateHome={() => navigate("/")}
+          isCollapsed={isCollapsed}
+          setCollapsed={setIsCollapsed}
         />
       </div>
 

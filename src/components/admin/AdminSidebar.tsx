@@ -12,7 +12,9 @@ import {
   User as UserIcon,
   Mail,
   Building2,
-  Tag
+  Tag,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -22,6 +24,8 @@ interface AdminSidebarProps {
   user: User;
   onSignOut: () => void;
   onNavigateHome: () => void;
+  isCollapsed?: boolean;
+  setCollapsed?: (v: boolean) => void;
 }
 
 const menuItems = [
@@ -41,48 +45,68 @@ export function AdminSidebar({
   setActiveSection, 
   user, 
   onSignOut, 
-  onNavigateHome 
+  onNavigateHome,
+  isCollapsed = false,
+  setCollapsed = () => {},
 }: AdminSidebarProps) {
   return (
-    <div className="h-full bg-sidebar-background border-r border-sidebar-border flex flex-col">
+    <div className={`h-full bg-sidebar-background border-r border-sidebar-border flex flex-col ${isCollapsed ? "items-center" : ""}`}>
       {/* Header */}
-      <div className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              <UserIcon className="h-5 w-5" />
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">
-              Administration
-            </p>
-            <p className="text-xs text-sidebar-foreground/70 truncate">
-              {user.email}
-            </p>
+      <div className={`p-4 border-b border-sidebar-border w-full ${isCollapsed ? "px-2" : ""}`}>
+        <div className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} space-x-3`}>
+          <div className={`flex items-center ${isCollapsed ? "space-x-0" : "space-x-3"}`}>
+            <Avatar className="h-10 w-10">
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                <UserIcon className="h-5 w-5" />
+              </AvatarFallback>
+            </Avatar>
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  Administration
+                </p>
+                <p className="text-xs text-sidebar-foreground/70 truncate">
+                  {user.email}
+                </p>
+              </div>
+            )}
           </div>
-          <ThemeToggle />
+
+          <div className="flex items-center gap-2">
+            {!isCollapsed && <ThemeToggle />}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setCollapsed(!isCollapsed)}
+              title={isCollapsed ? "Déplier" : "Réduire"}
+            >
+              {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 p-4">
+      <div className={`flex-1 ${isCollapsed ? "p-2" : "p-4"} w-full`}>
         <nav className="space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
+            const isActive = activeSection === item.id;
             return (
               <Button
                 key={item.id}
-                variant={activeSection === item.id ? "secondary" : "ghost"}
-                className={`w-full justify-start font-sans text-sm transition-colors ${
-                  activeSection === item.id
+                variant={isActive ? "secondary" : "ghost"}
+                className={`w-full ${isCollapsed ? "justify-center" : "justify-start"} font-sans text-sm transition-colors ${
+                  isActive
                     ? "bg-accent-blue/10 text-accent-blue border-l-2 border-accent-blue"
                     : "text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky"
                 }`}
                 onClick={() => setActiveSection(item.id)}
+                title={isCollapsed ? item.label : undefined}
               >
-                <Icon className="w-4 h-4 mr-3" />
-                {item.label}
+                <Icon className={`w-4 h-4 ${isCollapsed ? "" : "mr-3"}`} />
+                {!isCollapsed && item.label}
               </Button>
             );
           })}
@@ -90,22 +114,24 @@ export function AdminSidebar({
       </div>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border space-y-2">
+      <div className={`border-t border-sidebar-border w-full ${isCollapsed ? "p-2" : "p-4"} space-y-2`}>
         <Button
           variant="ghost"
-          className="w-full justify-start text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky transition-colors"
+          className={`w-full ${isCollapsed ? "justify-center" : "justify-start"} text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky transition-colors`}
           onClick={onNavigateHome}
-        >
-          <Home className="w-4 h-4 mr-3" />
-          Voir le site
+          title={isCollapsed ? "Voir le site" : undefined}
+       >
+          <Home className={`w-4 h-4 ${isCollapsed ? "" : "mr-3"}`} />
+          {!isCollapsed && "Voir le site"}
         </Button>
         <Button
           variant="ghost"
-          className="w-full justify-start text-accent-red hover:bg-accent-red/10 hover:text-accent-red transition-colors"
+          className={`w-full ${isCollapsed ? "justify-center" : "justify-start"} text-accent-red hover:bg-accent-red/10 hover:text-accent-red transition-colors`}
           onClick={onSignOut}
+          title={isCollapsed ? "Déconnexion" : undefined}
         >
-          <LogOut className="w-4 h-4 mr-3" />
-          Déconnexion
+          <LogOut className={`w-4 h-4 ${isCollapsed ? "" : "mr-3"}`} />
+          {!isCollapsed && "Déconnexion"}
         </Button>
       </div>
     </div>
