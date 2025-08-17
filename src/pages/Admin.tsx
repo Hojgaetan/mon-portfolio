@@ -18,6 +18,8 @@ export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [activeSection, setActiveSection] = useState("dashboard");
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -28,7 +30,6 @@ export default function Admin() {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
         if (!session?.user && event !== 'INITIAL_SESSION') {
           navigate("/auth");
         }
@@ -40,7 +41,6 @@ export default function Admin() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
       if (!session?.user) {
         navigate("/auth");
       }
@@ -49,6 +49,45 @@ export default function Admin() {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  // Vérifier le statut admin quand l’utilisateur change
+  useEffect(() => {
+    const checkAdmin = async () => {
+      if (!user) {
+        setIsAdmin(null);
+        setCheckingAdmin(false);
+        return;
+      }
+      try {
+        setCheckingAdmin(true);
+        const { data, error } = await supabase
+          .from("admins")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (error) throw error;
+        setIsAdmin(!!data);
+      } catch (e) {
+        console.warn("Vérification admin échouée:", e);
+        setIsAdmin(false);
+      } finally {
+        setCheckingAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, [user?.id]);
+
+  // Redirection si non-admin
+  useEffect(() => {
+    if (!loading && !checkingAdmin && user && isAdmin === false) {
+      toast({
+        title: "Accès refusé",
+        description: "Cette page est réservée aux administrateurs.",
+        variant: "destructive",
+      });
+      navigate("/");
+    }
+  }, [loading, checkingAdmin, isAdmin, user, navigate, toast]);
 
   const handleSignOut = async () => {
     try {
@@ -100,7 +139,7 @@ export default function Admin() {
     }
   };
 
-  if (loading) {
+  if (loading || checkingAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
@@ -111,7 +150,7 @@ export default function Admin() {
     );
   }
 
-  if (!user) {
+  if (!user || isAdmin === false) {
     return null;
   }
 
