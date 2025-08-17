@@ -155,7 +155,7 @@ export function CategorieManager() {
                 {editingCategorie ? "Modifier la catégorie" : "Nouvelle catégorie"}
               </DialogTitle>
               <DialogDescription>
-                {editingCategorie 
+                {editingCategorie
                   ? "Modifiez les informations de la catégorie"
                   : "Ajoutez une nouvelle catégorie pour organiser les entreprises"
                 }
@@ -214,45 +214,45 @@ export function CategorieManager() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Date de création</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((categorie) => (
-                <TableRow key={categorie.id}>
-                  <TableCell className="font-medium">{categorie.nom}</TableCell>
-                  <TableCell>{categorie.description || "Aucune description"}</TableCell>
-                  <TableCell>
-                    {new Date(categorie.created_at).toLocaleDateString("fr-FR")}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(categorie)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(categorie.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[680px] sm:min-w-0 text-sm">
+             <TableHeader>
+               <TableRow>
+                <TableHead className="whitespace-nowrap">Nom</TableHead>
+                <TableHead className="hidden sm:table-cell whitespace-nowrap">Description</TableHead>
+                <TableHead className="hidden md:table-cell whitespace-nowrap">Date de création</TableHead>
+                <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
+               </TableRow>
+             </TableHeader>
+             <TableBody>
+               {categories.map((categorie) => (
+                 <TableRow key={categorie.id}>
+                  <TableCell className="font-medium max-w-[200px] truncate">{categorie.nom}</TableCell>
+                  <TableCell className="hidden sm:table-cell max-w-[280px] truncate">{categorie.description || "Aucune description"}</TableCell>
+                  <TableCell className="hidden md:table-cell whitespace-nowrap">{new Date(categorie.created_at).toLocaleDateString("fr-FR")}</TableCell>
+                   <TableCell className="text-right">
+                     <div className="flex justify-end gap-2">
+                       <Button
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => handleEdit(categorie)}
+                       >
+                         <Edit className="h-4 w-4" />
+                       </Button>
+                       <Button
+                         variant="ghost"
+                         size="sm"
+                         onClick={() => handleDelete(categorie.id)}
+                       >
+                         <Trash2 className="h-4 w-4" />
+                       </Button>
+                     </div>
+                   </TableCell>
+                 </TableRow>
+               ))}
+             </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -538,7 +538,7 @@ export default function EntreprisesPage() {
 
          <p className="text-xs text-muted-foreground">
            Protection: clic droit/copier désactivés, raccourcis impression/enregistrement bloqués, impression cachée.
-           Aucune option d'export n'est proposée. Note: aucune protection n'est infaillible contre les captures.
+           Aucune option d'export n'est proposée.
          </p>
        </div>
     </>

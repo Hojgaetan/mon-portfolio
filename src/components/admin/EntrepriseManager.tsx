@@ -343,79 +343,79 @@ export function EntrepriseManager() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Catégorie</TableHead>
-                <TableHead>Téléphone</TableHead>
-                <TableHead>Site Web</TableHead>
-                <TableHead>Statut Site</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {entreprises.map((entreprise) => (
-                <TableRow key={entreprise.id}>
-                  <TableCell className="font-medium">{entreprise.nom}</TableCell>
-                  <TableCell>
-                    {entreprise.categorie ? (
-                      <Badge variant="secondary">{entreprise.categorie.nom}</Badge>
-                    ) : (
-                      <span className="text-muted-foreground">Aucune</span>
-                    )}
-                  </TableCell>
-                  <TableCell>{entreprise.telephone || "Non renseigné"}</TableCell>
-                  <TableCell>
-                    {entreprise.site_web ? (
-                      <a 
-                        href={entreprise.site_web} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-blue-600 hover:underline"
-                      >
-                        <span className="truncate max-w-[200px]">
-                          {entreprise.site_web}
-                        </span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground">Aucun</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {entreprise.site_web ? (
-                      <Badge 
-                        variant={entreprise.site_web_valide ? "default" : "destructive"}
-                      >
-                        {entreprise.site_web_valide ? "Valide" : "Invalide"}
-                      </Badge>
-                    ) : (
-                      <span className="text-muted-foreground">N/A</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(entreprise)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(entreprise.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="w-full overflow-x-auto">
+            <Table className="min-w-[860px] sm:min-w-0 text-sm">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="whitespace-nowrap">Nom</TableHead>
+                  <TableHead className="whitespace-nowrap">Catégorie</TableHead>
+                  <TableHead className="hidden md:table-cell whitespace-nowrap">Téléphone</TableHead>
+                  <TableHead className="hidden sm:table-cell whitespace-nowrap">Site Web</TableHead>
+                  <TableHead className="hidden lg:table-cell whitespace-nowrap">Statut Site</TableHead>
+                  <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {entreprises.map((entreprise) => (
+                  <TableRow key={entreprise.id}>
+                    <TableCell className="font-medium max-w-[180px] sm:max-w-[240px] truncate">{entreprise.nom}</TableCell>
+                    <TableCell className="min-w-[120px]">
+                       {entreprise.categorie ? (
+                         <Badge variant="secondary">{entreprise.categorie.nom}</Badge>
+                       ) : (
+                         <span className="text-muted-foreground">Aucune</span>
+                       )}
+                     </TableCell>
+                    <TableCell className="hidden md:table-cell whitespace-nowrap">{entreprise.telephone || "Non renseigné"}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                       {entreprise.site_web ? (
+                         <a
+                           href={entreprise.site_web}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="flex items-center gap-1 text-blue-600 hover:underline"
+                         >
+                          <span className="truncate max-w-[140px] md:max-w-[220px] block">{entreprise.site_web}</span>
+                          <ExternalLink className="h-3 w-3" />
+                         </a>
+                       ) : (
+                         <span className="text-muted-foreground">Aucun</span>
+                       )}
+                     </TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                       {entreprise.site_web ? (
+                         <Badge
+                           variant={entreprise.site_web_valide ? "default" : "destructive"}
+                         >
+                           {entreprise.site_web_valide ? "Valide" : "Invalide"}
+                         </Badge>
+                       ) : (
+                         <span className="text-muted-foreground">N/A</span>
+                       )}
+                     </TableCell>
+                     <TableCell className="text-right">
+                       <div className="flex justify-end gap-2">
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => handleEdit(entreprise)}
+                         >
+                           <Edit className="h-4 w-4" />
+                         </Button>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={() => handleDelete(entreprise.id)}
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
+                     </TableCell>
+                   </TableRow>
+                 ))}
+               </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>
