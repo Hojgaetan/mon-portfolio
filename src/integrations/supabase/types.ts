@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
@@ -17,7 +17,7 @@ export type Database = {
       about_sections: {
         Row: {
           content: Json
-          created_at: string
+          created_at: string | null
           icon_name: string | null
           id: string
           is_active: boolean | null
@@ -25,11 +25,11 @@ export type Database = {
           section_key: string
           section_type: string
           title: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           content: Json
-          created_at?: string
+          created_at?: string | null
           icon_name?: string | null
           id?: string
           is_active?: boolean | null
@@ -37,11 +37,11 @@ export type Database = {
           section_key: string
           section_type: string
           title: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           content?: Json
-          created_at?: string
+          created_at?: string | null
           icon_name?: string | null
           id?: string
           is_active?: boolean | null
@@ -49,7 +49,7 @@ export type Database = {
           section_key?: string
           section_type?: string
           title?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -60,10 +60,10 @@ export type Database = {
           author_email: string
           author_name: string
           content: string
-          created_at: string
+          created_at: string | null
           id: string
           ip_address: unknown | null
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           approved?: boolean | null
@@ -71,10 +71,10 @@ export type Database = {
           author_email: string
           author_name: string
           content: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           approved?: boolean | null
@@ -82,10 +82,10 @@ export type Database = {
           author_email?: string
           author_name?: string
           content?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -100,19 +100,19 @@ export type Database = {
       article_likes: {
         Row: {
           article_id: string
-          created_at: string
+          created_at: string | null
           id: string
           ip_address: unknown
         }
         Insert: {
           article_id: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address: unknown
         }
         Update: {
           article_id?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown
         }
@@ -129,21 +129,21 @@ export type Database = {
       article_shares: {
         Row: {
           article_id: string
-          created_at: string
+          created_at: string | null
           id: string
           ip_address: unknown | null
           platform: string
         }
         Insert: {
           article_id: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
           platform: string
         }
         Update: {
           article_id?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
           platform?: string
@@ -161,21 +161,21 @@ export type Database = {
       article_views: {
         Row: {
           article_id: string
-          created_at: string
+          created_at: string | null
           id: string
           ip_address: unknown | null
           user_agent: string | null
         }
         Insert: {
           article_id: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
           user_agent?: string | null
         }
         Update: {
           article_id?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
           ip_address?: unknown | null
           user_agent?: string | null
@@ -194,38 +194,38 @@ export type Database = {
         Row: {
           category_id: string | null
           content: string
-          created_at: string
+          created_at: string | null
           excerpt: string | null
           id: string
           image_url: string | null
           published: boolean | null
           slug: string | null
           title: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           category_id?: string | null
           content: string
-          created_at?: string
+          created_at?: string | null
           excerpt?: string | null
           id?: string
           image_url?: string | null
           published?: boolean | null
           slug?: string | null
           title: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           category_id?: string | null
           content?: string
-          created_at?: string
+          created_at?: string | null
           excerpt?: string | null
           id?: string
           image_url?: string | null
           published?: boolean | null
           slug?: string | null
           title?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -237,39 +237,60 @@ export type Database = {
           },
         ]
       }
+      categorie: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          nom: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          nom?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           color: string | null
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
           name: string
           slug: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           color?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name: string
           slug: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           color?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           name?: string
           slug?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       contact_messages: {
         Row: {
-          created_at: string
+          created_at: string | null
           email: string
           id: string
           ip_address: unknown | null
@@ -277,11 +298,11 @@ export type Database = {
           name: string
           read: boolean | null
           replied: boolean | null
-          updated_at: string
+          updated_at: string | null
           user_agent: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           email: string
           id?: string
           ip_address?: unknown | null
@@ -289,11 +310,11 @@ export type Database = {
           name: string
           read?: boolean | null
           replied?: boolean | null
-          updated_at?: string
+          updated_at?: string | null
           user_agent?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           email?: string
           id?: string
           ip_address?: unknown | null
@@ -301,16 +322,60 @@ export type Database = {
           name?: string
           read?: boolean | null
           replied?: boolean | null
-          updated_at?: string
+          updated_at?: string | null
           user_agent?: string | null
         }
         Relationships: []
+      }
+      entreprise: {
+        Row: {
+          adresse: string | null
+          categorie_id: string | null
+          created_at: string
+          id: string
+          nom: string
+          site_web: string | null
+          site_web_valide: boolean | null
+          telephone: string | null
+          updated_at: string
+        }
+        Insert: {
+          adresse?: string | null
+          categorie_id?: string | null
+          created_at?: string
+          id?: string
+          nom: string
+          site_web?: string | null
+          site_web_valide?: boolean | null
+          telephone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          adresse?: string | null
+          categorie_id?: string | null
+          created_at?: string
+          id?: string
+          nom?: string
+          site_web?: string | null
+          site_web_valide?: boolean | null
+          telephone?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entreprise_categorie_id_fkey"
+            columns: ["categorie_id"]
+            isOneToOne: false
+            referencedRelation: "categorie"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
           analysis_url: string | null
           category: string | null
-          created_at: string
+          created_at: string | null
           description: string | null
           design_url: string | null
           featured: boolean | null
@@ -322,12 +387,12 @@ export type Database = {
           prototype_url: string | null
           technologies: string[] | null
           title: string
-          updated_at: string
+          updated_at: string | null
         }
         Insert: {
           analysis_url?: string | null
           category?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           design_url?: string | null
           featured?: boolean | null
@@ -339,12 +404,12 @@ export type Database = {
           prototype_url?: string | null
           technologies?: string[] | null
           title: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           analysis_url?: string | null
           category?: string | null
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           design_url?: string | null
           featured?: boolean | null
@@ -356,7 +421,7 @@ export type Database = {
           prototype_url?: string | null
           technologies?: string[] | null
           title?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -389,7 +454,7 @@ export type Tables<
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never,
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
