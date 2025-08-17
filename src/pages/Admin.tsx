@@ -11,7 +11,6 @@ import { AboutManager } from "@/components/admin/AboutManager";
 import { ContactMessagesManager } from "@/components/admin/ContactMessagesManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
-import { Resizable } from "re-resizable";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -113,14 +112,7 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-background flex font-sans">
       {/* Sidebar */}
-      <Resizable
-        defaultSize={{ width: 280, height: "100%" }}
-        minWidth={200}
-        maxWidth={400}
-        enable={{ right: true }}
-        handleStyles={{ right: { right: 0, width: 6, background: 'rgba(0,0,0,0.05)', cursor: 'col-resize', zIndex: 10 } }}
-        className="relative h-screen min-h-0 min-w-0"
-      >
+      <div className="w-80 h-screen">
         <AdminSidebar
           activeSection={activeSection}
           setActiveSection={setActiveSection}
@@ -128,7 +120,7 @@ export default function Admin() {
           onSignOut={handleSignOut}
           onNavigateHome={() => navigate("/")}
         />
-      </Resizable>
+      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">

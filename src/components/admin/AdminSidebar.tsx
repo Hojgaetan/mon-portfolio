@@ -13,7 +13,6 @@ import {
   Mail
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 
 interface AdminSidebarProps {
   activeSection: string;
