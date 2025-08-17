@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -62,7 +62,8 @@ export function EntrepriseManager() {
       adresse: "",
       site_web: "",
       site_web_valide: false,
-      categorie_id: "",
+      // utiliser undefined au lieu de string vide pour éviter l'erreur du Select
+      categorie_id: undefined,
     },
   });
 
@@ -130,9 +131,10 @@ export function EntrepriseManager() {
       setEditingEntreprise(null);
       form.reset();
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Une erreur s'est produite");
+      const message = error instanceof Error ? error.message : "Une erreur s'est produite";
+      toast.error(message);
     }
   };
 
@@ -144,7 +146,8 @@ export function EntrepriseManager() {
       adresse: entreprise.adresse || "",
       site_web: entreprise.site_web || "",
       site_web_valide: entreprise.site_web_valide || false,
-      categorie_id: entreprise.categorie_id || "",
+      // undefined si pas de catégorie
+      categorie_id: entreprise.categorie_id || undefined,
     });
     setIsDialogOpen(true);
   };
@@ -161,9 +164,10 @@ export function EntrepriseManager() {
       if (error) throw error;
       toast.success("Entreprise supprimée avec succès");
       fetchData();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Erreur lors de la suppression");
+      const message = error instanceof Error ? error.message : "Erreur lors de la suppression";
+      toast.error(message);
     }
   };
 
@@ -186,146 +190,150 @@ export function EntrepriseManager() {
             Gérez la base de données des entreprises
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => {
-              console.log("Button clicked, opening dialog");
-              setIsDialogOpen(true);
-            }}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nouvelle Entreprise
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>
-                {editingEntreprise ? "Modifier l'entreprise" : "Nouvelle entreprise"}
-              </DialogTitle>
-              <DialogDescription>
-                {editingEntreprise 
-                  ? "Modifiez les informations de l'entreprise"
-                  : "Ajoutez une nouvelle entreprise à la base de données"
-                }
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="nom"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nom de l'entreprise</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nom de l'entreprise" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="categorie_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Catégorie</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Sélectionnez une catégorie" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="">Aucune catégorie</SelectItem>
-                          {categories.map((categorie) => (
-                            <SelectItem key={categorie.id} value={categorie.id}>
-                              {categorie.nom}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="telephone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Téléphone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Numéro de téléphone" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="adresse"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Adresse</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Adresse complète" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="site_web"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Site Web</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://exemple.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="site_web_valide"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Site Web Valide</FormLabel>
-                        <div className="text-sm text-muted-foreground">
-                          Le site web est-il accessible et fonctionnel ?
-                        </div>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={handleDialogClose}>
-                    Annuler
-                  </Button>
-                  <Button type="submit">
-                    {editingEntreprise ? "Mettre à jour" : "Créer"}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+        <Button type="button" onClick={() => {
+          console.log("Button clicked, opening dialog");
+          setIsDialogOpen(true);
+        }}>
+          <Plus className="mr-2 h-4 w-4" />
+          Nouvelle Entreprise
+        </Button>
       </div>
+
+      {/* Dialog placé à la racine du composant pour éviter tout conflit d'imbrication */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              {editingEntreprise ? "Modifier l'entreprise" : "Nouvelle entreprise"}
+            </DialogTitle>
+            <DialogDescription>
+              {editingEntreprise
+                ? "Modifiez les informations de l'entreprise"
+                : "Ajoutez une nouvelle entreprise à la base de données"
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="nom"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom de l'entreprise</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Nom de l'entreprise" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="categorie_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Catégorie</FormLabel>
+                    <Select
+                      onValueChange={(v) => field.onChange(v === "none" ? undefined : v)}
+                      value={field.value ?? "none"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Sélectionnez une catégorie" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {/* Radix Select interdit value="" pour les items */}
+                        <SelectItem value="none">Aucune catégorie</SelectItem>
+                        {categories.map((categorie) => (
+                          <SelectItem key={categorie.id} value={categorie.id}>
+                            {categorie.nom}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="telephone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Téléphone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Numéro de téléphone" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="adresse"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Adresse</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Adresse complète" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="site_web"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Site Web</FormLabel>
+                    <FormControl>
+                      <Input placeholder="https://exemple.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="site_web_valide"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Site Web Valide</FormLabel>
+                      <div className="text-sm text-muted-foreground">
+                        Le site web est-il accessible et fonctionnel ?
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={handleDialogClose}>
+                  Annuler
+                </Button>
+                <Button type="submit">
+                  {editingEntreprise ? "Mettre à jour" : "Créer"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader>

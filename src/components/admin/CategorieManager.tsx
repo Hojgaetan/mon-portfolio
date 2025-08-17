@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
@@ -86,9 +86,10 @@ export function CategorieManager() {
       setEditingCategorie(null);
       form.reset();
       fetchCategories();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Une erreur s'est produite");
+      const message = error instanceof Error ? error.message : "Une erreur s'est produite";
+      toast.error(message);
     }
   };
 
@@ -113,9 +114,10 @@ export function CategorieManager() {
       if (error) throw error;
       toast.success("Catégorie supprimée avec succès");
       fetchCategories();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erreur:", error);
-      toast.error(error.message || "Erreur lors de la suppression");
+      const message = error instanceof Error ? error.message : "Erreur lors de la suppression";
+      toast.error(message);
     }
   };
 
@@ -138,16 +140,15 @@ export function CategorieManager() {
             Gérez les catégories pour organiser les entreprises
           </p>
         </div>
+        {/* Utilisation contrôlée du Dialog: on déclenche l'ouverture avec le bouton directement */}
+        <Button onClick={() => {
+          console.log("Button clicked, opening dialog");
+          setIsDialogOpen(true);
+        }}>
+          <Plus className="mr-2 h-4 w-4" />
+          Nouvelle Catégorie
+        </Button>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => {
-              console.log("Button clicked, opening dialog");
-              setIsDialogOpen(true);
-            }}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nouvelle Catégorie
-            </Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>

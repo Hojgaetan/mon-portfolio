@@ -24,7 +24,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+
+    // Enable ESM default import interop to fix TS1259 for tailwindcss-animate
+    "esModuleInterop": true
   },
   "include": ["src"]
 }
