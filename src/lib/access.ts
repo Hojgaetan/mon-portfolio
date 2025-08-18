@@ -65,6 +65,22 @@ export function generateAccessExternalId(userId: string): string {
   return `ACCESSPASS_${userId}_${Date.now()}`;
 }
 
+function normalizeIntlPhone(phone: string): string {
+  const raw = String(phone).trim();
+  // Si commence déjà par +, laisser tel quel
+  if (raw.startsWith("+")) return raw;
+  // Supprimer non-digits
+  const digits = raw.replace(/\D+/g, "");
+  // Cas Sénégal: 9 chiffres -> +221XXXXXXXXX
+  if (/^\d{9}$/.test(digits)) return `+221${digits}`;
+  // 221 + 9 chiffres -> +221XXXXXXXXX
+  if (/^221\d{9}$/.test(digits)) return `+${digits}`;
+  // Sinon, si vous avez déjà 11-15 digits, préfixer +
+  if (/^\d{11,15}$/.test(digits)) return `+${digits}`;
+  // Fallback: renvoyer original
+  return raw;
+}
+
 export async function startAccessPurchase(opts: { phone: string; operator: OperatorCode; amount?: number; }): Promise<StartAccessPurchaseResult> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Authentification requise");
@@ -75,9 +91,10 @@ export async function startAccessPurchase(opts: { phone: string; operator: Opera
   const callbackUrl = fnBase ? `${fnBase}/intech-callback` : undefined;
 
   const amount = Number(opts.amount ?? ACCESS_PRICE_XOF);
+  const phone = normalizeIntlPhone(opts.phone);
 
   const payload = {
-    phone: opts.phone,
+    phone,
     amount,
     codeService: opts.operator,
     externalTransactionId: extId,
