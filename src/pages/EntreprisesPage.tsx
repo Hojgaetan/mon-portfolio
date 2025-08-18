@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getActiveAccessPass, getAccessPrice } from "@/lib/access";
 import { revokeActivePass } from "@/lib/access";
 import { toast } from "sonner";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import heroImage from "@/assets/IMG_2792.jpg";
+import { Link, useLocation } from "react-router-dom";
+// Paiement Intech
+import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 
 interface EntrepriseRow {
   id: string;
@@ -46,22 +47,14 @@ export default function EntreprisesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // Flux d’achat manuel
+  // Etat du dialogue d’achat
   const [purchaseOpen, setPurchaseOpen] = useState(false);
-  const [showContactPrompt, setShowContactPrompt] = useState(false);
+  const [buyerPhone, setBuyerPhone] = useState("");
+  const [buyerOperator, setBuyerOperator] = useState<OperatorCode>("WAVE_SN_API_CASH_IN");
+  const [purchasing, setPurchasing] = useState(false);
+  const [pendingExtId, setPendingExtId] = useState<string | null>(null);
+  const [pendingDeepLink, setPendingDeepLink] = useState<string | null>(null);
   const location = useLocation();
-  const navigate = useNavigate();
-  const ADMIN_WHATSAPP_INTL = "+221708184010";
-  const waPhone = ADMIN_WHATSAPP_INTL.replace(/^\+/, "");
-  const waText = encodeURIComponent(`Bonjour, j'ai payé l'accès à l'annuaire. Mon email: ${userEmail ?? ''}. Merci d'activer mon accès.`);
-  const waLink = `https://wa.me/${waPhone}?text=${waText}`;
-
-  const openPurchase = () => { setShowContactPrompt(false); setPurchaseOpen(true); };
-  const handleCancelPayment = () => { setPurchaseOpen(false); navigate("/produits/annuaire"); };
-  const handleConfirmPaid = () => {
-    setShowContactPrompt(true);
-    toast.info("Veuillez contacter l’administrateur sur WhatsApp pour finaliser l’activation.");
-  };
 
   // Définir fetchEntreprises mémorisé pour les dépendances de hooks
   const fetchEntreprises = useCallback(async () => {
@@ -105,6 +98,56 @@ export default function EntreprisesPage() {
       setLoading(false);
     }
   }, []);
+
+  // Achat via Intech: ouvertures/confirmations
+  const openPurchase = () => setPurchaseOpen(true);
+  const closePurchase = () => { if (!purchasing) setPurchaseOpen(false); };
+  const handleConfirmPurchase = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.info("Veuillez vous connecter.");
+        return;
+      }
+      if (!buyerPhone) {
+        toast.info("Entrez votre numéro de téléphone.");
+        return;
+      }
+      setPurchasing(true);
+      const res = await startAccessPurchase({ phone: buyerPhone, operator: buyerOperator, amount: getAccessPrice() });
+      setPendingExtId(res.externalTransactionId);
+      if (res.deepLinkUrl) {
+        setPendingDeepLink(res.deepLinkUrl);
+        window.open(res.deepLinkUrl, "_blank");
+      } else if (res.authLinkUrl) {
+        setPendingDeepLink(res.authLinkUrl);
+      } else {
+        setPendingDeepLink(null);
+      }
+      toast("Paiement initié. Terminez-le dans l’application opérateur.");
+
+      const pass = await pollAccessActivation({ externalTransactionId: res.externalTransactionId, timeoutMs: 180000, intervalMs: 3000 });
+      if (pass) {
+        setHasAccess(true);
+        setExpiresAt(pass.expires_at);
+        setPurchaseOpen(false);
+        await fetchEntreprises();
+        toast.success("Accès activé pour 1 heure.");
+      } else {
+        toast.error("Paiement non confirmé à temps. Réessayez.");
+      }
+    } catch (e: unknown) {
+      console.error(e);
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg && msg.includes("Failed to send a request to the Edge Function")) {
+        toast.error("Paiement indisponible: fonction Edge non joignable. Déployez ‘intech-operation’ et vérifiez les secrets.");
+      } else {
+        toast.error(msg || "Impossible d’initier le paiement.");
+      }
+    } finally {
+      setPurchasing(false);
+    }
+  };
 
   // Liste filtrée pour l’affichage
   const filtered = useMemo(() => {
@@ -391,7 +434,7 @@ export default function EntreprisesPage() {
                 Durée: 1 heure. Tarif: {getAccessPrice().toLocaleString("fr-FR")} F CFA.
               </p>
               <div className="flex gap-3">
-                <Button onClick={openPurchase}>Acheter l'accès</Button>
+                <Button onClick={openPurchase} disabled={isAdmin}>Acheter l'accès</Button>
                 <Button asChild variant="outline">
                   <Link to="/auth">Changer de compte</Link>
                 </Button>
@@ -405,46 +448,44 @@ export default function EntreprisesPage() {
             </CardContent>
           </Card>
 
-          {/* Dialogue d’achat manuel */}
-          <Dialog open={purchaseOpen} onOpenChange={(o)=>{ setPurchaseOpen(o); if(!o) setShowContactPrompt(false); }}>
+          {/* Dialogue d’achat */}
+          <Dialog open={purchaseOpen} onOpenChange={(o)=>{ if(!purchasing) setPurchaseOpen(o); }}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Acheter l’accès</DialogTitle>
                 <DialogDescription>
-                  Montant: {getAccessPrice().toLocaleString("fr-FR")} F CFA — suivez les instructions ci-dessous.
+                  Montant: {getAccessPrice().toLocaleString("fr-FR")} F CFA — choisissez votre opérateur et entrez votre numéro.
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4">
-                <img src={heroImage} alt="Instructions de paiement" className="w-full rounded border" />
-                {!showContactPrompt ? (
-                  <>
-                    <p className="text-sm text-muted-foreground">
-                      Une fois le paiement effectué, cliquez sur « J’ai payé ». Sinon, vous pouvez annuler et revenir à la page produit.
-                    </p>
-                    <div className="flex gap-2 justify-end">
-                      <Button variant="outline" onClick={handleCancelPayment}>Annuler</Button>
-                      <Button onClick={handleConfirmPaid}>J’ai payé</Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-sm">
-                      Merci. Veuillez contacter l’administrateur via WhatsApp pour valider votre paiement et recevoir vos identifiants.
-                    </p>
-                    <div className="flex gap-2 flex-wrap">
-                      <a href={waLink} target="_blank" rel="noreferrer">
-                        <Button>Contacter sur WhatsApp</Button>
-                      </a>
-                      <Button asChild variant="outline">
-                        <Link to="/auth">Se connecter</Link>
-                      </Button>
-                      <Button variant="ghost" onClick={()=>setPurchaseOpen(false)}>Fermer</Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Astuce: mentionnez votre email ({userEmail ?? '—'}) pour accélérer la validation.
-                    </p>
-                  </>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm text-muted-foreground">Opérateur</label>
+                    <Select value={buyerOperator} onValueChange={(v)=>setBuyerOperator(v as OperatorCode)}>
+                      <SelectTrigger><SelectValue placeholder="Opérateur" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="WAVE_SN_API_CASH_IN">WAVE</SelectItem>
+                        <SelectItem value="ORANGE_SN_API_CASH_IN">Orange Money</SelectItem>
+                        <SelectItem value="WIZALL_SN_API_CASH_IN">Wizall</SelectItem>
+                        <SelectItem value="FREE_SN_WALLET_CASH_IN">Free Money</SelectItem>
+                        <SelectItem value="EXPRESSO_SN_WALLET_CASH_IN">Expresso</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Téléphone</label>
+                    <Input placeholder="Ex: 772345678" value={buyerPhone} onChange={(e)=>setBuyerPhone(e.target.value)} />
+                  </div>
+                </div>
+                {pendingDeepLink && (
+                  <div className="text-xs text-muted-foreground">
+                    Si la fenêtre ne s’est pas ouverte, <a className="underline" href={pendingDeepLink} target="_blank">cliquez ici</a>.
+                  </div>
                 )}
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={closePurchase} disabled={purchasing}>Annuler</Button>
+                  <Button onClick={handleConfirmPurchase} disabled={purchasing}>{purchasing ? "Traitement..." : "Payer"}</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
