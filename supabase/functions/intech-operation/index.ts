@@ -16,9 +16,19 @@ function withTimeout<T>(p: Promise<T>, ms = 65000): Promise<T> {
   });
 }
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 Deno.serve(async (req) => {
-  if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
-  if (!API_KEY) return new Response("Missing INTECH_API_KEY", { status: 500 });
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+  
+  if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: corsHeaders });
+  if (!API_KEY) return new Response("Missing INTECH_API_KEY", { status: 500, headers: corsHeaders });
 
   try {
     const body = await req.json().catch(() => ({}));
@@ -42,8 +52,20 @@ Deno.serve(async (req) => {
 
     const data = await resp.json();
     // Always forward status 201/200 as 200 to frontend
-    return new Response(JSON.stringify(data), { status: 200, headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify(data), { 
+      status: 200, 
+      headers: { 
+        "Content-Type": "application/json",
+        ...corsHeaders
+      } 
+    });
   } catch (e) {
-    return new Response(JSON.stringify({ error: true, message: String(e) }), { status: 500 });
+    return new Response(JSON.stringify({ error: true, message: String(e) }), { 
+      status: 500, 
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders
+      }
+    });
   }
 });
