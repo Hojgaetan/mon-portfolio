@@ -32,12 +32,16 @@ Deno.serve(async (req) => {
 
   try {
     const body = await req.json().catch(() => ({}));
+    console.log("Received request body:", JSON.stringify(body, null, 2));
+    
     // Ensure mandatory structure per Postman: apiKey in body; callbackUrl recommended
     const payload = {
       ...body,
       apiKey: API_KEY,
       ...(body?.callbackUrl ? {} : (DEFAULT_CALLBACK_URL ? { callbackUrl: DEFAULT_CALLBACK_URL } : {})),
     };
+    
+    console.log("Sending payload to Intech:", JSON.stringify(payload, null, 2));
 
     const resp = await withTimeout(fetch(`${BASE_URL}/api-services/operation`, {
       method: "POST",
@@ -50,7 +54,9 @@ Deno.serve(async (req) => {
       body: JSON.stringify(payload),
     }));
 
+    console.log("Intech API response status:", resp.status);
     const data = await resp.json();
+    console.log("Intech API response data:", JSON.stringify(data, null, 2));
     // Always forward status 201/200 as 200 to frontend
     return new Response(JSON.stringify(data), { 
       status: 200, 
