@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getActiveAccessPass, getAccessPrice, purchaseAccessPass } from "@/lib/access";
+import { getActiveAccessPass, getAccessPrice } from "@/lib/access";
 import { revokeActivePass } from "@/lib/access";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+// Paiement Intech
+import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 
 interface EntrepriseRow {
   id: string;
@@ -44,6 +46,108 @@ export default function EntreprisesPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Etat du dialogue d’achat
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [buyerPhone, setBuyerPhone] = useState("");
+  const [buyerOperator, setBuyerOperator] = useState<OperatorCode>("WAVE_SN_API_CASH_IN");
+  const [purchasing, setPurchasing] = useState(false);
+  const [pendingExtId, setPendingExtId] = useState<string | null>(null);
+  const [pendingDeepLink, setPendingDeepLink] = useState<string | null>(null);
+  const location = useLocation();
+
+  // Définir fetchEntreprises mémorisé pour les dépendances de hooks
+  const fetchEntreprises = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("entreprise")
+        .select(`
+          id, nom, telephone, adresse, site_web, site_web_valide, created_at, categorie_id,
+          categorie ( id, nom )
+        `)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const raw = (data ?? []) as any[];
+      const rows: EntrepriseRow[] = raw.map((r) => ({
+        id: r.id,
+        nom: r.nom,
+        telephone: r.telephone,
+        adresse: r.adresse,
+        site_web: r.site_web,
+        site_web_valide: r.site_web_valide,
+        created_at: r.created_at,
+        categorie_id: r.categorie_id,
+        categorie: Array.isArray(r.categorie) ? (r.categorie[0] ?? null) : (r.categorie ?? null),
+      }));
+      setEntreprises(rows);
+      // Charger les compteurs pour les entreprises affichées
+      const ids = rows.map((e) => e.id);
+      await fetchViewCounts(ids);
+      // Charger les catégories (liste pour le filtre)
+      const { data: cats } = await supabase
+        .from("categorie")
+        .select("id, nom")
+        .order("nom");
+      if (cats) setCategories(cats as Category[]);
+    } catch (e: unknown) {
+      console.error(e);
+      const msg = e instanceof Error ? e.message : String(e);
+      toast.error(msg || "Accès refusé. Achetez un pass pour consulter la liste.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Achat via Intech: ouvertures/confirmations
+  const openPurchase = () => setPurchaseOpen(true);
+  const closePurchase = () => { if (!purchasing) setPurchaseOpen(false); };
+  const handleConfirmPurchase = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.info("Veuillez vous connecter.");
+        return;
+      }
+      if (!buyerPhone) {
+        toast.info("Entrez votre numéro de téléphone.");
+        return;
+      }
+      setPurchasing(true);
+      const res = await startAccessPurchase({ phone: buyerPhone, operator: buyerOperator, amount: getAccessPrice() });
+      setPendingExtId(res.externalTransactionId);
+      if (res.deepLinkUrl) {
+        setPendingDeepLink(res.deepLinkUrl);
+        window.open(res.deepLinkUrl, "_blank");
+      } else if (res.authLinkUrl) {
+        setPendingDeepLink(res.authLinkUrl);
+      } else {
+        setPendingDeepLink(null);
+      }
+      toast("Paiement initié. Terminez-le dans l’application opérateur.");
+
+      const pass = await pollAccessActivation({ externalTransactionId: res.externalTransactionId, timeoutMs: 180000, intervalMs: 3000 });
+      if (pass) {
+        setHasAccess(true);
+        setExpiresAt(pass.expires_at);
+        setPurchaseOpen(false);
+        await fetchEntreprises();
+        toast.success("Accès activé pour 1 heure.");
+      } else {
+        toast.error("Paiement non confirmé à temps. Réessayez.");
+      }
+    } catch (e: unknown) {
+      console.error(e);
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg && msg.includes("Failed to send a request to the Edge Function")) {
+        toast.error("Paiement indisponible: fonction Edge non joignable. Déployez ‘intech-operation’ et vérifiez les secrets.");
+      } else {
+        toast.error(msg || "Impossible d’initier le paiement.");
+      }
+    } finally {
+      setPurchasing(false);
+    }
+  };
 
   // Liste filtrée pour l’affichage
   const filtered = useMemo(() => {
@@ -98,7 +202,7 @@ export default function EntreprisesPage() {
       if (pass) await fetchEntreprises();
     };
     init();
-  }, []);
+  }, [fetchEntreprises]);
 
   useEffect(() => {
     // Récupère aussi l'email pour le watermark
@@ -109,7 +213,7 @@ export default function EntreprisesPage() {
   }, []);
 
   // Révocation immédiate du pass (tentative de capture/impression)
-  const expirePassNow = async (reason: string) => {
+  const expirePassNow = useCallback(async (_reason: string) => {
     if (isAdmin || revoking) return;
     try {
       setRevoking(true);
@@ -122,7 +226,7 @@ export default function EntreprisesPage() {
       setRevoking(false);
       toast.error("Accès révoqué: tentative de capture détectée.");
     }
-  };
+  }, [isAdmin, revoking]);
 
   // Voile quand l’onglet est caché (Page Visibility API)
   useEffect(() => {
@@ -146,13 +250,11 @@ export default function EntreprisesPage() {
   // Révocation si tentative d’impression
   useEffect(() => {
     const onBeforePrint = () => expirePassNow('print');
-    // @ts-ignore: beforeprint est supporté par certains navigateurs
-    window.addEventListener('beforeprint', onBeforePrint);
+    (window as any).addEventListener('beforeprint', onBeforePrint);
     return () => {
-      // @ts-ignore
-      window.removeEventListener('beforeprint', onBeforePrint);
+      (window as any).removeEventListener('beforeprint', onBeforePrint);
     };
-  }, [isAdmin, revoking]);
+  }, [expirePassNow]);
 
   const fetchViewCounts = async (ids: string[]) => {
     if (ids.length === 0) return;
@@ -166,56 +268,6 @@ export default function EntreprisesPage() {
       counts[row.entreprise_id] = (counts[row.entreprise_id] || 0) + 1;
     });
     setViewCounts(counts);
-  };
-
-  const fetchEntreprises = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("entreprise")
-        .select(`
-          id, nom, telephone, adresse, site_web, site_web_valide, created_at, categorie_id,
-          categorie ( id, nom )
-        `)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      setEntreprises(data as unknown as EntrepriseRow[]);
-      // Charger les compteurs pour les entreprises affichées
-      const ids = (data as any[]).map((e) => e.id);
-      await fetchViewCounts(ids);
-      // Charger les catégories (liste pour le filtre)
-      const { data: cats } = await supabase
-        .from("categorie")
-        .select("id, nom")
-        .order("nom");
-      if (cats) setCategories(cats as Category[]);
-    } catch (e: any) {
-      console.error(e);
-      toast.error(e.message || "Accès refusé. Achetez un pass pour consulter la liste.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Achat du pass et activation de l'accès
-  const onPurchase = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        toast.info("Veuillez vous connecter pour acheter l'accès.");
-        return;
-      }
-      const pass = await purchaseAccessPass();
-      if (pass) {
-        toast.success("Accès activé pour 1 heure.");
-        setHasAccess(true);
-        setExpiresAt(pass.expires_at);
-        await fetchEntreprises();
-      }
-    } catch (e: any) {
-      console.error(e);
-      toast.error(e.message || "Impossible de finaliser l'achat.");
-    }
   };
 
   const refreshOneCount = async (entrepriseId: string) => {
@@ -243,19 +295,18 @@ export default function EntreprisesPage() {
         });
       await refreshOneCount(e.id);
     } catch (err) {
-      // Ignorer les erreurs de doublon
       console.warn("Erreur enregistrement vue:", err);
     }
   };
 
   // Protection basique de consultation: pas de téléchargement, pas de clic droit, pas de sélection
-  const guardProps = {
-    onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
-    onCopy: (e: React.ClipboardEvent) => e.preventDefault(),
-    onKeyDown: (e: React.KeyboardEvent) => {
+  const guardProps: React.HTMLAttributes<HTMLDivElement> = {
+    onContextMenu: (e) => e.preventDefault(),
+    onCopy: (e) => e.preventDefault(),
+    onKeyDown: (e) => {
       const key = e.key.toLowerCase();
       // Blocage impression/enregistrement/copier
-      if ((e.ctrlKey || e.metaKey) && ["p", "s", "c"].includes(key)) {
+      if ((e.ctrlKey || (e as any).metaKey) && ["p", "s", "c"].includes(key)) {
         e.preventDefault();
         if (key === 'p') expirePassNow('print');
         return;
@@ -267,7 +318,7 @@ export default function EntreprisesPage() {
         return;
       }
       // Détection raccourcis macOS: Cmd+Shift+3/4/5
-      if (e.metaKey && e.shiftKey && ["3", "4", "5"].includes(key)) {
+      if ((e as any).metaKey && (e as any).shiftKey && ["3", "4", "5"].includes(key)) {
         e.preventDefault();
         expirePassNow('screenshot');
         return;
@@ -330,6 +381,14 @@ export default function EntreprisesPage() {
     document.title = "Annuaire des entreprises";
   }, []);
 
+  useEffect(() => {
+    // Auto-open purchase modal if /annuaire?buy=1 and user is logged but no access
+    const params = new URLSearchParams(location.search);
+    if (params.get("buy") === "1" && userId && !hasAccess && !checkingAccess) {
+      setPurchaseOpen(true);
+    }
+  }, [location.search, userId, hasAccess, checkingAccess]);
+
   if (checkingAccess) {
     return (
       <>
@@ -375,9 +434,12 @@ export default function EntreprisesPage() {
                 Durée: 1 heure. Tarif: {getAccessPrice().toLocaleString("fr-FR")} F CFA.
               </p>
               <div className="flex gap-3">
-                <Button onClick={onPurchase} disabled={isAdmin}>Acheter l'accès</Button>
+                <Button onClick={openPurchase} disabled={isAdmin}>Acheter l'accès</Button>
                 <Button asChild variant="outline">
                   <Link to="/auth">Changer de compte</Link>
+                </Button>
+                <Button asChild variant="ghost">
+                  <Link to="/produits/annuaire">Voir la page produit</Link>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -385,6 +447,48 @@ export default function EntreprisesPage() {
               </p>
             </CardContent>
           </Card>
+
+          {/* Dialogue d’achat */}
+          <Dialog open={purchaseOpen} onOpenChange={(o)=>{ if(!purchasing) setPurchaseOpen(o); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Acheter l’accès</DialogTitle>
+                <DialogDescription>
+                  Montant: {getAccessPrice().toLocaleString("fr-FR")} F CFA — choisissez votre opérateur et entrez votre numéro.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-sm text-muted-foreground">Opérateur</label>
+                    <Select value={buyerOperator} onValueChange={(v)=>setBuyerOperator(v as OperatorCode)}>
+                      <SelectTrigger><SelectValue placeholder="Opérateur" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="WAVE_SN_API_CASH_IN">WAVE</SelectItem>
+                        <SelectItem value="ORANGE_SN_API_CASH_IN">Orange Money</SelectItem>
+                        <SelectItem value="WIZALL_SN_API_CASH_IN">Wizall</SelectItem>
+                        <SelectItem value="FREE_SN_WALLET_CASH_IN">Free Money</SelectItem>
+                        <SelectItem value="EXPRESSO_SN_WALLET_CASH_IN">Expresso</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted-foreground">Téléphone</label>
+                    <Input placeholder="Ex: 772345678" value={buyerPhone} onChange={(e)=>setBuyerPhone(e.target.value)} />
+                  </div>
+                </div>
+                {pendingDeepLink && (
+                  <div className="text-xs text-muted-foreground">
+                    Si la fenêtre ne s’est pas ouverte, <a className="underline" href={pendingDeepLink} target="_blank">cliquez ici</a>.
+                  </div>
+                )}
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={closePurchase} disabled={purchasing}>Annuler</Button>
+                  <Button onClick={handleConfirmPurchase} disabled={purchasing}>{purchasing ? "Traitement..." : "Payer"}</Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </>
     );

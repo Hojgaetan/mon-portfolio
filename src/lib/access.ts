@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { createOperation, getTransactionStatus } from "@/lib/intech";
 
 export type AccessPass = {
   id: string;
@@ -33,6 +34,83 @@ export async function getActiveAccessPass(): Promise<AccessPass | null> {
   return data as AccessPass | null;
 }
 
+// --- Nouvelle intégration paiement Intech pour le pass d’accès ---
+export type OperatorCode =
+  | "WAVE_SN_API_CASH_IN"
+  | "ORANGE_SN_API_CASH_IN"
+  | "WIZALL_SN_API_CASH_IN"
+  | "FREE_SN_WALLET_CASH_IN"
+  | "EXPRESSO_SN_WALLET_CASH_IN";
+
+export type StartAccessPurchaseResult = {
+  externalTransactionId: string;
+  deepLinkUrl?: string;
+  authLinkUrl?: string;
+  raw?: unknown;
+};
+
+function getFunctionsBaseUrlFromClient(): string | null {
+  try {
+    const SUPABASE_URL = "https://yavxlxrttdcqbknhxiph.supabase.co"; // repris du client
+    const u = new URL(SUPABASE_URL);
+    const host = u.hostname; // e.g. yavxlxrttdcqbknhxiph.supabase.co
+    const projectRef = host.split(".")[0];
+    return `https://${projectRef}.functions.supabase.co`;
+  } catch {
+    return null;
+  }
+}
+
+export function generateAccessExternalId(userId: string): string {
+  return `ACCESSPASS_${userId}_${Date.now()}`;
+}
+
+export async function startAccessPurchase(opts: { phone: string; operator: OperatorCode; amount?: number; }): Promise<StartAccessPurchaseResult> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Authentification requise");
+  const extId = generateAccessExternalId(user.id);
+
+  // Utilise le callback edge déployé: /intech-callback
+  const fnBase = getFunctionsBaseUrlFromClient();
+  const callbackUrl = fnBase ? `${fnBase}/intech-callback` : undefined;
+
+  const amount = Number(opts.amount ?? ACCESS_PRICE_XOF);
+
+  const payload = {
+    phone: opts.phone,
+    amount,
+    codeService: opts.operator,
+    externalTransactionId: extId,
+    ...(callbackUrl ? { callbackUrl } : {}),
+    data: {},
+  } as const;
+
+  const res = await createOperation(payload);
+  const deepLinkUrl = (res as any)?.data?.deepLinkUrl as string | undefined;
+  const authLinkUrl = (res as any)?.data?.authLinkUrl as string | undefined;
+  return { externalTransactionId: extId, deepLinkUrl, authLinkUrl, raw: res };
+}
+
+export async function pollAccessActivation(params: { externalTransactionId: string; timeoutMs?: number; intervalMs?: number; }): Promise<AccessPass | null> {
+  const timeoutMs = params.timeoutMs ?? 120000; // 2 min
+  const intervalMs = params.intervalMs ?? 3000;
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    // Vérifier si le pass est actif
+    const pass = await getActiveAccessPass();
+    if (pass) return pass;
+    // Optionnel: consulter statut transaction pour diagnostiquer (non bloquant)
+    try {
+      await getTransactionStatus(params.externalTransactionId);
+    } catch (err) {
+      console.debug("pollAccessActivation status error", err);
+    }
+    await new Promise(r => setTimeout(r, intervalMs));
+  }
+  return null;
+}
+
+// Simulation existante conservée pour debug/local
 export async function purchaseAccessPass(): Promise<AccessPass> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Authentification requise");

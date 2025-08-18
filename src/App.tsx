@@ -13,7 +13,9 @@ import ArticlePage from "./pages/ArticlePage";
 import BlogPage from "./pages/BlogPage";
 import ProjectsPage from "./pages/ProjectsPage";
 import EntreprisesPage from "./pages/EntreprisesPage.tsx";
+import IntechDemo from "./pages/IntechDemo";
 import { Footer } from "@/components/Footer";
+import ProductAnnuaire from "./pages/ProductAnnuaire";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ function AppRoutes() {
           <Route path="/projets" element={<ProjectsPage />} />
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
+          <Route path="/produits/annuaire" element={<ProductAnnuaire />} />
+          <Route path="/intech-demo" element={<IntechDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

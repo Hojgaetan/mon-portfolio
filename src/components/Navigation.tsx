@@ -3,14 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import {
-	Briefcase,
 	FolderKanban,
-	GraduationCap,
 	Hand,
 	Mail,
 	Menu,
-	Newspaper,
-	Settings,
 	User,
 	X,
 } from "lucide-react";
@@ -19,7 +15,7 @@ import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PdfIcon } from "./PdfIcon";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavigationProps {
   activeTab: string;
@@ -44,10 +40,10 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
     { id: "hello", label: t('nav.hello'), icon: <Hand className="h-4 w-4" /> },
     { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" /> },
     {
-      id: "entreprises",
-      label: "Annuaire des entreprises",
-      icon: <Briefcase className="h-4 w-4" />,
-      path: "/annuaire",
+      id: "produits",
+      label: "Produits",
+      icon: <FolderKanban className="h-4 w-4" />,
+      path: "/produits/annuaire",
     },
     /* {
       id: "projects",
