@@ -37,6 +37,7 @@ function AppRoutes() {
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
           <Route path="/produits/annuaire" element={<ProductAnnuaire />} />
+          {/* Legacy manual payment route now redirects to annuaire/auth based on access */}
           <Route path="/paiement-manuel" element={<ManualPurchase />} />
           <Route path="/intech-demo" element={<IntechDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAccessPrice } from "@/lib/access";
+import { getAccessPrice, getActiveAccessPass } from "@/lib/access";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -11,6 +11,7 @@ import { MessageCircle } from "lucide-react";
 export default function ProductAnnuaire() {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [hasAccess, setHasAccess] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -27,8 +28,21 @@ export default function ProductAnnuaire() {
           .eq("user_id", user.id)
           .maybeSingle();
         setIsAdmin(!!adminRow);
+        // If not admin, check if user already has an active pass
+        if (!adminRow) {
+          const pass = await getActiveAccessPass();
+          const active = !!pass;
+          setHasAccess(active);
+          if (active) {
+            // Redirect directly to annuaire if access is already granted
+            navigate("/annuaire", { replace: true });
+          }
+        } else {
+          setHasAccess(true);
+        }
       } else {
         setIsAdmin(false);
+        setHasAccess(false);
       }
     });
     subscription = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -40,8 +54,17 @@ export default function ProductAnnuaire() {
           .eq("user_id", session.user.id)
           .maybeSingle();
         setIsAdmin(!!adminRow);
+        if (!adminRow) {
+          const pass = await getActiveAccessPass();
+          const active = !!pass;
+          setHasAccess(active);
+          if (active) navigate("/annuaire", { replace: true });
+        } else {
+          setHasAccess(true);
+        }
       } else {
         setIsAdmin(false);
+        setHasAccess(false);
       }
     }).data.subscription;
     return () => subscription?.unsubscribe();
@@ -49,14 +72,20 @@ export default function ProductAnnuaire() {
 
   const price = getAccessPrice();
 
-  const handlePurchase = () => {
+  const handlePurchase = async () => {
     if (!user) {
       // Redirect to auth page if not logged in
       navigate("/auth");
       return;
     }
-    // If logged in, go to manual purchase flow
-    navigate("/paiement-manuel");
+    // If user already has access, go straight to annuaire
+    const pass = await getActiveAccessPass();
+    if (pass || isAdmin) {
+      navigate("/annuaire");
+      return;
+    }
+    // Otherwise, open the in-page payment flow on annuaire
+    navigate("/annuaire?buy=1");
   };
 
   const handleWhatsAppContact = () => {

@@ -42,7 +42,7 @@ export default function Auth() {
               user_type: 'client'
             }, { onConflict: 'user_id' });
           } catch {}
-          // Rediriger après connexion: admin vers /annuaire, sinon vers /annuaire si pass actif, sinon /paiement-manuel
+          // Rediriger après connexion: admin vers /annuaire, sinon vers /annuaire si pass actif, sinon ouvrir l'achat sur /annuaire
           const { data: adminData } = await supabase
             .from('admins')
             .select('user_id')
@@ -52,7 +52,7 @@ export default function Auth() {
             navigate("/annuaire", { replace: true });
           } else {
             const pass = await getActiveAccessPass();
-            navigate(pass ? "/annuaire" : "/paiement-manuel", { replace: true });
+            navigate(pass ? "/annuaire" : "/annuaire?buy=1", { replace: true });
           }
         }
       }
@@ -71,7 +71,7 @@ export default function Auth() {
             user_type: 'client'
           }, { onConflict: 'user_id' });
         } catch {}
-        // Rediriger selon rôle si déjà connecté: admin -> /annuaire ; sinon si pass actif -> /annuaire ; sinon /paiement-manuel
+  // Rediriger selon rôle si déjà connecté: admin -> /annuaire ; sinon si pass actif -> /annuaire ; sinon /annuaire?buy=1
         const { data: adminData } = await supabase
           .from('admins')
           .select('user_id')
@@ -81,7 +81,7 @@ export default function Auth() {
           navigate("/annuaire", { replace: true });
         } else {
           const pass = await getActiveAccessPass();
-          navigate(pass ? "/annuaire" : "/paiement-manuel", { replace: true });
+          navigate(pass ? "/annuaire" : "/annuaire?buy=1", { replace: true });
         }
       }
     });
