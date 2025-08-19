@@ -16,6 +16,7 @@ import EntreprisesPage from "./pages/EntreprisesPage.tsx";
 import IntechDemo from "./pages/IntechDemo";
 import { Footer } from "@/components/Footer";
 import ProductAnnuaire from "./pages/ProductAnnuaire";
+import ManualPurchase from "./pages/ManualPurchase";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function AppRoutes() {
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
           <Route path="/produits/annuaire" element={<ProductAnnuaire />} />
+          <Route path="/paiement-manuel" element={<ManualPurchase />} />
           <Route path="/intech-demo" element={<IntechDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

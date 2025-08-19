@@ -35,8 +35,8 @@ export default function ProductAnnuaire() {
       navigate("/auth");
       return;
     }
-    // If logged in, go to purchase flow
-    navigate("/annuaire?buy=1");
+    // If logged in, go to manual purchase flow
+    navigate("/paiement-manuel");
   };
 
   const handleWhatsAppContact = () => {

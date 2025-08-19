@@ -15,6 +15,7 @@ import {
   Tag,
   ChevronLeft,
   ChevronRight,
+  Key,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -36,6 +37,7 @@ const menuItems = [
   { id: "messages", label: "Messages", icon: Mail },
   { id: "categories", label: "Catégories", icon: Tag },
   { id: "entreprises", label: "Entreprises", icon: Building2 },
+  { id: "access", label: "Gestion des accès", icon: Key },
   { id: "users", label: "Utilisateurs", icon: Users },
   { id: "settings", label: "Paramètres", icon: Settings },
 ];

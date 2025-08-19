@@ -13,6 +13,7 @@ import { CategorieManager } from "@/components/admin/CategorieManager";
 import { EntrepriseManager } from "@/components/admin/EntrepriseManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
+import { AccessManager } from "@/components/admin/AccessManager";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -131,6 +132,8 @@ export default function Admin() {
         return <CategorieManager />;
       case "entreprises":
         return <EntrepriseManager />;
+      case "access":
+        return <AccessManager />;
       case "users":
         return <UsersManager />;
       case "settings":
