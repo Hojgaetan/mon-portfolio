@@ -10,21 +10,41 @@ import { MessageCircle } from "lucide-react";
 
 export default function ProductAnnuaire() {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
     document.title = "Produit · Annuaire des entreprises";
     
     // Check authentication status
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    let subscription;
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user);
+      if (user && user.id) {
+        const { data: adminRow } = await supabase
+          .from("admins")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        setIsAdmin(!!adminRow);
+      } else {
+        setIsAdmin(false);
+      }
     });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    subscription = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+      if (session?.user && session.user.id) {
+        const { data: adminRow } = await supabase
+          .from("admins")
+          .select("user_id")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        setIsAdmin(!!adminRow);
+      } else {
+        setIsAdmin(false);
+      }
+    }).data.subscription;
+    return () => subscription?.unsubscribe();
   }, []);
 
   const price = getAccessPrice();
@@ -86,26 +106,37 @@ export default function ProductAnnuaire() {
               </div>
 
               <div className="pt-6 space-y-4">
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto px-12 py-3 text-base font-semibold"
-                  onClick={handlePurchase}
-                >
-                  {user ? "Acheter l'accès" : "Se connecter pour acheter"}
-                </Button>
-
-                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                  <span>Problème de paiement ?</span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
-                    onClick={handleWhatsAppContact}
-                  >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Contactez-nous
-                  </Button>
-                </div>
+                {isAdmin ? (
+                  <div className="text-center">
+                    <Link to="/annuaire" className="inline-block">
+                      <Button size="lg" className="w-full sm:w-auto px-12 py-3 text-base font-semibold">
+                        Voir la liste
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <Button 
+                      size="lg" 
+                      className="w-full sm:w-auto px-12 py-3 text-base font-semibold"
+                      onClick={handlePurchase}
+                    >
+                      {user ? "Acheter l'accès" : "Se connecter pour acheter"}
+                    </Button>
+                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                      <span>Problème de paiement ?</span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+                        onClick={handleWhatsAppContact}
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Contactez-nous
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
 
               <p className="text-xs text-muted-foreground mt-6 opacity-70">

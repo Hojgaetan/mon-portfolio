@@ -10,6 +10,7 @@ import { User, Session } from "@supabase/supabase-js";
 import logoLight from "@/assets/logo fond beige.svg";
 import logoDark from "@/assets/logo fond nuit.svg";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { getActiveAccessPass } from "@/lib/access";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -32,43 +33,55 @@ export default function Auth() {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Redirect authenticated users based on their type
-        if (session?.user) {
-          // Check if user is admin
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            // Upsert de l'email dans profiles pour lister les utilisateurs par email dans l'admin
+            await supabase.from('profiles').upsert({
+              user_id: session.user.id,
+              email: session.user.email ?? null,
+              user_type: 'client'
+            }, { onConflict: 'user_id' });
+          } catch {}
+          // Rediriger après connexion: admin vers /annuaire, sinon vers /annuaire si pass actif, sinon /paiement-manuel
           const { data: adminData } = await supabase
             .from('admins')
             .select('user_id')
             .eq('user_id', session.user.id)
-            .single();
-
+            .maybeSingle();
           if (adminData) {
-            navigate("/admin");
+            navigate("/annuaire", { replace: true });
           } else {
-            // Regular visitor, redirect to product page
-            navigate("/produit-annuaire");
+            const pass = await getActiveAccessPass();
+            navigate(pass ? "/annuaire" : "/paiement-manuel", { replace: true });
           }
         }
       }
     );
 
-    // Check for existing session
+  // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        // Check if user is admin
+        try {
+          await supabase.from('profiles').upsert({
+            user_id: session.user.id,
+            email: session.user.email ?? null,
+            user_type: 'client'
+          }, { onConflict: 'user_id' });
+        } catch {}
+        // Rediriger selon rôle si déjà connecté: admin -> /annuaire ; sinon si pass actif -> /annuaire ; sinon /paiement-manuel
         const { data: adminData } = await supabase
           .from('admins')
           .select('user_id')
           .eq('user_id', session.user.id)
-          .single();
-
+          .maybeSingle();
         if (adminData) {
-          navigate("/admin");
+          navigate("/annuaire", { replace: true });
         } else {
-          // Regular visitor, redirect to product page
-          navigate("/produit-annuaire");
+          const pass = await getActiveAccessPass();
+          navigate(pass ? "/annuaire" : "/paiement-manuel", { replace: true });
         }
       }
     });

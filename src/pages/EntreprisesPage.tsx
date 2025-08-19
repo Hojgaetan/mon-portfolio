@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,9 @@ export default function EntreprisesPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  // Masquage dynamique anti-capture pour non-admin
+  const [isObscured, setIsObscured] = useState<boolean>(true);
+  const obscurityTimer = useRef<number | null>(null);
 
   // Etat du dialogue d’achat
   const [purchaseOpen, setPurchaseOpen] = useState(false);
@@ -118,7 +121,7 @@ export default function EntreprisesPage() {
       setPendingExtId(res.externalTransactionId);
       if (res.deepLinkUrl) {
         setPendingDeepLink(res.deepLinkUrl);
-        window.open(res.deepLinkUrl, "_blank");
+        // Ne pas ouvrir automatiquement d’autres passerelles ici
       } else if (res.authLinkUrl) {
         setPendingDeepLink(res.authLinkUrl);
       } else {
@@ -192,6 +195,7 @@ export default function EntreprisesPage() {
         setExpiresAt(null);
         setCheckingAccess(false);
         await fetchEntreprises();
+        setPurchaseOpen(false);
         return;
       }
 
@@ -199,7 +203,12 @@ export default function EntreprisesPage() {
       setHasAccess(!!pass);
       setExpiresAt(pass?.expires_at ?? null);
       setCheckingAccess(false);
-      if (pass) await fetchEntreprises();
+      if (pass) {
+        await fetchEntreprises();
+        setPurchaseOpen(false);
+      } else {
+        setPurchaseOpen(true);
+      }
     };
     init();
   }, [fetchEntreprises]);
@@ -381,6 +390,26 @@ export default function EntreprisesPage() {
     document.title = "Annuaire des entreprises";
   }, []);
 
+  // Masquer le contenu (blur) par défaut et ne l'afficher nettement que brièvement après interaction (non-admin)
+  useEffect(() => {
+    if (isAdmin) {
+      setIsObscured(false);
+      return;
+    }
+    setIsObscured(true);
+    const onInteract = () => {
+      setIsObscured(false);
+      if (obscurityTimer.current) window.clearTimeout(obscurityTimer.current);
+      obscurityTimer.current = window.setTimeout(() => setIsObscured(true), 1200);
+    };
+    const events: (keyof WindowEventMap)[] = ["mousemove", "keydown", "mousedown", "touchstart", "wheel"];
+    events.forEach((ev) => window.addEventListener(ev, onInteract, { passive: true } as any));
+    return () => {
+      if (obscurityTimer.current) window.clearTimeout(obscurityTimer.current);
+      events.forEach((ev) => window.removeEventListener(ev, onInteract as any));
+    };
+  }, [isAdmin]);
+
   useEffect(() => {
     // Auto-open purchase modal if /annuaire?buy=1 and user is logged but no access
     const params = new URLSearchParams(location.search);
@@ -497,7 +526,11 @@ export default function EntreprisesPage() {
   return (
     <>
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="container mx-auto max-w-6xl p-4 sm:p-6 space-y-6" {...guardProps}>
+      <div
+        className="container mx-auto max-w-6xl p-4 sm:p-6 space-y-6 relative"
+        {...guardProps}
+        style={!isAdmin && isObscured ? { filter: "blur(6px) brightness(0.7)" } : undefined}
+      >
         {/* Empêcher l'impression */}
         <style>{`@media print { body { display: none !important; } }`}</style>
         {/* Styles responsives pour watermark */}
@@ -528,6 +561,13 @@ export default function EntreprisesPage() {
               <div className="text-lg font-semibold">Contenu protégé</div>
               <div className="text-sm opacity-80 mt-1">L’onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
             </div>
+          </div>
+        )}
+
+        {/* Alerte discrète quand le masquage dynamique est actif (non-admin) */}
+        {!isAdmin && isObscured && !hiddenOverlay && (
+          <div aria-hidden className="pointer-events-none fixed bottom-4 left-1/2 -translate-x-1/2 z-[65] px-3 py-1.5 rounded bg-black/70 text-white text-xs shadow">
+            Déplacez la souris pour afficher brièvement
           </div>
         )}
 
@@ -573,6 +613,8 @@ export default function EntreprisesPage() {
 
          {loading ? (
            <div>Chargement...</div>
+         ) : filtered.length === 0 ? (
+           <div className="text-sm text-muted-foreground">Aucune entreprise trouvée.</div>
          ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
              {filtered.map((e) => (
@@ -585,13 +627,20 @@ export default function EntreprisesPage() {
                     <Badge variant="outline">{viewCounts[e.id] ?? 0} vues</Badge>
                   </div>
                   <div className="min-w-0">
-                    <CardTitle className="text-base sm:text-lg truncate text-muted-foreground">
-                      Nom masqué — cliquez pour voir
+                    <CardTitle className="text-base sm:text-lg truncate text-foreground">
+                      {isAdmin ? e.nom : 'Nom masqué — cliquez pour voir'}
                     </CardTitle>
                   </div>
                 </CardHeader>
                  <CardContent className="text-sm text-muted-foreground">
-                   Cliquez pour voir les détails
+                   {isAdmin ? (
+                     <div className="space-y-1">
+                       {e.telephone && <div>Téléphone: {e.telephone}</div>}
+                       {e.adresse && <div>Adresse: {e.adresse}</div>}
+                     </div>
+                   ) : (
+                     'Cliquez pour voir les détails'
+                   )}
                  </CardContent>
                </Card>
              ))}

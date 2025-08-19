@@ -20,7 +20,8 @@ export async function getActiveAccessPass(): Promise<AccessPass | null> {
 
   const { data, error } = await supabase
     .from("access_pass")
-    .select("id,user_id,amount,currency,status,expires_at,created_at")
+  .select("id,user_id,amount,currency,status,expires_at,created_at")
+  .eq("user_id", user.id)
     .eq("status", "active")
     .gt("expires_at", new Date().toISOString())
     .order("expires_at", { ascending: false })

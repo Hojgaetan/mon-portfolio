@@ -51,8 +51,8 @@ export function AccessManager() {
       const { data, error } = await supabase
         .from("access_pass")
         .select(`
-          *,
-          profiles (
+          id, user_id, status, expires_at, created_at, amount, currency,
+          profiles:profiles!access_pass_user_id_fkey_profiles(
             user_id,
             first_name,
             last_name,
@@ -63,7 +63,11 @@ export function AccessManager() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setAccessPasses(data || []);
+      const normalized = (data || []).map((row: any) => ({
+        ...row,
+        profiles: Array.isArray(row.profiles) ? (row.profiles[0] ?? undefined) : row.profiles,
+      }));
+      setAccessPasses(normalized);
     } catch (error) {
       console.error("Erreur lors du chargement des accès:", error);
       toast({
@@ -78,30 +82,17 @@ export function AccessManager() {
 
   const fetchUsers = async () => {
     try {
-      // Récupérer les profils pour avoir accès aux emails via les relations
+      // On s'appuie sur la colonne email du profil pour lister les utilisateurs
       const { data: profiles, error } = await supabase
         .from("profiles")
-        .select("user_id, first_name, last_name");
+        .select("user_id, email");
 
       if (error) throw error;
 
-      // Pour chaque profil, essayer de récupérer l'email depuis auth
-      const usersWithEmails: User[] = [];
-      for (const profile of profiles || []) {
-        try {
-          // Note: En production, vous devriez utiliser l'API Admin
-          const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(profile.user_id);
-          if (!userError && user) {
-            usersWithEmails.push({
-              id: user.id,
-              email: user.email || '',
-            });
-          }
-        } catch (err) {
-          // Ignorer les erreurs individuelles
-        }
-      }
-      
+      const usersWithEmails: User[] = (profiles || []).map((p: any) => ({
+        id: p.user_id,
+        email: p.email || p.user_id,
+      }));
       setUsers(usersWithEmails);
     } catch (error) {
       console.error("Erreur lors du chargement des utilisateurs:", error);

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -31,10 +33,35 @@ interface NavItem {
 
 export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { theme } = useTheme();
   const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
+  useEffect(() => {
+    // Si l'utilisateur est admin, rediriger automatiquement vers la liste (/annuaire)
+    const checkAdminAndRedirect = async () => {
+      if (user && user.id) {
+        const { data: adminRow } = await supabase
+          .from("admins")
+          .select("user_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (adminRow) {
+          if (location.pathname !== "/annuaire") {
+            navigate("/annuaire");
+          }
+        }
+      }
+    };
+    checkAdminAndRedirect();
+  }, [user, location.pathname, navigate]);
+  // Supabase auth
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
+    return () => subscription?.unsubscribe();
+  }, []);
 
   const navItems: NavItem[] = [
     { id: "hello", label: t('nav.hello'), icon: <Hand className="h-4 w-4" /> },
@@ -134,6 +161,28 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 </Button>
               );
             })}
+            {/* Auth Button Desktop */}
+            <Button
+              variant="outline"
+              className="ml-2 font-sans text-sm px-3 py-2 h-12 rounded-none"
+              onClick={async () => {
+                if (user) {
+                  try {
+                    const { error } = await supabase.auth.signOut();
+                    if (error) throw error;
+                  } catch {
+                    // No-op, but keep user state consistent
+                  } finally {
+                    setUser(null);
+                    navigate('/');
+                  }
+                } else {
+                  navigate('/auth');
+                }
+              }}
+            >
+              {user ? 'Se déconnecter' : 'Se connecter'}
+            </Button>
           </div>
 
           {/* Mobile menu button and Theme Toggle */}
@@ -183,6 +232,22 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   </Button>
                 );
               })}
+              {/* Auth Button Mobile */}
+              <Button
+                variant="outline"
+                className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none"
+                onClick={async () => {
+                  if (user) {
+                    await supabase.auth.signOut();
+                    setUser(null);
+                    navigate('/');
+                  } else {
+                    navigate('/auth');
+                  }
+                }}
+              >
+                {user ? 'Se déconnecter' : 'Se connecter'}
+              </Button>
               <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="w-full">
                 <Button
                   variant="accent-red"
