@@ -53,6 +53,51 @@ export type Database = {
         }
         Relationships: []
       }
+      access_pass: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          expires_at: string
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          expires_at: string
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          expires_at?: string
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admins: {
+        Row: {
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       article_comments: {
         Row: {
           approved: boolean | null
@@ -370,6 +415,71 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      entreprise_view: {
+        Row: {
+          created_at: string
+          entreprise_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entreprise_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entreprise_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "entreprise_view_entreprise_id_fkey"
+            columns: ["entreprise_id"]
+            isOneToOne: false
+            referencedRelation: "entreprise"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          profession: string | null
+          updated_at: string
+          user_id: string
+          user_type: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          profession?: string | null
+          updated_at?: string
+          user_id: string
+          user_type?: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          profession?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: string
+        }
+        Relationships: []
       }
       projects: {
         Row: {

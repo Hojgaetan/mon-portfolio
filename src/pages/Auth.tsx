@@ -14,33 +14,62 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [city, setCity] = useState("");
+  const [profession, setProfession] = useState("");
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Redirect authenticated users to admin
+        // Redirect authenticated users based on their type
         if (session?.user) {
-          navigate("/admin");
+          // Check if user is admin
+          const { data: adminData } = await supabase
+            .from('admins')
+            .select('user_id')
+            .eq('user_id', session.user.id)
+            .single();
+
+          if (adminData) {
+            navigate("/admin");
+          } else {
+            // Regular visitor, redirect to product page
+            navigate("/produit-annuaire");
+          }
         }
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        navigate("/admin");
+        // Check if user is admin
+        const { data: adminData } = await supabase
+          .from('admins')
+          .select('user_id')
+          .eq('user_id', session.user.id)
+          .single();
+
+        if (adminData) {
+          navigate("/admin");
+        } else {
+          // Regular visitor, redirect to product page
+          navigate("/produit-annuaire");
+        }
       }
     });
 
@@ -91,7 +120,14 @@ export default function Auth() {
         email,
         password,
         options: {
-          emailRedirectTo: redirectUrl
+          emailRedirectTo: redirectUrl,
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            city: city,
+            profession: profession,
+            user_type: 'visitor'
+          }
         }
       });
 
@@ -106,6 +142,7 @@ export default function Auth() {
           title: "Inscription réussie",
           description: "Vérifiez votre email pour confirmer votre compte.",
         });
+        setIsSignUp(false); // Return to login form
       }
     } catch (error) {
       toast({
@@ -129,54 +166,149 @@ export default function Auth() {
           <img src={logoDark} alt="Logo" className="h-20 hidden dark:block" />
         </div>
         <CardHeader className="text-center">
-          <CardTitle>Administration</CardTitle>
+          <CardTitle>{isSignUp ? "Créer un compte" : "Connexion"}</CardTitle>
           <CardDescription>
-            Connectez-vous pour accéder au système de gestion de contenu
+            {isSignUp 
+              ? "Créez votre compte pour accéder à l'annuaire des entreprises"
+              : "Connectez-vous pour accéder à votre compte"
+            }
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleSignIn} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.com"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Connexion..." : "Se connecter"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handleSignUp}
-                disabled={loading}
-              >
-                {loading ? "Inscription..." : "S'inscrire"}
-              </Button>
-            </div>
-          </form>
+          {!isSignUp ? (
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="votre@email.com"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? "Connexion..." : "Se connecter"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setIsSignUp(true)}
+                  disabled={loading}
+                >
+                  Créer un compte
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSignUp} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">Prénom</Label>
+                  <Input
+                    id="firstName"
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Votre prénom"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Nom</Label>
+                  <Input
+                    id="lastName"
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Votre nom"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">Ville</Label>
+                <Input
+                  id="city"
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Votre ville"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="profession">Profession</Label>
+                <Input
+                  id="profession"
+                  type="text"
+                  value={profession}
+                  onChange={(e) => setProfession(e.target.value)}
+                  placeholder="Votre profession"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signupEmail">Email</Label>
+                <Input
+                  id="signupEmail"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="votre@email.com"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signupPassword">Mot de passe</Label>
+                <Input
+                  id="signupPassword"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loading}
+                >
+                  {loading ? "Inscription..." : "Créer mon compte"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setIsSignUp(false)}
+                  disabled={loading}
+                >
+                  Retour à la connexion
+                </Button>
+              </div>
+            </form>
+          )}
           <div className="text-center">
             <Button
               variant="link"
