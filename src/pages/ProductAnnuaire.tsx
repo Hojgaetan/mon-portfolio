@@ -1,16 +1,48 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAccessPrice } from "@/lib/access";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { MessageCircle } from "lucide-react";
 
 export default function ProductAnnuaire() {
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+  
   useEffect(() => {
     document.title = "Produit · Annuaire des entreprises";
+    
+    // Check authentication status
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const price = getAccessPrice();
+
+  const handlePurchase = () => {
+    if (!user) {
+      // Redirect to auth page if not logged in
+      navigate("/auth");
+      return;
+    }
+    // If logged in, go to purchase flow
+    navigate("/annuaire?buy=1");
+  };
+
+  const handleWhatsAppContact = () => {
+    const message = encodeURIComponent("Bonjour, j'ai besoin d'aide pour accéder à l'annuaire des entreprises.");
+    window.open(`https://wa.me/221708184010?text=${message}`, '_blank');
+  };
 
   return (
     <>
@@ -53,10 +85,27 @@ export default function ProductAnnuaire() {
                 </div>
               </div>
 
-              <div className="pt-6">
-                <Button asChild size="lg" className="w-full sm:w-auto px-12 py-3 text-base font-semibold">
-                  <Link to="/annuaire?buy=1">Acheter l'accès</Link>
+              <div className="pt-6 space-y-4">
+                <Button 
+                  size="lg" 
+                  className="w-full sm:w-auto px-12 py-3 text-base font-semibold"
+                  onClick={handlePurchase}
+                >
+                  {user ? "Acheter l'accès" : "Se connecter pour acheter"}
                 </Button>
+
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <span>Problème de paiement ?</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+                    onClick={handleWhatsAppContact}
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Contactez-nous
+                  </Button>
+                </div>
               </div>
 
               <p className="text-xs text-muted-foreground mt-6 opacity-70">
