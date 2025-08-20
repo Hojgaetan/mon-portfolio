@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useId } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,12 +47,32 @@ interface Categorie {
   nom: string;
 }
 
+// Alias de types pour les filtres (évite tout any)
+type SiteStatus = "all" | "valide" | "invalide" | "avec" | "sans";
+type SortKey = "date_desc" | "date_asc" | "name_asc" | "name_desc";
+
 export function EntrepriseManager() {
   const [entreprises, setEntreprises] = useState<Entreprise[]>([]);
   const [categories, setCategories] = useState<Categorie[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEntreprise, setEditingEntreprise] = useState<Entreprise | null>(null);
+
+  // Filtres avancés
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [siteStatus, setSiteStatus] = useState<SiteStatus>("all");
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [sortBy, setSortBy] = useState<SortKey>("date_desc");
+
+  // IDs accessibles pour lier labels et champs
+  const searchId = useId();
+  const categoryId = useId();
+  const statusId = useId();
+  const dateFromId = useId();
+  const dateToId = useId();
+  const sortId = useId();
 
   const form = useForm<EntrepriseFormData>({
     resolver: zodResolver(entrepriseSchema),
@@ -177,27 +197,185 @@ export function EntrepriseManager() {
     form.reset();
   };
 
+  // Appliquer filtres client côté et tri
+  const filteredEntreprises = useMemo(() => {
+    let list = [...entreprises];
+
+    // Catégorie
+    if (categoryFilter !== "all") {
+      list = list.filter((e) => e.categorie_id === categoryFilter);
+    }
+
+    // Statut site
+    if (siteStatus === "valide") list = list.filter((e) => e.site_web_valide === true);
+    if (siteStatus === "invalide") list = list.filter((e) => e.site_web_valide === false);
+    if (siteStatus === "avec") list = list.filter((e) => !!e.site_web);
+    if (siteStatus === "sans") list = list.filter((e) => !e.site_web);
+
+    // Plage de dates sur created_at
+    if (dateFrom) {
+      const from = new Date(dateFrom).getTime();
+      list = list.filter((e) => new Date(e.created_at).getTime() >= from);
+    }
+    if (dateTo) {
+      // inclure toute la journée de fin
+      const to = new Date(dateTo);
+      to.setHours(23, 59, 59, 999);
+      const toMs = to.getTime();
+      list = list.filter((e) => new Date(e.created_at).getTime() <= toMs);
+    }
+
+    // Recherche plein texte simple
+    const term = query.trim().toLowerCase();
+    if (term) {
+      list = list.filter((e) =>
+        [
+          e.nom,
+          e.telephone || "",
+          e.adresse || "",
+          e.site_web || "",
+          e.categorie?.nom || "",
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(term)
+      );
+    }
+
+    // Tri
+    list.sort((a, b) => {
+      switch (sortBy) {
+        case "date_asc":
+          return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+        case "name_asc":
+          return a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" });
+        case "name_desc":
+          return b.nom.localeCompare(a.nom, "fr", { sensitivity: "base" });
+        case "date_desc":
+        default:
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    });
+
+    return list;
+  }, [entreprises, categoryFilter, siteStatus, dateFrom, dateTo, query, sortBy]);
+
+  const resetFilters = () => {
+    setQuery("");
+    setCategoryFilter("all");
+    setSiteStatus("all");
+    setDateFrom("");
+    setDateTo("");
+    setSortBy("date_desc");
+  };
+
   if (loading) {
     return <div>Chargement...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Gestion des Entreprises</h2>
-          <p className="text-muted-foreground">
-            Gérez la base de données des entreprises
-          </p>
+          <p className="text-muted-foreground">Gérez la base de données des entreprises</p>
         </div>
-        <Button type="button" onClick={() => {
-          console.log("Button clicked, opening dialog");
-          setIsDialogOpen(true);
-        }}>
+        <Button type="button" onClick={() => { setIsDialogOpen(true); }}>
           <Plus className="mr-2 h-4 w-4" />
           Nouvelle Entreprise
         </Button>
       </div>
+
+      {/* Barre de recherche et filtres - accessible et responsive */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Recherche et filtres</CardTitle>
+          <CardDescription>
+            Affinez l’affichage. Tous les champs sont facultatifs.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div role="search" aria-label="Recherche d’entreprises" className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="flex flex-col gap-1">
+                <label htmlFor={searchId} className="text-sm font-medium">Recherche</label>
+                <Input
+                  id={searchId}
+                  placeholder="Nom, téléphone, site, adresse..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor={categoryId} className="text-sm font-medium">Catégorie</label>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger id={categoryId} aria-label="Filtrer par catégorie">
+                    <SelectValue placeholder="Toutes les catégories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes</SelectItem>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor={statusId} className="text-sm font-medium">Statut du site</label>
+                <Select value={siteStatus} onValueChange={(v) => setSiteStatus(v as SiteStatus)}>
+                  <SelectTrigger id={statusId} aria-label="Filtrer par statut du site">
+                    <SelectValue placeholder="Tous" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous</SelectItem>
+                    <SelectItem value="avec">Avec site</SelectItem>
+                    <SelectItem value="sans">Sans site</SelectItem>
+                    <SelectItem value="valide">Site valide</SelectItem>
+                    <SelectItem value="invalide">Site invalide</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label htmlFor={sortId} className="text-sm font-medium">Tri</label>
+                <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortKey)}>
+                  <SelectTrigger id={sortId} aria-label="Trier la liste">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="date_desc">Plus récentes d’abord</SelectItem>
+                    <SelectItem value="date_asc">Plus anciennes d’abord</SelectItem>
+                    <SelectItem value="name_asc">Nom A → Z</SelectItem>
+                    <SelectItem value="name_desc">Nom Z → A</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <fieldset className="grid grid-cols-1 sm:grid-cols-2 gap-4" aria-describedby="hint-dates">
+              <legend className="text-sm font-medium">Date de création</legend>
+              <div className="flex flex-col gap-1">
+                <label htmlFor={dateFromId} className="text-sm">Du</label>
+                <Input id={dateFromId} type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label htmlFor={dateToId} className="text-sm">Au</label>
+                <Input id={dateToId} type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} />
+              </div>
+              <p id="hint-dates" className="sr-only">Filtre par intervalle de dates, inclusif.</p>
+            </fieldset>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Button type="button" variant="outline" onClick={resetFilters}>Réinitialiser</Button>
+              <span role="status" aria-live="polite" className="text-sm text-muted-foreground">
+                {filteredEntreprises.length} résultat(s)
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Dialog placé à la racine du composant pour éviter tout conflit d'imbrication */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -339,12 +517,12 @@ export function EntrepriseManager() {
         <CardHeader>
           <CardTitle>Liste des Entreprises</CardTitle>
           <CardDescription>
-            {entreprises.length} entreprise(s) au total
+            {filteredEntreprises.length} entreprise(s) affichée(s) sur {entreprises.length}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="w-full overflow-x-auto">
-            <Table className="min-w-[860px] sm:min-w-0 text-sm">
+          <div className="w-full overflow-x-auto" aria-live="polite">
+            <Table id="entreprises-table" className="min-w-[860px] sm:min-w-0 text-sm">
               <TableHeader>
                 <TableRow>
                   <TableHead className="whitespace-nowrap">Nom</TableHead>
@@ -356,7 +534,7 @@ export function EntrepriseManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {entreprises.map((entreprise) => (
+                {filteredEntreprises.map((entreprise) => (
                   <TableRow key={entreprise.id}>
                     <TableCell className="font-medium max-w-[180px] sm:max-w-[240px] truncate">{entreprise.nom}</TableCell>
                     <TableCell className="min-w-[120px]">
