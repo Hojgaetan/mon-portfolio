@@ -52,7 +52,7 @@ function AppRoutes() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <TooltipProvider>
           <Toaster />
           <Sonner />
