@@ -411,10 +411,17 @@ export default function EntreprisesPage() {
   }, [isAdmin]);
 
   useEffect(() => {
-    // Auto-open purchase modal if /annuaire?buy=1 and user is logged but no access
+    // Rediriger vers le paiement manuel si /annuaire?buy=1 et pas d'accès
     const params = new URLSearchParams(location.search);
     if (params.get("buy") === "1" && userId && !hasAccess && !checkingAccess) {
-      setPurchaseOpen(true);
+      // bascule vers le flux manuel
+      window.history.replaceState({}, "", "/annuaire");
+      // Utiliser la navigation client
+      (async () => {
+        const { useNavigate } = await import("react-router-dom");
+      })();
+      // Fallback: changer l’emplacement
+      window.location.assign("/paiement-manuel");
     }
   }, [location.search, userId, hasAccess, checkingAccess]);
 
@@ -462,8 +469,10 @@ export default function EntreprisesPage() {
                 L'accès à la liste des entreprises est réservé aux membres ayant un pass actif.
                 Durée: 1 heure. Tarif: {getAccessPrice().toLocaleString("fr-FR")} F CFA.
               </p>
-              <div className="flex gap-3">
-                <Button onClick={openPurchase} disabled={isAdmin}>Acheter l'accès</Button>
+              <div className="flex gap-3 flex-wrap">
+                <Button asChild>
+                  <Link to="/paiement-manuel">Acheter l'accès</Link>
+                </Button>
                 <Button asChild variant="outline">
                   <Link to="/auth">Changer de compte</Link>
                 </Button>
@@ -477,7 +486,7 @@ export default function EntreprisesPage() {
             </CardContent>
           </Card>
 
-          {/* Dialogue d’achat */}
+          {/* Dialogue d’achat conservé mais non déclenché */}
           <Dialog open={purchaseOpen} onOpenChange={(o)=>{ if(!purchasing) setPurchaseOpen(o); }}>
             <DialogContent>
               <DialogHeader>

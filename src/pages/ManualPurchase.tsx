@@ -2,26 +2,19 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageCircle, Copy, CheckCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { MessageCircle } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { useToast } from "@/hooks/use-toast";
-import { getActiveAccessPass } from "@/lib/access";
 
 export default function ManualPurchase() {
   const [user, setUser] = useState<User | null>(null);
-  const [copiedWave, setCopiedWave] = useState(false);
-  const [copiedOrange, setCopiedOrange] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
-  useEffect(() => {
-    document.title = "Paiement manuel (désactivé) · Annuaire";
 
-    // Enforce: if user not authenticated, redirect to /auth
-    // If user authenticated and already has access, redirect to /annuaire
-    // Otherwise, we can optionally redirect to product or annuaire buy flow
+  useEffect(() => {
+    document.title = "Paiement manuel · Annuaire";
+
+    // Exiger l'authentification
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -29,60 +22,62 @@ export default function ManualPurchase() {
         return;
       }
       setUser(user);
-      const pass = await getActiveAccessPass();
-      if (pass) {
-        navigate("/annuaire", { replace: true });
-        return;
-      }
-      // No active pass: send user to annuaire with purchase modal
-      navigate("/annuaire?buy=1", { replace: true });
     })();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!session?.user) {
         navigate("/auth", { replace: true });
-        return;
+      } else {
+        setUser(session.user);
       }
-      setUser(session.user);
-      const pass = await getActiveAccessPass();
-      if (pass) navigate("/annuaire", { replace: true });
-      else navigate("/annuaire?buy=1", { replace: true });
     });
 
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleCopy = async (text: string, type: 'wave' | 'orange') => {
-    try {
-      await navigator.clipboard.writeText(text);
-      if (type === 'wave') {
-        setCopiedWave(true);
-        setTimeout(() => setCopiedWave(false), 2000);
-      } else {
-        setCopiedOrange(true);
-        setTimeout(() => setCopiedOrange(false), 2000);
-      }
-      toast({
-        title: "Copié !",
-        description: "Le numéro a été copié dans le presse-papiers",
-      });
-    } catch (err) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de copier le numéro",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent(
-      `Bonjour, je souhaite acheter l'accès à l'annuaire des entreprises.\n\nMon email : ${user?.email}\n\nJ'ai effectué le paiement de 5000 F CFA. Veuillez trouver la capture d'écran du paiement ci-joint.`
+      `Bonjour, je souhaite acheter l'accès à l'annuaire des entreprises.\n\nMon email : ${user?.email}\n\nMerci de m'indiquer les coordonnées pour le paiement manuel et d'activer mon accès une fois le paiement reçu.`
     );
     window.open(`https://wa.me/221708184010?text=${message}`, '_blank');
   };
 
-  // This page should never render its legacy content anymore
-  return null;
-  // Legacy UI removed — redirected above
+  if (!user) return null;
+
+  return (
+    <>
+      <Navigation activeTab={"entreprises"} setActiveTab={() => {}} />
+      <div className="container mx-auto max-w-3xl p-6 min-h-screen flex items-center justify-center">
+        <Card className="w-full shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl md:text-2xl font-bold">
+              Paiement manuel de l'accès à l'annuaire
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5 text-muted-foreground">
+            <p>
+              Vous avez choisi le paiement manuel. Contactez-nous sur WhatsApp pour recevoir les
+              coordonnées de paiement et nous envoyer votre preuve. Nous activerons votre accès
+              dès validation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+                onClick={handleWhatsAppContact}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Contacter sur WhatsApp
+              </Button>
+              <Link to="/produits/annuaire">
+                <Button variant="outline">Retour à la page produit</Button>
+              </Link>
+            </div>
+            <p className="text-xs opacity-70">
+              Astuce: mentionnez l'email de votre compte dans le message pour une activation plus rapide.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    </>
+  );
 }

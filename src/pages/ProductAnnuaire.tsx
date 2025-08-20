@@ -84,8 +84,8 @@ export default function ProductAnnuaire() {
       navigate("/annuaire");
       return;
     }
-    // Otherwise, open the in-page payment flow on annuaire
-    navigate("/annuaire?buy=1");
+    // Bascule: paiement manuel par défaut
+    navigate("/paiement-manuel");
   };
 
   const handleWhatsAppContact = () => {
@@ -152,17 +152,22 @@ export default function ProductAnnuaire() {
                     >
                       {user ? "Acheter l'accès" : "Se connecter pour acheter"}
                     </Button>
-                    <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                      <span>Problème de paiement ?</span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
-                        onClick={handleWhatsAppContact}
-                      >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Contactez-nous
-                      </Button>
+                    <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                      <Link to="/paiement-manuel" className="underline">
+                        Payer manuellement (Wave/Orange Money, activation manuelle)
+                      </Link>
+                      <div className="flex items-center justify-center gap-2">
+                        <span>Besoin d’aide ?</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+                          onClick={handleWhatsAppContact}
+                        >
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contactez-nous
+                        </Button>
+                      </div>
                     </div>
                   </>
                 )}
