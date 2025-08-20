@@ -56,8 +56,8 @@ export default function ManualPurchase() {
           </CardHeader>
           <CardContent className="space-y-5 text-muted-foreground">
             <p>
-              Contactez-nous sur WhatsApp pour recevoir les
-              coordonnées de paiement et nous envoyer votre preuve. Nous activerons votre accès
+              Contactez-moi sur WhatsApp pour recevoir les
+              coordonnées de paiement et m'envoyer votre preuve de paiement sous forme de capture d'écran. J'activerai votre accès
               dès validation.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
