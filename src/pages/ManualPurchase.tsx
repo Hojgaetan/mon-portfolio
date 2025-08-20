@@ -56,7 +56,7 @@ export default function ManualPurchase() {
           </CardHeader>
           <CardContent className="space-y-5 text-muted-foreground">
             <p>
-              Vous avez choisi le paiement manuel. Contactez-nous sur WhatsApp pour recevoir les
+              Contactez-nous sur WhatsApp pour recevoir les
               coordonnées de paiement et nous envoyer votre preuve. Nous activerons votre accès
               dès validation.
             </p>

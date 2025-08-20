@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getActiveAccessPass, getAccessPrice } from "@/lib/access";
 import { revokeActivePass } from "@/lib/access";
 import { toast } from "sonner";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // Paiement Intech
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 
@@ -58,6 +58,7 @@ export default function EntreprisesPage() {
   const [pendingExtId, setPendingExtId] = useState<string | null>(null);
   const [pendingDeepLink, setPendingDeepLink] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Définir fetchEntreprises mémorisé pour les dépendances de hooks
   const fetchEntreprises = useCallback(async () => {
@@ -414,16 +415,10 @@ export default function EntreprisesPage() {
     // Rediriger vers le paiement manuel si /annuaire?buy=1 et pas d'accès
     const params = new URLSearchParams(location.search);
     if (params.get("buy") === "1" && userId && !hasAccess && !checkingAccess) {
-      // bascule vers le flux manuel
       window.history.replaceState({}, "", "/annuaire");
-      // Utiliser la navigation client
-      (async () => {
-        const { useNavigate } = await import("react-router-dom");
-      })();
-      // Fallback: changer l’emplacement
-      window.location.assign("/paiement-manuel");
+      navigate("/paiement-manuel", { replace: true });
     }
-  }, [location.search, userId, hasAccess, checkingAccess]);
+  }, [location.search, userId, hasAccess, checkingAccess, navigate]);
 
   if (checkingAccess) {
     return (
