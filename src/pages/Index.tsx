@@ -137,7 +137,7 @@ const Index = () => {
               </div>
               <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">✨ Bienvenue</Badge>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                Portfolio, projets et idées
+                Joel Gaetan HASSAM OBAH
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
                 Développement web, data et IA — découvrez mes travaux, produits et articles.
