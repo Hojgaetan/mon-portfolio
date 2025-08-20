@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { getAccessPrice, getActiveAccessPass } from "@/lib/access";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, CheckCircle, Star, Users, Clock, Shield, Target, TrendingUp, Zap, Award } from "lucide-react";
 
 export default function ProductAnnuaire() {
   const [user, setUser] = useState<User | null>(null);

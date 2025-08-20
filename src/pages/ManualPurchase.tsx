@@ -2,14 +2,18 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { MessageCircle, Shield, Clock, CheckCircle, Copy, Smartphone, CreditCard, ArrowRight } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { useToast } from "@/hooks/use-toast";
 
 export default function ManualPurchase() {
   const [user, setUser] = useState<User | null>(null);
+  const [copiedPhone, setCopiedPhone] = useState(false);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     document.title = "Paiement manuel · Annuaire";
@@ -37,10 +41,20 @@ export default function ManualPurchase() {
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent(
-      `Bonjour, je souhaite acheter l'accès à l'annuaire des entreprises.\n\nMon email : ${user?.email}\n\nMerci de m'indiquer les coordonnées pour le paiement manuel et d'activer mon accès une fois le paiement reçu.`
+      `🚀 Bonjour ! Je souhaite acheter l'accès à l'annuaire des entreprises.\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci d'activer mon accès ! ⚡`
     );
     const url = `https://wa.me/221708184010?text=${message}`;
     window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const copyPhoneNumber = () => {
+    navigator.clipboard.writeText("772020430");
+    setCopiedPhone(true);
+    toast({
+      title: "Numéro copié !",
+      description: "Le numéro 772020430 a été copié dans votre presse-papiers.",
+    });
+    setTimeout(() => setCopiedPhone(false), 2000);
   };
 
   if (!user) return null;
@@ -48,54 +62,193 @@ export default function ManualPurchase() {
   return (
     <>
       <Navigation activeTab={"entreprises"} setActiveTab={() => {}} />
-      <main role="main" className="container mx-auto max-w-3xl p-6 min-h-screen flex flex-col items-center justify-start gap-6">
-        <nav aria-label="Fil d'Ariane" className="w-full -mb-2 text-sm text-muted-foreground">
-          <ol className="flex flex-wrap gap-2" role="list">
-            <li><Link to="/" className="hover:underline">Accueil</Link></li>
-            <li aria-hidden>›</li>
-            <li><Link to="/produit" className="hover:underline">Produits</Link></li>
-            <li aria-hidden>›</li>
-            <li><Link to="/produit/annuaire" className="hover:underline">Annuaire</Link></li>
-            <li aria-hidden>›</li>
-            <li aria-current="page" className="text-foreground">Paiement manuel</li>
-          </ol>
-        </nav>
+      
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-background via-accent-green/5 to-background">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+        
+        <div className="container mx-auto max-w-4xl p-6 relative">
+          <nav aria-label="Fil d'Ariane" className="mb-8 text-sm text-muted-foreground">
+            <ol className="flex flex-wrap gap-2" role="list">
+              <li><Link to="/" className="hover:underline transition-colors">Accueil</Link></li>
+              <li aria-hidden>›</li>
+              <li><Link to="/produit" className="hover:underline transition-colors">Produits</Link></li>
+              <li aria-hidden>›</li>
+              <li><Link to="/produit/annuaire" className="hover:underline transition-colors">Annuaire</Link></li>
+              <li aria-hidden>›</li>
+              <li aria-current="page" className="text-foreground font-medium">Paiement</li>
+            </ol>
+          </nav>
 
-        <header className="w-full" aria-labelledby="page-title">
-          <h1 id="page-title" className="text-2xl md:text-3xl font-bold tracking-tight">
-            Paiement manuel de l'accès à l'annuaire
-          </h1>
-          <p className="text-muted-foreground mt-2 max-w-prose">
-            Recevez les coordonnées de paiement et faites activer votre accès d'1 heure une fois le paiement confirmé.
-          </p>
-        </header>
-
-        <Card className="w-full shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-xl md:text-2xl font-bold">
+          <header className="text-center py-8" aria-labelledby="page-title">
+            <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">
+              💳 Paiement sécurisé  
+            </Badge>
+            <h1 id="page-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               Finaliser votre achat
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Processus simple et sécurisé via Wave ou Orange Money. Activation immédiate après confirmation.
+            </p>
+          </header>
+        </div>
+      </div>
+
+      <main role="main" className="container mx-auto max-w-4xl p-6">
+        {/* Payment Methods */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Wave Payment */}
+          <Card className="border-2 border-accent-blue/20 bg-gradient-to-br from-card to-accent-blue/5 hover:border-accent-blue/30 transition-all duration-300">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mb-4">
+                <Smartphone className="w-8 h-8 text-accent-blue" />
+              </div>
+              <CardTitle className="text-xl font-bold text-accent-blue">
+                Paiement Wave
+              </CardTitle>
+              <p className="text-muted-foreground">
+                Solution mobile de paiement populaire au Sénégal
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-accent-blue/5 p-4 rounded-lg border border-accent-blue/10">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Numéro Wave :</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyPhoneNumber}
+                    className="border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"
+                  >
+                    {copiedPhone ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+                <div className="text-2xl font-bold text-accent-blue">772 020 430</div>
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Envoyez 5000 F CFA</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Prenez une capture d'écran</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Contactez-nous sur WhatsApp</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Orange Money Payment */}
+          <Card className="border-2 border-accent-yellow/20 bg-gradient-to-br from-card to-accent-yellow/5 hover:border-accent-yellow/30 transition-all duration-300">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 bg-accent-yellow/10 rounded-full flex items-center justify-center mb-4">
+                <CreditCard className="w-8 h-8 text-accent-yellow" />
+              </div>
+              <CardTitle className="text-xl font-bold text-accent-yellow">
+                Orange Money
+              </CardTitle>
+              <p className="text-muted-foreground">
+                Service de paiement mobile d'Orange
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-accent-yellow/5 p-4 rounded-lg border border-accent-yellow/10">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium">Numéro Orange Money :</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyPhoneNumber}
+                    className="border-accent-yellow/20 text-accent-yellow hover:bg-accent-yellow/5"
+                  >
+                    {copiedPhone ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+                <div className="text-2xl font-bold text-accent-yellow">772 020 430</div>
+              </div>
+              
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Envoyez 5000 F CFA</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Prenez une capture d'écran</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-accent-green" />
+                  <span>Contactez-nous sur WhatsApp</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Section */}
+        <Card className="max-w-2xl mx-auto shadow-lg border-2 border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold mb-2">
+              💬 Étape finale
             </CardTitle>
+            <p className="text-muted-foreground">
+              Après avoir effectué votre paiement, contactez-nous pour l'activation
+            </p>
           </CardHeader>
-          <CardContent className="space-y-5 text-muted-foreground">
-            <p className="max-w-prose">
-              Contactez-moi sur WhatsApp pour recevoir les coordonnées de paiement et m'envoyer votre preuve de paiement (capture d'écran). J'activerai votre accès dès validation.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+          <CardContent className="space-y-6">
+            <div className="bg-accent-green/5 p-6 rounded-lg border border-accent-green/10">
+              <h3 className="font-semibold mb-3 flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-accent-green" />
+                Message automatique préparé
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Votre email sera automatiquement inclus dans le message pour une activation plus rapide.
+              </p>
+              
               <Button
-                className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
+                size="lg"
+                className="w-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={handleWhatsAppContact}
-                aria-label="Contacter sur WhatsApp pour le paiement"
+                aria-label="Contacter sur WhatsApp pour finaliser l'achat"
               >
-                <MessageCircle className="w-4 h-4 mr-2" aria-hidden="true" />
-                Contacter sur WhatsApp
+                <MessageCircle className="w-5 h-5 mr-2" aria-hidden="true" />
+                Envoyer la capture sur WhatsApp
+                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-              <Link to="/produit/annuaire">
-                <Button variant="outline" aria-label="Retour à la page produit annuaire">Retour à la page produit</Button>
-              </Link>
             </div>
-            <p className="text-xs opacity-70">
-              Astuce: mentionnez l'email de votre compte dans le message pour une activation plus rapide.
-            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
+              <Link to="/produit/annuaire" className="flex-1">
+                <Button variant="outline" className="w-full" aria-label="Retour à la page produit annuaire">
+                  ← Retour au produit
+                </Button>
+              </Link>
+              <Button 
+                variant="outline" 
+                onClick={copyPhoneNumber}
+                className="flex-1 border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copier le numéro
+              </Button>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                <span>Paiement sécurisé</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
+                <span>Activation en 5 min</span>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
