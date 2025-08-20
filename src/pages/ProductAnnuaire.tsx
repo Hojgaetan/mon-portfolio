@@ -18,7 +18,7 @@ export default function ProductAnnuaire() {
     document.title = "Produit · Annuaire des entreprises";
     
     // Check authentication status
-    let subscription;
+    let subscription: { unsubscribe: () => void } | undefined;
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user);
       if (user && user.id) {
@@ -90,13 +90,33 @@ export default function ProductAnnuaire() {
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent("Bonjour, j'ai besoin d'aide pour accéder à l'annuaire des entreprises.");
-    window.open(`https://wa.me/221708184010?text=${message}`, '_blank');
+    const url = `https://wa.me/221708184010?text=${message}`;
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
     <>
       <Navigation activeTab={"entreprises"} setActiveTab={()=>{}} />
-      <div className="container mx-auto max-w-4xl p-6 min-h-screen flex items-center justify-center">
+      <main role="main" className="container mx-auto max-w-4xl p-6 min-h-screen">
+        <nav aria-label="Fil d'Ariane" className="mb-4 text-sm text-muted-foreground">
+          <ol className="flex flex-wrap gap-2" role="list">
+            <li><Link to="/" className="hover:underline">Accueil</Link></li>
+            <li aria-hidden>›</li>
+            <li><Link to="/produit" className="hover:underline">Produits</Link></li>
+            <li aria-hidden>›</li>
+            <li aria-current="page" className="text-foreground">Annuaire</li>
+          </ol>
+        </nav>
+
+        <header className="mb-6" aria-labelledby="page-title">
+          <h1 id="page-title" className="text-2xl md:text-3xl font-bold tracking-tight">
+            Annuaire des entreprises — Produit
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Accédez à une base qualifiée d'entreprises sénégalaises sans présence web.
+          </p>
+        </header>
+
         <Card className="max-w-2xl mx-auto shadow-lg">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-xl md:text-2xl font-bold leading-tight">
@@ -110,7 +130,7 @@ export default function ProductAnnuaire() {
                 Idéal pour le démarchage commercial et les opportunités d'affaires.
               </p>
               
-              <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-lg border">
+              <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 rounded-lg border" aria-live="polite">
                 <div className="text-3xl font-bold text-primary mb-2">
                   {price.toLocaleString("fr-FR")} F CFA
                 </div>
@@ -119,26 +139,26 @@ export default function ProductAnnuaire() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center max-w-lg mx-auto">
-                <div className="p-3 rounded-lg bg-muted/20">
+              <ul role="list" className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center max-w-lg mx-auto">
+                <li className="p-3 rounded-lg bg-muted/20">
                   <div className="text-sm font-medium">Coordonnées</div>
                   <div className="text-xs text-muted-foreground">complètes</div>
-                </div>
-                <div className="p-3 rounded-lg bg-muted/20">
+                </li>
+                <li className="p-3 rounded-lg bg-muted/20">
                   <div className="text-sm font-medium">Recherche</div>
                   <div className="text-xs text-muted-foreground">avancée</div>
-                </div>
-                <div className="p-3 rounded-lg bg-muted/20">
+                </li>
+                <li className="p-3 rounded-lg bg-muted/20">
                   <div className="text-sm font-medium">Données</div>
                   <div className="text-xs text-muted-foreground">mises à jour</div>
-                </div>
-              </div>
+                </li>
+              </ul>
 
               <div className="pt-6 space-y-4">
                 {isAdmin ? (
                   <div className="text-center">
                     <Link to="/annuaire" className="inline-block">
-                      <Button size="lg" className="w-full sm:w-auto px-12 py-3 text-base font-semibold">
+                      <Button size="lg" className="w-full sm:w-auto px-12 py-3 text-base font-semibold" aria-label="Voir la liste des entreprises">
                         Voir la liste
                       </Button>
                     </Link>
@@ -149,6 +169,7 @@ export default function ProductAnnuaire() {
                       size="lg" 
                       className="w-full sm:w-auto px-12 py-3 text-base font-semibold"
                       onClick={handlePurchase}
+                      aria-label={user ? "Acheter l'accès à l'annuaire" : "Se connecter pour acheter l'accès"}
                     >
                       {user ? "Acheter l'accès" : "Se connecter pour acheter"}
                     </Button>
@@ -163,8 +184,9 @@ export default function ProductAnnuaire() {
                           size="sm"
                           className="bg-green-500 hover:bg-green-600 text-white border-green-500 hover:border-green-600"
                           onClick={handleWhatsAppContact}
+                          aria-label="Contacter l'assistance sur WhatsApp"
                         >
-                          <MessageCircle className="w-4 h-4 mr-2" />
+                          <MessageCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                           Contactez-nous
                         </Button>
                       </div>
@@ -179,7 +201,7 @@ export default function ProductAnnuaire() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
     </>
   );
 }

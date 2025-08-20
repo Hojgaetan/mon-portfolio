@@ -472,7 +472,7 @@ export default function EntreprisesPage() {
                   <Link to="/auth">Changer de compte</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                  <Link to="/produits/annuaire">Voir la page produit</Link>
+                  <Link to="/produit/annuaire">Voir la page produit</Link>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">

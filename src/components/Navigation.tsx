@@ -70,7 +70,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
       id: "produits",
       label: "Produits",
       icon: <FolderKanban className="h-4 w-4" />,
-      path: "/produits/annuaire",
+      path: "/produit",
     },
     /* {
       id: "projects",

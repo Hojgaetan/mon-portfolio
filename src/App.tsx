@@ -17,6 +17,7 @@ import IntechDemo from "./pages/IntechDemo";
 import { Footer } from "@/components/Footer";
 import ProductAnnuaire from "./pages/ProductAnnuaire";
 import ManualPurchase from "./pages/ManualPurchase";
+import ProductIndex from "./pages/ProductIndex";
 
 const queryClient = new QueryClient();
 
@@ -36,9 +37,13 @@ function AppRoutes() {
           <Route path="/projets" element={<ProjectsPage />} />
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
-          <Route path="/produits/annuaire" element={<ProductAnnuaire />} />
-          {/* Legacy manual payment route now redirects to annuaire/auth based on access */}
+          {/* Produits */}
+          <Route path="/produit" element={<ProductIndex />} />
+          <Route path="/produit/annuaire" element={<ProductAnnuaire />} />
+          <Route path="/produits/annuaire" element={<Navigate to="/produit/annuaire" replace />} />
+          {/* Paiement manuel */}
           <Route path="/paiement-manuel" element={<ManualPurchase />} />
+          {/* Demo */}
           <Route path="/intech-demo" element={<IntechDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
