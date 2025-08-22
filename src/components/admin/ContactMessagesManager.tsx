@@ -208,11 +208,11 @@ export function ContactMessagesManager() {
                     <CardTitle className="text-base flex items-center gap-2">
                       <User className="h-4 w-4" />
                       {message.name}
-                      <Badge variant={message.read ? "secondary" : "default"} className="ml-2">
+                      <Badge variant={message.read ? "secondary" : "default"} className={`ml-2 ${!message.read ? 'bg-accent-blue text-white' : ''}`}>
                         {message.read ? "Lu" : "Non lu"}
                       </Badge>
                       {message.replied && (
-                        <Badge variant="outline" className="bg-green-50 text-green-700">
+                        <Badge variant="outline" className="bg-accent-green/10 text-accent-green border-accent-green/20">
                           Répondu
                         </Badge>
                       )}

@@ -251,18 +251,21 @@ export function BlogManager() {
         <Button 
           variant={filter === 'all' ? "default" : "outline"} 
           onClick={() => setFilter('all')}
+          className={filter === 'all' ? "bg-accent-blue text-white" : "border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"}
         >
           Tous ({posts.length})
         </Button>
         <Button 
           variant={filter === 'published' ? "default" : "outline"} 
           onClick={() => setFilter('published')}
+          className={filter === 'published' ? "bg-accent-green text-white" : "border-accent-green/20 text-accent-green hover:bg-accent-green/5"}
         >
           Publiés ({posts.filter(p => p.published).length})
         </Button>
         <Button 
           variant={filter === 'draft' ? "default" : "outline"} 
           onClick={() => setFilter('draft')}
+          className={filter === 'draft' ? "bg-accent-red text-white" : "border-accent-red/20 text-accent-red hover:bg-accent-red/5"}
         >
           Brouillons ({posts.filter(p => !p.published).length})
         </Button>
@@ -387,7 +390,7 @@ export function BlogManager() {
                 <div>
                   <CardTitle className="flex items-center gap-2">
                     {post.title}
-                    <Badge variant={post.published ? "default" : "secondary"}>
+                    <Badge variant={post.published ? "default" : "secondary"} className={post.published ? "bg-accent-green text-white" : "bg-accent-red/10 text-accent-red"}>
                       {post.published ? "Publié" : "Brouillon"}
                     </Badge>
                   </CardTitle>

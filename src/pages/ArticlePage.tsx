@@ -216,7 +216,7 @@ export default function ArticlePage() {
         {/* Article Content */}
         <article className="mb-8">
           <div 
-            className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-primary hover:prose-a:text-primary/80"
+            className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-accent-blue hover:prose-a:text-accent-blue/80"
             dangerouslySetInnerHTML={{ __html: post.content }} 
           />
         </article>

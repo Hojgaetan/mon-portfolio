@@ -144,10 +144,10 @@ export function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Projets</CardTitle>
-            <FolderOpen className="h-4 w-4 text-muted-foreground" />
+            <FolderOpen className="h-4 w-4 text-accent-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProjects}</div>
+            <div className="text-2xl font-bold text-accent-blue">{stats.totalProjects}</div>
             <p className="text-xs text-muted-foreground">
               {stats.featuredProjects} en vedette
             </p>
@@ -157,10 +157,10 @@ export function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Articles</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <FileText className="h-4 w-4 text-accent-green" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalPosts}</div>
+            <div className="text-2xl font-bold text-accent-green">{stats.totalPosts}</div>
             <p className="text-xs text-muted-foreground">
               {stats.publishedPosts} publiés
             </p>
@@ -170,10 +170,10 @@ export function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Vues totales</CardTitle>
-            <Eye className="h-4 w-4 text-muted-foreground" />
+            <Eye className="h-4 w-4 text-accent-sky" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalViews}</div>
+            <div className="text-2xl font-bold text-accent-sky">{stats.totalViews}</div>
             <p className="text-xs text-muted-foreground">
               Sur tous les articles
             </p>
@@ -183,10 +183,10 @@ export function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Engagement</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <TrendingUp className="h-4 w-4 text-accent-yellow" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-accent-yellow">
               {stats.totalLikes + stats.totalComments + stats.totalShares}
             </div>
             <p className="text-xs text-muted-foreground">
@@ -201,30 +201,30 @@ export function AdminDashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Likes</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground" />
+            <Heart className="h-4 w-4 text-accent-red" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalLikes}</div>
+            <div className="text-2xl font-bold text-accent-red">{stats.totalLikes}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Commentaires</CardTitle>
-            <MessageCircle className="h-4 w-4 text-muted-foreground" />
+            <MessageCircle className="h-4 w-4 text-accent-green" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalComments}</div>
+            <div className="text-2xl font-bold text-accent-green">{stats.totalComments}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Partages</CardTitle>
-            <Share2 className="h-4 w-4 text-muted-foreground" />
+            <Share2 className="h-4 w-4 text-accent-sky" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.totalShares}</div>
+            <div className="text-2xl font-bold text-accent-sky">{stats.totalShares}</div>
           </CardContent>
         </Card>
       </div>

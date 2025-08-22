@@ -211,7 +211,7 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
             <Button 
               type="submit" 
               disabled={submitting || !formData.author_name || !formData.author_email || !formData.content || !validateEmail(formData.author_email)}
-              className="w-full md:w-auto"
+              className="w-full md:w-auto bg-accent-blue hover:bg-accent-blue/90 text-white"
             >
               {submitting ? "Envoi en cours..." : "Publier le commentaire"}
             </Button>

@@ -163,20 +163,20 @@ export function UsersManager() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total utilisateurs</CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
+            <User className="h-4 w-4 text-accent-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{users.length}</div>
+            <div className="text-2xl font-bold text-accent-blue">{users.length}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Comptes vérifiés</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
+            <Shield className="h-4 w-4 text-accent-green" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-accent-green">
               {users.filter(u => u.email_confirmed_at).length}
             </div>
           </CardContent>
@@ -185,10 +185,10 @@ export function UsersManager() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Connexions récentes</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-accent-sky" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-accent-sky">
               {users.filter(u => u.last_sign_in_at && 
                 new Date(u.last_sign_in_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
               ).length}
@@ -263,11 +263,11 @@ export function UsersManager() {
                     <div className="flex items-center space-x-2">
                       <h3 className="font-medium">{user.email}</h3>
                       {user.email_confirmed_at ? (
-                        <Badge variant="default" className="text-xs">
+                        <Badge variant="default" className="text-xs bg-accent-green text-white">
                           Vérifié
                         </Badge>
                       ) : (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs bg-accent-red/10 text-accent-red">
                           Non vérifié
                         </Badge>
                       )}

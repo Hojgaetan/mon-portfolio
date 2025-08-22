@@ -46,7 +46,7 @@ export default function EntreprisesPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  // Etat du dialogue d’achat
+  // Etat du dialogue d'achat
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const [buyerPhone, setBuyerPhone] = useState("");
   const [buyerOperator, setBuyerOperator] = useState<OperatorCode>("WAVE_SN_API_CASH_IN");
@@ -118,13 +118,13 @@ export default function EntreprisesPage() {
       setPendingExtId(res.externalTransactionId);
       if (res.deepLinkUrl) {
         setPendingDeepLink(res.deepLinkUrl);
-        // Ne pas ouvrir automatiquement d’autres passerelles ici
+        // Ne pas ouvrir automatiquement d'autres passerelles ici
       } else if (res.authLinkUrl) {
         setPendingDeepLink(res.authLinkUrl);
       } else {
         setPendingDeepLink(null);
       }
-      toast("Paiement initié. Terminez-le dans l’application opérateur.");
+      toast("Paiement initié. Terminez-le dans l'application opérateur.");
 
       const pass = await pollAccessActivation({ externalTransactionId: res.externalTransactionId, timeoutMs: 180000, intervalMs: 3000 });
       if (pass) {
@@ -140,16 +140,16 @@ export default function EntreprisesPage() {
       console.error(e);
       const msg = e instanceof Error ? e.message : String(e);
       if (msg && msg.includes("Failed to send a request to the Edge Function")) {
-        toast.error("Paiement indisponible: fonction Edge non joignable. Déployez ‘intech-operation’ et vérifiez les secrets.");
+        toast.error("Paiement indisponible: fonction Edge non joignable. Déployez 'intech-operation' et vérifiez les secrets.");
       } else {
-        toast.error(msg || "Impossible d’initier le paiement.");
+        toast.error(msg || "Impossible d'initier le paiement.");
       }
     } finally {
       setPurchasing(false);
     }
   };
 
-  // Liste filtrée pour l’affichage
+  // Liste filtrée pour l'affichage
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     const base = selectedCategory === "all"
@@ -234,7 +234,7 @@ export default function EntreprisesPage() {
     }
   }, [isAdmin, revoking]);
 
-  // Voile quand l’onglet est caché (Page Visibility API)
+  // Voile quand l'onglet est caché (Page Visibility API)
   useEffect(() => {
     const onVis = () => setHiddenOverlay(document.hidden);
     document.addEventListener('visibilitychange', onVis);
@@ -253,7 +253,7 @@ export default function EntreprisesPage() {
     };
   }, []);
 
-  // Révocation si tentative d’impression
+  // Révocation si tentative d'impression
   useEffect(() => {
     const onBeforePrint = () => expirePassNow('print');
     (window as any).addEventListener('beforeprint', onBeforePrint);
@@ -457,11 +457,11 @@ export default function EntreprisesPage() {
             </CardContent>
           </Card>
 
-          {/* Dialogue d’achat conservé mais non déclenché */}
+          {/* Dialogue d'achat conservé mais non déclenché */}
           <Dialog open={purchaseOpen} onOpenChange={(o)=>{ if(!purchasing) setPurchaseOpen(o); }}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Acheter l’accès</DialogTitle>
+                <DialogTitle>Acheter l'accès</DialogTitle>
                 <DialogDescription>
                   Montant: {getAccessPrice().toLocaleString("fr-FR")} F CFA — choisissez votre opérateur et entrez votre numéro.
                 </DialogDescription>
@@ -488,7 +488,7 @@ export default function EntreprisesPage() {
                 </div>
                 {pendingDeepLink && (
                   <div className="text-xs text-muted-foreground">
-                    Si la fenêtre ne s’est pas ouverte, <a className="underline" href={pendingDeepLink} target="_blank">cliquez ici</a>.
+                    Si la fenêtre ne s'est pas ouverte, <a className="underline" href={pendingDeepLink} target="_blank">cliquez ici</a>.
                   </div>
                 )}
                 <div className="flex gap-2 justify-end">
@@ -534,12 +534,12 @@ export default function EntreprisesPage() {
           </div>
         </div>
 
-        {/* Voile quand l’onglet est caché */}
+        {/* Voile quand l'onglet est caché */}
         {hiddenOverlay && (
           <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
             <div>
               <div className="text-lg font-semibold">Contenu protégé</div>
-              <div className="text-sm opacity-80 mt-1">L’onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
+              <div className="text-sm opacity-80 mt-1">L'onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
             </div>
           </div>
         )}
@@ -599,7 +599,7 @@ export default function EntreprisesPage() {
                     <span className="px-2 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm">
                       {e.categorie?.nom || 'Sans catégorie'}
                     </span>
-                    <Badge variant="outline">{viewCounts[e.id] ?? 0} vues</Badge>
+                    <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[e.id] ?? 0} vues</Badge>
                   </div>
                   <div className="min-w-0">
                     <CardTitle className="text-base sm:text-lg truncate text-foreground">
@@ -651,14 +651,14 @@ export default function EntreprisesPage() {
                      {selected.site_web}
                    </a>
                    {selected.site_web_valide ? (
-                     <Badge className="ml-2">Validé</Badge>
+                     <Badge className="ml-2 bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
                    ) : (
-                     <Badge variant="outline" className="ml-2">Non vérifié</Badge>
+                     <Badge variant="outline" className="ml-2 bg-accent-red/10 text-accent-red border-accent-red/20">Non vérifié</Badge>
                    )}
                  </div>
                )}
                <div className="pt-2">
-                 <Badge variant="outline">{viewCounts[selected?.id ?? ""] ?? 0} consultations uniques</Badge>
+                 <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} consultations uniques</Badge>
                </div>
              </div>
            </DialogContent>

@@ -116,7 +116,7 @@ export const ContactSection = () => {
           </div>
           <button
             type="submit"
-            className="w-full py-2 rounded bg-accent text-accent-foreground font-semibold hover:bg-accent-red transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 rounded bg-accent-blue text-white font-semibold hover:bg-accent-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={sent || loading}
           >
             {loading ? t('contact.sending') : sent ? t('contact.success') : t('contact.send')}
@@ -130,8 +130,8 @@ export const ContactSection = () => {
             <span className="font-semibold text-foreground">{t('contact.phone')} :</span> 221 77 202 04 30
           </div>
           <div className="flex items-center gap-4 mt-2">
-            <a href="https://www.linkedin.com/in/joel-gaetan-hassam-obah/" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">LinkedIn</a>
-            <a href="https://github.com/Hojgaetan" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">Github</a>
+            <a href="https://www.linkedin.com/in/joel-gaetan-hassam-obah/" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors">LinkedIn</a>
+            <a href="https://github.com/Hojgaetan" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors">Github</a>
           </div>
         </div>
       </div>

@@ -199,6 +199,7 @@ export default function Auth() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="votre@email.com"
                   required
+                  className="focus:ring-accent-blue focus:border-accent-blue"
                 />
               </div>
               <div className="space-y-2">
@@ -210,12 +211,13 @@ export default function Auth() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  className="focus:ring-accent-blue focus:border-accent-blue"
                 />
               </div>
               <div className="space-y-2">
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full bg-accent-blue hover:bg-accent-blue/90 text-white"
                   disabled={loading}
                 >
                   {loading ? "Connexion..." : "Se connecter"}
@@ -305,7 +307,7 @@ export default function Auth() {
               <div className="space-y-2">
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full bg-accent-green hover:bg-accent-green/90 text-white"
                   disabled={loading}
                 >
                   {loading ? "Inscription..." : "Créer mon compte"}

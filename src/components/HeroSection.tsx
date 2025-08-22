@@ -63,7 +63,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Contact Info as Code */}
-            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-6 border border-border font-sans text-sm space-y-2 max-w-2xl">
+            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-6 border border-accent-blue/20 font-sans text-sm space-y-2 max-w-2xl">
               <div className="text-code-comment">// bio</div>
 
               <div className="flex items-center space-x-2">

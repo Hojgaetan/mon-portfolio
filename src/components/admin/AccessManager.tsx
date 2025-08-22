@@ -193,30 +193,30 @@ export function AccessManager() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Accès actifs</CardTitle>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-4 w-4 text-accent-green" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{activeAccesses.length}</div>
+            <div className="text-2xl font-bold text-accent-green">{activeAccesses.length}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total accès</CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
+            <User className="h-4 w-4 text-accent-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{accessPasses.length}</div>
+            <div className="text-2xl font-bold text-accent-blue">{accessPasses.length}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Revenus total</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Calendar className="h-4 w-4 text-accent-yellow" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-accent-yellow">
               {accessPasses.reduce((sum, pass) => sum + pass.amount, 0).toLocaleString()} F
             </div>
           </CardContent>
@@ -273,10 +273,10 @@ export function AccessManager() {
               <p className="text-muted-foreground text-center py-4">Aucun accès actif</p>
             ) : (
               activeAccesses.map((pass) => (
-                <div key={pass.id} className="flex items-center justify-between p-4 border rounded-lg bg-green-50 dark:bg-green-950/20">
+                <div key={pass.id} className="flex items-center justify-between p-4 border rounded-lg bg-accent-green/5 border-accent-green/20">
                   <div className="flex items-center space-x-4">
                     <Avatar className="h-10 w-10">
-                      <AvatarFallback className="bg-green-100 text-green-700">
+                      <AvatarFallback className="bg-accent-green/10 text-accent-green">
                         {pass.profiles?.first_name?.[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -286,7 +286,7 @@ export function AccessManager() {
                         <span className="font-medium">
                           {pass.profiles?.first_name} {pass.profiles?.last_name}
                         </span>
-                        <Badge variant="default" className="bg-green-600">
+                        <Badge variant="default" className="bg-accent-green text-white">
                           <Clock className="w-3 h-3 mr-1" />
                           {getTimeRemaining(pass.expires_at)}
                         </Badge>

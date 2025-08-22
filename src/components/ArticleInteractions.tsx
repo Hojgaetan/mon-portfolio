@@ -162,10 +162,10 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
-              variant={liked ? "default" : "outline"}
+              variant={liked ? "accent-red" : "outline"}
               size="sm"
               onClick={handleLike}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 ${!liked ? 'border-accent-red/20 text-accent-red hover:bg-accent-red/5' : ''}`}
             >
               <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
               {likes}
@@ -181,6 +181,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             <Button
               variant="outline"
               size="sm"
+              className="border-accent-sky/20 text-accent-sky hover:bg-accent-sky/5"
               onClick={() => handleShare('twitter', shareUrls.twitter)}
             >
               <Twitter className="w-4 h-4" />
@@ -189,6 +190,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             <Button
               variant="outline"
               size="sm"
+              className="border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"
               onClick={() => handleShare('linkedin', shareUrls.linkedin)}
             >
               <Linkedin className="w-4 h-4" />
@@ -197,6 +199,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             <Button
               variant="outline"
               size="sm"
+              className="border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"
               onClick={() => handleShare('facebook', shareUrls.facebook)}
             >
               <Facebook className="w-4 h-4" />
@@ -205,6 +208,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             <Button
               variant="outline"
               size="sm"
+              className="border-accent-green/20 text-accent-green hover:bg-accent-green/5"
               onClick={copyToClipboard}
             >
               <Link2 className="w-4 h-4" />

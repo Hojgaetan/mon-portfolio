@@ -76,6 +76,7 @@ export function AdminSettings() {
                     <Button
                       key={option.value}
                       variant={theme === option.value ? "default" : "outline"}
+                      className={theme === option.value ? "bg-accent-blue text-white" : "border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"}
                       className="justify-start"
                       onClick={() => setTheme(option.value as "light" | "dark" | "system")}
                     >
@@ -232,7 +233,7 @@ export function AdminSettings() {
 
         {/* Save Button */}
         <div className="flex justify-end">
-          <Button onClick={handleSave} size="lg">
+          <Button onClick={handleSave} size="lg" className="bg-accent-blue hover:bg-accent-blue/90 text-white">
             Sauvegarder les paramètres
           </Button>
         </div>
