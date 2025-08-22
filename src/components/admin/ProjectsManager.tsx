@@ -23,10 +23,10 @@ interface Project {
   technologies: string[] | null;
   featured: boolean | null;
   planning_url: string | null;
-  modelisation_url: string | null;
-  charte_url: string | null;
+  analysis_url: string | null;
+  design_url: string | null;
   prototype_url: string | null;
-  category: "personnel" | "professionnel" | "academique";
+  category: string | null;
 }
 
 interface FormProject {
@@ -37,12 +37,12 @@ interface FormProject {
   project_url: string;
   github_url: string;
   planning_url: string;
-  modelisation_url: string;
-  charte_url: string;
+  analysis_url: string;
+  design_url: string;
   prototype_url: string;
   technologies: string[];
   featured: boolean;
-  category: "personnel" | "professionnel" | "academique";
+  category: string;
 }
 
 export function ProjectsManager() {
@@ -59,12 +59,12 @@ export function ProjectsManager() {
     project_url: "",
     github_url: "",
     planning_url: "",
-    modelisation_url: "",
-    charte_url: "",
+    analysis_url: "",
+    design_url: "",
     prototype_url: "",
     technologies: "",
     featured: false,
-    category: "professionnel" as "personnel" | "professionnel" | "academique",
+    category: "professionnel",
   });
 
   useEffect(() => {
@@ -88,8 +88,8 @@ export function ProjectsManager() {
           project_url: project.project_url ?? "",
           github_url: project.github_url ?? "",
           planning_url: project.planning_url ?? "",
-          modelisation_url: project.modelisation_url ?? "",
-          charte_url: project.charte_url ?? "",
+          analysis_url: project.analysis_url ?? "",
+          design_url: project.design_url ?? "",
           prototype_url: project.prototype_url ?? "",
           technologies: project.technologies ?? [],
           featured: project.featured ?? false,
@@ -111,12 +111,12 @@ export function ProjectsManager() {
       project_url: "",
       github_url: "",
       planning_url: "",
-      modelisation_url: "",
-      charte_url: "",
+      analysis_url: "",
+      design_url: "",
       prototype_url: "",
       technologies: "",
       featured: false,
-      category: "professionnel" as "personnel" | "professionnel" | "academique",
+      category: "professionnel",
     });
     setEditingProject(null);
     setIsCreating(false);
@@ -133,8 +133,8 @@ export function ProjectsManager() {
       project_url: project.project_url,
       github_url: project.github_url,
       planning_url: project.planning_url,
-      modelisation_url: project.modelisation_url,
-      charte_url: project.charte_url,
+      analysis_url: project.analysis_url,
+      design_url: project.design_url,
       prototype_url: project.prototype_url,
       technologies: project.technologies,
       featured: project.featured,
@@ -148,8 +148,8 @@ export function ProjectsManager() {
       project_url: project.project_url || "",
       github_url: project.github_url || "",
       planning_url: project.planning_url || "",
-      modelisation_url: project.modelisation_url || "",
-      charte_url: project.charte_url || "",
+      analysis_url: project.analysis_url || "",
+      design_url: project.design_url || "",
       prototype_url: project.prototype_url || "",
       technologies: project.technologies?.join(", ") || "",
       featured: project.featured || false,
@@ -173,8 +173,8 @@ export function ProjectsManager() {
         project_url: formData.project_url || null,
         github_url: formData.github_url || null,
         planning_url: formData.planning_url || null,
-        modelisation_url: formData.modelisation_url || null,
-        charte_url: formData.charte_url || null,
+        analysis_url: formData.analysis_url || null,
+        design_url: formData.design_url || null,
         prototype_url: formData.prototype_url || null,
         technologies: formData.technologies
           ? formData.technologies.split(",").map(tech => tech.trim()).filter(Boolean)
@@ -333,22 +333,22 @@ export function ProjectsManager() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="modelisation_url">URL de la modélisation</Label>
+                <Label htmlFor="analysis_url">URL de l'analyse</Label>
                 <Input
-                  id="modelisation_url"
+                  id="analysis_url"
                   type="url"
-                  value={formData.modelisation_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, modelisation_url: e.target.value }))}
+                  value={formData.analysis_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, analysis_url: e.target.value }))}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="charte_url">URL de la charte</Label>
+                <Label htmlFor="design_url">URL du design</Label>
                 <Input
-                  id="charte_url"
+                  id="design_url"
                   type="url"
-                  value={formData.charte_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, charte_url: e.target.value }))}
+                  value={formData.design_url}
+                  onChange={(e) => setFormData(prev => ({ ...prev, design_url: e.target.value }))}
                 />
               </div>
 
@@ -372,22 +372,22 @@ export function ProjectsManager() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="category">Catégorie</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as "personnel" | "professionnel" | "academique" }))}
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Sélectionner une catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="professionnel">Professionnel</SelectItem>
-                    <SelectItem value="personnel">Personnel</SelectItem>
-                    <SelectItem value="academique">Académique</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="category">Catégorie</Label>
+                  <Select
+                    value={formData.category}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}
+                  >
+                    <SelectTrigger id="category">
+                      <SelectValue placeholder="Sélectionner une catégorie" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="professionnel">Professionnel</SelectItem>
+                      <SelectItem value="personnel">Personnel</SelectItem>
+                      <SelectItem value="academique">Académique</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
               <div className="flex items-center space-x-2">
                 <Switch
@@ -485,24 +485,24 @@ export function ProjectsManager() {
                     Planning
                   </a>
                 )}
-                {project.modelisation_url && (
+                {project.analysis_url && (
                   <a
-                    href={project.modelisation_url}
+                    href={project.analysis_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
                   >
-                    Modélisation
+                    Analyse
                   </a>
                 )}
-                {project.charte_url && (
+                {project.design_url && (
                   <a
-                    href={project.charte_url}
+                    href={project.design_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline"
                   >
-                    Charte
+                    Design
                   </a>
                 )}
                 {project.prototype_url && (
