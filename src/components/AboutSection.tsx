@@ -398,7 +398,7 @@ export const AboutSection = () => {
                                   className={`flex items-center space-x-3 w-full text-left rounded-lg px-3 py-2.5 transition-all duration-200 text-sm ml-6 ${
                                     selectedInfo === item.id 
                                       ? "bg-primary/15 text-primary font-medium border border-primary/40 shadow-sm scale-[1.02]" 
-                                      : "hover:bg-muted/60 text-foreground hover:text-primary border border-transparent hover:border-border hover:scale-[1.01]"
+                                      : "hover:bg-accent-sky/10 text-foreground hover:text-accent-sky border border-transparent hover:border-border hover:scale-[1.01]"
                                   }`}
                                   onClick={() => {
                                     setSelectedInfo(item.id);
@@ -408,7 +408,7 @@ export const AboutSection = () => {
                                   <span className="w-4 h-4 flex items-center justify-center text-muted-foreground">{item.icon}</span>
                                   <span className="font-sans flex-1">{item.label}</span>
                                   {selectedInfo === item.id && (
-                                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                                    <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse"></div>
                                   )}
                                 </button>
                               ))}
@@ -441,8 +441,8 @@ export const AboutSection = () => {
                       onClick={() => setSelectedInfo(item.id)}
                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${
                         selectedInfo === item.id 
-                          ? "bg-primary/15 text-primary border border-primary/30" 
-                          : "bg-background text-muted-foreground border border-border hover:bg-muted/60"
+                          ? "bg-accent-blue/15 text-accent-blue border border-accent-blue/30" 
+                          : "bg-background text-muted-foreground border border-border hover:bg-accent-sky/10"
                       }`}
                     >
                       <span className="w-3 h-3 flex items-center justify-center">{item.icon}</span>
@@ -477,8 +477,8 @@ export const AboutSection = () => {
                       onClick={() => setSelectedInfo(item.id)}
                       className={`flex items-center gap-1 px-2 py-1 rounded text-xs whitespace-nowrap flex-shrink-0 ${
                         selectedInfo === item.id 
-                          ? "bg-primary/15 text-primary border border-primary/30" 
-                          : "bg-background text-muted-foreground border border-border hover:bg-muted/60"
+                          ? "bg-accent-blue/15 text-accent-blue border border-accent-blue/30" 
+                          : "bg-background text-muted-foreground border border-border hover:bg-accent-sky/10"
                       }`}
                     >
                       <span className="w-3 h-3 flex items-center justify-center">{item.icon}</span>

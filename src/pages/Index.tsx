@@ -219,10 +219,10 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">Outils et solutions proposés</CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-yellow/20 bg-gradient-to-br from-card to-accent-yellow/5 cursor-pointer" onClick={() => navigate('/projets')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-yellow/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-sky/20 bg-gradient-to-br from-card to-accent-sky/5 cursor-pointer" onClick={() => navigate('/projets')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Folder className="h-5 w-5 text-accent-yellow" />
+                  <Folder className="h-5 w-5 text-accent-sky" />
                   <CardTitle className="text-base">Projets</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">Sélection de travaux récents</CardContent>

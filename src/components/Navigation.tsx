@@ -242,7 +242,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                     setUser(null);
                     navigate('/');
                   } else {
-                    navigate('/auth');
+                    : "text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky"
                   }
                 }}
               >

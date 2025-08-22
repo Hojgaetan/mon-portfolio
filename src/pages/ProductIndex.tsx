@@ -45,7 +45,7 @@ export default function ProductIndex() {
                 <div className="text-sm text-muted-foreground">Qualité</div>
               </div>
               <div className="text-center p-4">
-                <div className="text-2xl font-bold text-accent-yellow">24/7</div>
+                <div className="text-2xl font-bold text-accent-sky">24/7</div>
                 <div className="text-sm text-muted-foreground">Accès</div>
               </div>
               <div className="text-center p-4">

@@ -226,7 +226,7 @@ export const ProjectsSection = () => {
                       {filteredProjects.map(project => (
                         <Card
                           key={project.id}
-                          className={`cursor-pointer transition-all hover:shadow-md ${currentProject?.id === project.id ? 'shadow-lg' : ''}`}
+                          className={`cursor-pointer transition-all hover:shadow-md border-2 hover:border-accent-blue/20 ${currentProject?.id === project.id ? 'shadow-lg border-accent-blue/30 bg-accent-blue/5' : 'border-transparent'}`}
                           onClick={() => handleProjectClick(project.id)}
                         >
                           <CardHeader>
@@ -237,7 +237,7 @@ export const ProjectsSection = () => {
                             {project.technologies && project.technologies.length > 0 && (
                               <div className="flex flex-wrap gap-2 mt-2">
                                 {project.technologies.map(tech => (
-                                  <Badge key={tech} variant="secondary">{tech}</Badge>
+                                  <Badge key={tech} variant="secondary" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{tech}</Badge>
                                 ))}
                               </div>
                             )}

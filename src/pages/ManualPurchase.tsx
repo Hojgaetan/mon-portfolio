@@ -144,12 +144,12 @@ export default function ManualPurchase() {
           </Card>
 
           {/* Orange Money Payment */}
-          <Card className="border-2 border-accent-yellow/20 bg-gradient-to-br from-card to-accent-yellow/5 hover:border-accent-yellow/30 transition-all duration-300">
+          <Card className="border-2 border-accent-sky/20 bg-gradient-to-br from-card to-accent-sky/5 hover:border-accent-sky/30 transition-all duration-300">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-accent-yellow/10 rounded-full flex items-center justify-center mb-4">
-                <CreditCard className="w-8 h-8 text-accent-yellow" />
+              <div className="mx-auto w-16 h-16 bg-accent-sky/10 rounded-full flex items-center justify-center mb-4">
+                <CreditCard className="w-8 h-8 text-accent-sky" />
               </div>
-              <CardTitle className="text-xl font-bold text-accent-yellow">
+              <CardTitle className="text-xl font-bold text-accent-sky">
                 Orange Money
               </CardTitle>
               <p className="text-muted-foreground">
@@ -157,19 +157,19 @@ export default function ManualPurchase() {
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-accent-yellow/5 p-4 rounded-lg border border-accent-yellow/10">
+              <div className="bg-accent-sky/5 p-4 rounded-lg border border-accent-sky/10">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">Numéro Orange Money :</span>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={copyPhoneNumber}
-                    className="border-accent-yellow/20 text-accent-yellow hover:bg-accent-yellow/5"
+                    className="border-accent-sky/20 text-accent-sky hover:bg-accent-sky/5"
                   >
                     {copiedPhone ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                   </Button>
                 </div>
-                <div className="text-2xl font-bold text-accent-yellow">772 020 430</div>
+                <div className="text-2xl font-bold text-accent-sky">772 020 430</div>
               </div>
               
               <div className="space-y-2 text-sm">

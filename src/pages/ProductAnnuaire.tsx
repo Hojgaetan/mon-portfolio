@@ -189,10 +189,10 @@ export default function ProductAnnuaire() {
                         >
                           <MessageCircle className="w-4 h-4 mr-2" aria-hidden="true" />
                           Contactez-nous
-                        </Button>
+                        <span className="text-lg text-muted-foreground line-through">10 000 F</span>
                       </div>
                     </div>
-                  </>
+                <div className="text-2xl font-bold text-accent-sky">24/7</div>
                 )}
               </div>
 
@@ -206,3 +206,5 @@ export default function ProductAnnuaire() {
     </>
   );
 }
+
+                      <Star key={i} className="w-4 h-4 fill-accent-yellow text-accent-yellow" />

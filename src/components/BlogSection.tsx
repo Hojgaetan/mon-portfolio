@@ -253,7 +253,7 @@ export const BlogSection: React.FC = () => {
                     {(groupedPosts[selectedCategory] || []).map(post => (
                       <Card
                         key={post.id}
-                        className={`cursor-pointer transition-all hover:shadow-md ${currentPost?.id === post.id ? 'shadow-lg border-primary' : ''}`}
+                        className={`cursor-pointer transition-all hover:shadow-md border-2 hover:border-accent-green/20 ${currentPost?.id === post.id ? 'shadow-lg border-accent-green/30 bg-accent-green/5' : 'border-transparent'}`}
                         onClick={() => handlePostClick(post.id)}
                       >
                         <CardHeader>
