@@ -32,7 +32,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("hello");
   const location = useLocation();
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
 
   // States pour aperçus
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -216,13 +216,13 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2">
                 <h2 className="text-3xl md:text-4xl font-bold mb-2">À propos</h2>
-                <p className="text-lg text-muted-foreground">
-                  Passionné par le web, la data et l'IA. Voici un aperçu et des liens rapides vers mes contenus.
+                <p className="text-lg text-muted-foreground line-clamp-3">
+                  {t('about.bio')}
                 </p>
               </div>
               <div className="flex md:justify-end">
-                <Button className="bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg transition-all" onClick={() => setActiveTab('contact')}>
-                  Me contacter
+                <Button className="bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg transition-all" onClick={() => navigate('/a-propos')}>
+                  En savoir plus
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>

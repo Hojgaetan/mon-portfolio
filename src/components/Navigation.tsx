@@ -65,7 +65,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
   const navItems: NavItem[] = [
     { id: "hello", label: t('nav.hello'), icon: <Hand className="h-4 w-4" /> },
-    { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" /> },
+    { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" />, path: "/a-propos" },
     {
       id: "produits",
       label: "Produits",

@@ -18,6 +18,7 @@ import { Footer } from "@/components/Footer";
 import ProductAnnuaire from "./pages/ProductAnnuaire";
 import ManualPurchase from "./pages/ManualPurchase";
 import ProductIndex from "./pages/ProductIndex";
+import AboutPage from "./pages/AboutPage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,8 @@ function AppRoutes() {
           <Route path="/paiement-manuel" element={<ManualPurchase />} />
           {/* Demo */}
           <Route path="/intech-demo" element={<IntechDemo />} />
+          <Route path="/a-propos" element={<AboutPage />} />
+          <Route path="/about" element={<Navigate to="/a-propos" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
