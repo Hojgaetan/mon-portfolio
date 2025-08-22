@@ -13,6 +13,9 @@ import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 // Paiement Intech
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
+// Nouveaux imports UI
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 
 interface EntrepriseRow {
   id: string;
@@ -27,6 +30,8 @@ interface EntrepriseRow {
 }
 interface Category { id: string; nom: string; }
 
+type SortKey = "recent" | "name" | "category" | "views";
+
 export default function EntreprisesPage() {
   const [activeTab, setActiveTab] = useState("hello");
   const [loading, setLoading] = useState(true);
@@ -34,6 +39,11 @@ export default function EntreprisesPage() {
   const [hasAccess, setHasAccess] = useState(false);
   const [entreprises, setEntreprises] = useState<EntrepriseRow[]>([]);
   const [q, setQ] = useState("");
+  // Recherche avec debounce
+  const [debouncedQ, setDebouncedQ] = useState("");
+  const [sortBy, setSortBy] = useState<SortKey>("recent");
+  const [page, setPage] = useState(1);
+  const pageSize = 12;
   const [userId, setUserId] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -55,6 +65,22 @@ export default function EntreprisesPage() {
   const [pendingDeepLink, setPendingDeepLink] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Debounce search input
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebouncedQ(q), 300);
+    return () => window.clearTimeout(id);
+  }, [q]);
+
+  // Réinitialiser la page lors d'un changement de filtres/recherche/tri
+  useEffect(() => { setPage(1); }, [debouncedQ, selectedCategory, sortBy]);
+
+  const formattedDate = (iso?: string) => {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleDateString('fr-FR', { year: 'numeric', month: 'short', day: '2-digit' });
+    } catch { return ""; }
+  };
 
   // Définir fetchEntreprises mémorisé pour les dépendances de hooks
   const fetchEntreprises = useCallback(async () => {
@@ -151,7 +177,7 @@ export default function EntreprisesPage() {
 
   // Liste filtrée pour l'affichage
   const filtered = useMemo(() => {
-    const term = q.trim().toLowerCase();
+    const term = debouncedQ.trim().toLowerCase();
     const base = selectedCategory === "all"
       ? entreprises
       : entreprises.filter((e) => e.categorie_id === selectedCategory);
@@ -168,7 +194,33 @@ export default function EntreprisesPage() {
         .toLowerCase()
         .includes(term)
     );
-  }, [q, entreprises, selectedCategory]);
+  }, [debouncedQ, entreprises, selectedCategory]);
+
+  const sorted = useMemo(() => {
+    const arr = [...filtered];
+    switch (sortBy) {
+      case "name":
+        arr.sort((a, b) => (a.nom || "").localeCompare(b.nom || "", 'fr'));
+        break;
+      case "category":
+        arr.sort((a, b) => (a.categorie?.nom || "").localeCompare(b.categorie?.nom || "", 'fr'));
+        break;
+      case "views":
+        arr.sort((a, b) => (viewCounts[b.id] || 0) - (viewCounts[a.id] || 0));
+        break;
+      case "recent":
+      default:
+        arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    return arr;
+  }, [filtered, sortBy, viewCounts]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
+  useEffect(() => { if (page > totalPages) setPage(1); }, [totalPages, page]);
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return sorted.slice(start, start + pageSize);
+  }, [sorted, page]);
 
   useEffect(() => {
     const init = async () => {
@@ -507,168 +559,245 @@ export default function EntreprisesPage() {
     <>
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       <div
-        className="container mx-auto max-w-6xl p-4 sm:p-6 space-y-6 relative"
+        className="container mx-auto max-w-6xl p-0 sm:p-0 relative"
         {...guardProps}
-        // Flou retiré pour les clients: on ne filtre plus le container
       >
-        {/* Empêcher l'impression */}
-        <style>{`@media print { body { display: none !important; } }`}</style>
-        {/* Styles responsives pour watermark */}
-        <style>{`
-          @media (max-width: 640px) { .wm-text { font-size: 12px; } }
-          @media (min-width: 641px) { .wm-text { font-size: 16px; } }
-        `}</style>
-
-        {/* Watermark répétitif avec email + horodatage */}
-        <div aria-hidden className="fixed inset-0 pointer-events-none select-none z-[60]" style={{ opacity: 0.12 }}>
-          <div className="absolute inset-0" style={{ transform: 'rotate(-30deg)' }}>
-            {Array.from({ length: 8 }).map((_, r) => (
-              <div key={r} className="flex gap-24" style={{ position: 'absolute', top: `${r * 180}px`, left: 0 }}>
-                {Array.from({ length: 8 }).map((_, c) => (
-                  <span key={c} className="wm-text font-bold" style={{ color: '#000' }}>
-                    {userEmail ?? 'Utilisateur'} · {new Date().toLocaleDateString('fr-FR')}
-                  </span>
-                ))}
+        {/* Hero */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-background via-background to-accent-sky/5 border-b">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%223%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+          <div className="relative px-4 sm:px-6 py-8 max-w-6xl mx-auto">
+            <div className="flex flex-col gap-2">
+              <Badge className="w-fit bg-accent-sky/10 text-accent-sky border-accent-sky/20">📚 Annuaire</Badge>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Entreprises sans site web</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Accédez à une base à jour pour accélérer votre prospection B2B.</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+              <div className="text-center p-2">
+                <div className="text-xl font-bold text-accent-blue">{entreprises.length}</div>
+                <div className="text-xs text-muted-foreground">Entreprises</div>
               </div>
-            ))}
+              <div className="text-center p-2">
+                <div className="text-xl font-bold text-accent-green">{categories.length}</div>
+                <div className="text-xs text-muted-foreground">Catégories</div>
+              </div>
+              <div className="text-center p-2">
+                <div className="text-xl font-bold text-accent-sky">{expiresAt ? countdown ?? "—" : "—"}</div>
+                <div className="text-xs text-muted-foreground">Temps restant</div>
+              </div>
+              <div className="text-center p-2">
+                <div className="text-xl font-bold text-accent-yellow">{new Date().getFullYear()}</div>
+                <div className="text-xs text-muted-foreground">Année</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Voile quand l'onglet est caché */}
-        {hiddenOverlay && (
-          <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
-            <div>
-              <div className="text-lg font-semibold">Contenu protégé</div>
-              <div className="text-sm opacity-80 mt-1">L'onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
+        {/* Toolbar collante */}
+        <div className="sticky top-12 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+            <div className="flex-1 min-w-[220px] relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                className="pl-8"
+                placeholder="Rechercher (nom, catégorie, téléphone...)"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              <div className="w-[200px]">
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>{c.nom}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-[200px]">
+                <Select value={sortBy} onValueChange={(v)=>setSortBy(v as SortKey)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Trier par" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="recent">Plus récents</SelectItem>
+                    <SelectItem value="name">Nom (A→Z)</SelectItem>
+                    <SelectItem value="category">Catégorie (A→Z)</SelectItem>
+                    <SelectItem value="views">Plus consultés</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="ghost" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>
+                Réinitialiser
+              </Button>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Alerte masquage temporaire supprimée car le flou est retiré et le contenu reste masqué via placeholders */}
+        {/* Corps */}
+        <div className="px-4 sm:px-6 py-6 space-y-6">
+          {/* Empêcher l'impression */}
+          <style>{`@media print { body { display: none !important; } }`}</style>
+          {/* Styles responsives pour watermark */}
+          <style>{`
+            @media (max-width: 640px) { .wm-text { font-size: 12px; } }
+            @media (min-width: 641px) { .wm-text { font-size: 16px; } }
+          `}</style>
 
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <h1 className="text-xl sm:text-2xl font-bold">Annuaire des entreprises</h1>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-wrap">
-             {isAdmin ? (
-               <Badge variant="default">Accès admin</Badge>
-             ) : (
-               <>
-                 {expiresAt && (
-                   <Badge variant="outline">
-                     Expire le {new Date(expiresAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                   </Badge>
-                 )}
-                 {countdown && (
-                   <Badge variant="secondary">Reste {countdown}</Badge>
-                 )}
-               </>
-             )}
-            <div className="w-full sm:w-64">
-               <Input
-                 placeholder="Rechercher (nom, catégorie, téléphone...)"
-                 value={q}
-                 onChange={(e) => setQ(e.target.value)}
-               />
-             </div>
-            <div className="w-full sm:w-64">
-               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                 <SelectTrigger>
-                   <SelectValue placeholder="Catégorie" />
-                 </SelectTrigger>
-                 <SelectContent>
-                   <SelectItem value="all">Toutes les catégories</SelectItem>
-                   {categories.map((c) => (
-                     <SelectItem key={c.id} value={c.id}>{c.nom}</SelectItem>
-                   ))}
-                 </SelectContent>
-               </Select>
-             </div>
-           </div>
-         </div>
-
-         {loading ? (
-           <div>Chargement...</div>
-         ) : filtered.length === 0 ? (
-           <div className="text-sm text-muted-foreground">Aucune entreprise trouvée.</div>
-         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-             {filtered.map((e) => (
-               <Card key={e.id} className="overflow-hidden cursor-pointer" onClick={() => openDetails(e)}>
-                 <CardHeader className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm">
-                      {e.categorie?.nom || 'Sans catégorie'}
+          {/* Watermark répétitif */}
+          <div aria-hidden className="fixed inset-0 pointer-events-none select-none z-[60]" style={{ opacity: 0.12 }}>
+            <div className="absolute inset-0" style={{ transform: 'rotate(-30deg)' }}>
+              {Array.from({ length: 8 }).map((_, r) => (
+                <div key={r} className="flex gap-24" style={{ position: 'absolute', top: `${r * 180}px`, left: 0 }}>
+                  {Array.from({ length: 8 }).map((_, c) => (
+                    <span key={c} className="wm-text font-bold" style={{ color: '#000' }}>
+                      {userEmail ?? 'Utilisateur'} · {new Date().toLocaleDateString('fr-FR')}
                     </span>
-                    <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[e.id] ?? 0} vues</Badge>
-                  </div>
-                  <div className="min-w-0">
-                    <CardTitle className="text-base sm:text-lg truncate text-foreground">
-                      {isAdmin ? e.nom : 'Nom masqué — cliquez pour voir'}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                 <CardContent className="text-sm text-muted-foreground">
-                   {isAdmin ? (
-                     <div className="space-y-1">
-                       {e.telephone && <div>Téléphone: {e.telephone}</div>}
-                       {e.adresse && <div>Adresse: {e.adresse}</div>}
-                     </div>
-                   ) : (
-                     'Cliquez pour voir les détails'
-                   )}
-                 </CardContent>
-               </Card>
-             ))}
-           </div>
-         )}
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
 
-         {/* Détails entreprise en modal */}
-         <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-           <DialogContent className="max-w-2xl w-[95vw] max-h-[85vh] overflow-auto">
-             <DialogHeader>
-               <DialogTitle>{selected?.nom}</DialogTitle>
-               {selected?.categorie?.nom && (
-                 <DialogDescription>Catégorie: {selected.categorie.nom}</DialogDescription>
-               )}
-             </DialogHeader>
-             <div className="space-y-2 text-sm">
-               {selected?.telephone && (
-                 <div className="flex gap-2">
-                   <span className="text-muted-foreground">Téléphone:</span>
-                   <span className="break-all">{selected.telephone}</span>
-                 </div>
-               )}
-               {selected?.adresse && (
-                 <div className="flex gap-2">
-                   <span className="text-muted-foreground">Adresse:</span>
-                   <span className="break-words">{selected.adresse}</span>
-                 </div>
-               )}
-               {selected?.site_web && (
-                 <div className="flex gap-2 items-center flex-wrap">
-                   <span className="text-muted-foreground">Site:</span>
-                   <a href={selected.site_web} target="_blank" rel="noreferrer" className="underline break-all">
-                     {selected.site_web}
-                   </a>
-                   {selected.site_web_valide ? (
-                     <Badge className="ml-2 bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
-                   ) : (
-                     <Badge variant="outline" className="ml-2 bg-accent-red/10 text-accent-red border-accent-red/20">Non vérifié</Badge>
-                   )}
-                 </div>
-               )}
-               <div className="pt-2">
-                 <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} consultations uniques</Badge>
-               </div>
-             </div>
-           </DialogContent>
-         </Dialog>
+          {/* Voile quand l'onglet est caché */}
+          {hiddenOverlay && (
+            <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
+              <div>
+                <div className="text-lg font-semibold">Contenu protégé</div>
+                <div className="text-sm opacity-80 mt-1">L'onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
+              </div>
+            </div>
+          )}
 
-         <p className="text-xs text-muted-foreground">
-           Protection: clic droit/copier désactivés, raccourcis impression/enregistrement bloqués, impression cachée.
-           Aucune option d'export n'est proposée.
-         </p>
-       </div>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-5 w-24 rounded-full" />
+                      <Skeleton className="h-5 w-16" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4 mt-2" />
+                  </CardHeader>
+                  <CardContent>
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-4 w-5/6" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : paged.length === 0 ? (
+            <div className="flex flex-col items-center text-center gap-2 py-12">
+              <AlertCircle className="w-6 h-6 text-accent-yellow" />
+              <div className="text-sm text-muted-foreground">Aucune entreprise ne correspond à vos filtres.</div>
+              <Button variant="outline" size="sm" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>Réinitialiser les filtres</Button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {paged.map((e) => (
+                  <Card key={e.id} className="overflow-hidden cursor-pointer hover:shadow-lg transition" onClick={() => openDetails(e)}>
+                    <CardHeader className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="px-2 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm">
+                          {e.categorie?.nom || 'Sans catégorie'}
+                        </span>
+                        <span className="inline-flex items-center gap-1 text-xs text-accent-sky">
+                          <Eye className="w-3 h-3" />{viewCounts[e.id] ?? 0}
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <CardTitle className="text-base sm:text-lg truncate text-foreground">
+                          {isAdmin ? e.nom : 'Nom masqué — cliquez pour voir'}
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="text-xs sm:text-sm text-muted-foreground space-y-1">
+                      <div className="flex items-center gap-1"><CalendarIcon className="w-3 h-3" />Ajouté le {formattedDate(e.created_at)}</div>
+                      {e.site_web ? (
+                        <div className="flex items-center gap-2">
+                          <span>Site:</span>
+                          <span className="truncate max-w-[180px]">{e.site_web}</span>
+                          {e.site_web_valide ? (
+                            <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
+                          ) : (
+                            <Badge variant="outline" className="bg-accent-red/10 text-accent-red border-accent-red/20">Site inaccessible</Badge>
+                          )}
+                        </div>
+                      ) : (
+                        <div><Badge variant="outline" className="bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">Pas de site</Badge></div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              <div className="flex items-center justify-center gap-3 pt-4">
+                <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
+                  <ChevronLeft className="w-4 h-4" /> Précédent
+                </Button>
+                <div className="text-sm text-muted-foreground">Page {page} / {totalPages}</div>
+                <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
+                  Suivant <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            </>
+          )}
+
+          {/* Détails entreprise en modal */}
+          <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+            <DialogContent className="max-w-2xl w-[95vw] max-h-[85vh] overflow-auto">
+              <DialogHeader>
+                <DialogTitle>{selected?.nom}</DialogTitle>
+                {selected?.categorie?.nom && (
+                  <DialogDescription>Catégorie: {selected.categorie.nom}</DialogDescription>
+                )}
+              </DialogHeader>
+              <div className="space-y-2 text-sm">
+                {selected?.telephone && (
+                  <div className="flex gap-2">
+                    <span className="text-muted-foreground">Téléphone:</span>
+                    <span className="break-all">{selected.telephone}</span>
+                  </div>
+                )}
+                {selected?.adresse && (
+                  <div className="flex gap-2">
+                    <span className="text-muted-foreground">Adresse:</span>
+                    <span className="break-words">{selected.adresse}</span>
+                  </div>
+                )}
+                {selected?.site_web && (
+                  <div className="flex gap-2 items-center flex-wrap">
+                    <span className="text-muted-foreground">Site:</span>
+                    <a href={selected.site_web} target="_blank" rel="noreferrer" className="underline break-all">
+                      {selected.site_web}
+                    </a>
+                    {selected.site_web_valide ? (
+                      <Badge className="ml-2 bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
+                    ) : (
+                      <Badge variant="outline" className="ml-2 bg-accent-red/10 text-accent-red border-accent-red/20">Site inaccessible</Badge>
+                    )}
+                  </div>
+                )}
+                <div className="pt-2">
+                  <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} consultations uniques</Badge>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <p className="text-xs text-muted-foreground">
+            Protection: clic droit/copier désactivés, raccourcis impression/enregistrement bloqués, impression cachée.
+            Aucune option d'export n'est proposée.
+          </p>
+        </div>
+      </div>
     </>
   );
 }

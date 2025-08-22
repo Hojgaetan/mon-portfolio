@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { FolderKanban, Newspaper, Building2, ArrowRight, Folder, Shield, Clock, Star } from "lucide-react";
+// Ajout d'icônes pour les métadonnées
+import { Calendar, Tag, BookOpen } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
 
 interface ProjectPreview {
@@ -17,6 +19,8 @@ interface ProjectPreview {
   description: string | null;
   image_url: string | null;
   category?: string | null;
+  // Métadonnée ajoutée pour affichage
+  created_at?: string;
 }
 
 interface BlogPostPreview {
@@ -68,7 +72,8 @@ const Index = () => {
         setLoadingProjects(true);
         const { data, error } = await supabase
           .from("projects")
-          .select("id, title, description, image_url, category")
+          // Inclure created_at pour l'afficher
+          .select("id, title, description, image_url, category, created_at")
           .order("created_at", { ascending: false })
           .limit(3);
         if (error) {
@@ -150,10 +155,29 @@ const Index = () => {
   const formattedDate = (iso?: string) => {
     if (!iso) return "";
     try {
-      return new Date(iso).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US');
+      return new Date(iso).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', {
+        year: 'numeric', month: 'short', day: '2-digit'
+      } as Intl.DateTimeFormatOptions);
     } catch {
       return "";
     }
+  };
+
+  // Détermine si une date est récente (7 jours)
+  const isNew = (iso?: string) => {
+    if (!iso) return false;
+    const now = new Date();
+    const d = new Date(iso);
+    const diff = now.getTime() - d.getTime();
+    return diff < 7 * 24 * 60 * 60 * 1000;
+  };
+
+  // Estimation simple du temps de lecture à partir de l'extrait (200 wpm)
+  const estimateReadingTime = (text?: string | null) => {
+    if (!text) return undefined;
+    const words = text.trim().split(/\s+/).length;
+    const minutes = Math.max(1, Math.round(words / 200));
+    return `${minutes} min`;
   };
 
   return (
@@ -286,16 +310,39 @@ const Index = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {projects.map((p) => (
-                  <Card key={p.id} className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/20 bg-gradient-to-br from-card to-accent-blue/5">
-                    <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-                    <CardHeader>
-                      <CardTitle className="text-base font-semibold">{p.title}</CardTitle>
+                  <Card key={p.id} className="relative group overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/30 bg-gradient-to-br from-card to-accent-blue/5">
+                    {/* Image avec overlay */}
+                    <div className="relative h-40 w-full">
+                      {p.image_url ? (
+                        <img src={p.image_url} alt={p.title} className="absolute inset-0 w-full h-full object-cover" />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-muted/10" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-95" />
+                      {p.category && (
+                        <span className="absolute top-3 left-3 inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-accent-blue/15 text-accent-blue border border-accent-blue/20">
+                          <Tag className="w-3 h-3" /> {p.category}
+                        </span>
+                      )}
+                      {isNew(p.created_at) && (
+                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">Nouveau</span>
+                      )}
+                    </div>
+
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base font-semibold line-clamp-2">{p.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      {p.image_url && (
-                        <img src={p.image_url} alt={p.title} className="rounded-lg object-cover w-full h-40 mb-3" />
-                      )}
-                      <p className="text-sm text-muted-foreground line-clamp-3">{p.description}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{p.description}</p>
+                      {/* Métadonnées */}
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        {p.created_at && (
+                          <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{formattedDate(p.created_at)}</span>
+                        )}
+                        {p.category && (
+                          <span className="inline-flex items-center gap-1"><Tag className="w-3 h-3" />{p.category}</span>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
@@ -328,21 +375,48 @@ const Index = () => {
               <div className="text-muted-foreground">Aucun article publié.</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {posts.map((post) => (
-                  <Card key={post.id} className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5 cursor-pointer" onClick={() => post.slug && navigate(`/article/${post.slug}`)}>
-                    <div className="absolute inset-0 bg-gradient-to-r from-accent-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-                    <CardHeader>
-                      <CardTitle className="text-base font-semibold line-clamp-2">{post.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {post.image_url && (
-                        <img src={post.image_url} alt={post.title} className="rounded-lg object-cover w-full h-40 mb-3" />
-                      )}
-                      <p className="text-xs text-muted-foreground">{formattedDate(post.created_at)}</p>
-                      <p className="text-sm text-muted-foreground line-clamp-3 mt-1">{post.excerpt}</p>
-                    </CardContent>
-                  </Card>
-                ))}
+                {posts.map((post) => {
+                  const readTime = estimateReadingTime(post.excerpt);
+                  return (
+                    <Card
+                      key={post.id}
+                      className="relative group overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-green/30 bg-gradient-to-br from-card to-accent-green/5 cursor-pointer"
+                      onClick={() => post.slug && navigate(`/article/${post.slug}`)}
+                    >
+                      {/* Image avec overlay et badge nouveau */}
+                      <div className="relative h-40 w-full">
+                        {post.image_url ? (
+                          <img src={post.image_url} alt={post.title} className="absolute inset-0 w-full h-full object-cover" />
+                        ) : (
+                          <div className="absolute inset-0 bg-gradient-to-br from-muted/30 to-muted/10" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-95" />
+                        {isNew(post.created_at) && (
+                          <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">Nouveau</span>
+                        )}
+                      </div>
+
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base font-semibold line-clamp-2">{post.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {/* Métadonnées */}
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-2">
+                          {post.created_at && (
+                            <span className="inline-flex items-center gap-1"><Calendar className="w-3 h-3" />{formattedDate(post.created_at)}</span>
+                          )}
+                          {readTime && (
+                            <span className="inline-flex items-center gap-1"><BookOpen className="w-3 h-3" />{readTime}</span>
+                          )}
+                        </div>
+                        {post.image_url && (
+                          <></>
+                        )}
+                        <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
               </div>
             )}
 
