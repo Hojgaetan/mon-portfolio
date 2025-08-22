@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
@@ -46,10 +46,6 @@ export default function EntreprisesPage() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  // Masquage dynamique anti-capture pour non-admin
-  const [isObscured, setIsObscured] = useState<boolean>(true);
-  const obscurityTimer = useRef<number | null>(null);
-
   // Etat du dialogue d’achat
   const [purchaseOpen, setPurchaseOpen] = useState(false);
   const [buyerPhone, setBuyerPhone] = useState("");
@@ -391,28 +387,8 @@ export default function EntreprisesPage() {
     document.title = "Annuaire des entreprises";
   }, []);
 
-  // Masquer le contenu (blur) par défaut et ne l'afficher nettement que brièvement après interaction (non-admin)
+  // Rediriger vers le paiement manuel si /annuaire?buy=1 et pas d'accès
   useEffect(() => {
-    if (isAdmin) {
-      setIsObscured(false);
-      return;
-    }
-    setIsObscured(true);
-    const onInteract = () => {
-      setIsObscured(false);
-      if (obscurityTimer.current) window.clearTimeout(obscurityTimer.current);
-      obscurityTimer.current = window.setTimeout(() => setIsObscured(true), 1200);
-    };
-    const events: (keyof WindowEventMap)[] = ["mousemove", "keydown", "mousedown", "touchstart", "wheel"];
-    events.forEach((ev) => window.addEventListener(ev, onInteract, { passive: true } as any));
-    return () => {
-      if (obscurityTimer.current) window.clearTimeout(obscurityTimer.current);
-      events.forEach((ev) => window.removeEventListener(ev, onInteract as any));
-    };
-  }, [isAdmin]);
-
-  useEffect(() => {
-    // Rediriger vers le paiement manuel si /annuaire?buy=1 et pas d'accès
     const params = new URLSearchParams(location.search);
     if (params.get("buy") === "1" && userId && !hasAccess && !checkingAccess) {
       window.history.replaceState({}, "", "/annuaire");
@@ -533,7 +509,7 @@ export default function EntreprisesPage() {
       <div
         className="container mx-auto max-w-6xl p-4 sm:p-6 space-y-6 relative"
         {...guardProps}
-        style={!isAdmin && isObscured ? { filter: "blur(6px) brightness(0.7)" } : undefined}
+        // Flou retiré pour les clients: on ne filtre plus le container
       >
         {/* Empêcher l'impression */}
         <style>{`@media print { body { display: none !important; } }`}</style>
@@ -568,12 +544,7 @@ export default function EntreprisesPage() {
           </div>
         )}
 
-        {/* Alerte discrète quand le masquage dynamique est actif (non-admin) */}
-        {!isAdmin && isObscured && !hiddenOverlay && (
-          <div aria-hidden className="pointer-events-none fixed bottom-4 left-1/2 -translate-x-1/2 z-[65] px-3 py-1.5 rounded bg-black/70 text-white text-xs shadow">
-            Déplacez la souris pour afficher brièvement
-          </div>
-        )}
+        {/* Alerte masquage temporaire supprimée car le flou est retiré et le contenu reste masqué via placeholders */}
 
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <h1 className="text-xl sm:text-2xl font-bold">Annuaire des entreprises</h1>
