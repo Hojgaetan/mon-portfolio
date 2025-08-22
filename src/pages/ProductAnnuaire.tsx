@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { getAccessPrice } from "@/lib/access";
 import { Shield, Calendar, Tag, Download, CheckCircle, ArrowRight, FileSpreadsheet, Users, MapPin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ProductAnnuaire() {
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function ProductAnnuaire() {
 
   const price = getAccessPrice();
   const lastUpdate = new Date();
+  const { t } = useLanguage();
 
   return (
     <>
@@ -25,24 +27,24 @@ export default function ProductAnnuaire() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              📒 Base de prospects B2B
+              📒 {t('product.annuaire.badge')}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Annuaire d'entreprises sans site web
+              {t('product.annuaire.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Identifiez rapidement des entreprises sénégalaises sans présence web et démarrez la conversation avec une offre claire.
+              {t('product.annuaire.subtitle')}
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6 text-sm">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-blue/10 text-accent-blue border border-accent-blue/20">
-                <Calendar className="w-4 h-4" /> Mise à jour {lastUpdate.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                <Calendar className="w-4 h-4" /> {t('product.annuaire.updated')} {lastUpdate.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
               </span>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-green/10 text-accent-green border border-accent-green/20">
-                <Users className="w-4 h-4" /> 500+ entreprises
+                <Users className="w-4 h-4" /> {t('product.annuaire.count')}
               </span>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-yellow/10 text-accent-yellow border border-accent-yellow/20">
-                <FileSpreadsheet className="w-4 h-4" /> Format: tableau sécurisé
+                <FileSpreadsheet className="w-4 h-4" /> {t('product.annuaire.format')}
               </span>
             </div>
           </div>
@@ -56,14 +58,14 @@ export default function ProductAnnuaire() {
           <section className="lg:col-span-2 space-y-6">
             <Card className="border-2 border-accent-blue/20 bg-gradient-to-br from-card to-accent-blue/5">
               <CardHeader>
-                <CardTitle className="text-2xl">Ce que vous obtenez</CardTitle>
+                <CardTitle className="text-2xl">{t('product.annuaire.what_you_get')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-muted-foreground">
                 <ul className="grid md:grid-cols-2 gap-3">
-                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>Coordonnées essentielles (téléphone professionnel, secteur, localisation)</span></li>
-                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>Filtrage simple par secteur et zone</span></li>
-                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>Données normalisées et prêtes pour prospection</span></li>
-                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>Mises à jour régulières avec corrections prioritaires</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>{t('product.annuaire.feature.coords')}</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>{t('product.annuaire.feature.filter')}</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>{t('product.annuaire.feature.normalized')}</span></li>
+                  <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>{t('product.annuaire.feature.updates')}</span></li>
                 </ul>
                 <div className="flex flex-wrap gap-2 pt-2">
                   <Badge className="bg-accent-sky/10 text-accent-sky border-accent-sky/20"><Tag className="w-3 h-3 mr-1" /> Commerce</Badge>
@@ -76,16 +78,16 @@ export default function ProductAnnuaire() {
 
             <Card className="border-2">
               <CardHeader>
-                <CardTitle className="text-xl">Aperçu des champs</CardTitle>
+                <CardTitle className="text-xl">{t('product.annuaire.fields')}</CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-muted-foreground">
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Entreprise</span><div className="opacity-80">Ex: Boulangerie X</div></div>
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Secteur</span><div className="opacity-80">Ex: Restauration</div></div>
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Téléphone</span><div className="opacity-80">Ex: 77 000 00 00</div></div>
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Localisation</span><div className="opacity-80">Ex: Dakar</div></div>
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Statut Web</span><div className="opacity-80">Pas de site</div></div>
-                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">Notes</span><div className="opacity-80">Contact WhatsApp, horaires</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.company')}</span><div className="opacity-80">{t('product.annuaire.fields.example.company')}</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.sector')}</span><div className="opacity-80">{t('product.annuaire.fields.example.sector')}</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.phone')}</span><div className="opacity-80">{t('product.annuaire.fields.example.phone')}</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.location')}</span><div className="opacity-80">{t('product.annuaire.fields.example.location')}</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.web_status')}</span><div className="opacity-80">{t('product.annuaire.fields.example.web_status')}</div></div>
+                  <div className="p-3 rounded-lg bg-muted/50 border"><span className="text-foreground font-medium">{t('product.annuaire.fields.notes')}</span><div className="opacity-80">{t('product.annuaire.fields.example.notes')}</div></div>
                 </div>
               </CardContent>
             </Card>
@@ -95,14 +97,14 @@ export default function ProductAnnuaire() {
           <aside className="lg:col-span-1">
             <Card className="sticky top-20 border-2 border-accent-blue/20 bg-gradient-to-b from-card to-accent-blue/5">
               <CardHeader>
-                <CardTitle className="text-xl">Accès immédiat</CardTitle>
+                <CardTitle className="text-xl">{t('product.annuaire.sidebar.access_title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
                   Accès sécurisé pendant 1 heure au tableau complet. Activation en quelques minutes après paiement.
                 </div>
                 <div className="bg-accent-blue/5 p-4 rounded-lg border border-accent-blue/10">
-                  <div className="text-sm text-muted-foreground">Tarif du jour</div>
+                  <div className="text-sm text-muted-foreground">{t('product.annuaire.sidebar.todays_price')}</div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-bold text-accent-blue">{price.toLocaleString('fr-FR')} F CFA</span>
                     <span className="text-muted-foreground line-through">10 000 F</span>
@@ -111,11 +113,11 @@ export default function ProductAnnuaire() {
                 <div className="flex flex-col gap-3">
                   <Link to="/paiement-manuel">
                     <Button size="lg" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg">
-                      Acheter maintenant <ArrowRight className="w-4 h-4 ml-2" />
+                      {t('product.annuaire.sidebar.buy_now')} <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </Link>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground justify-center">
-                    <Shield className="w-3 h-3" /> Paiement sécurisé • Activation rapide
+                    <Shield className="w-3 h-3" /> {t('product.annuaire.sidebar.secure_fast')}
                   </div>
                 </div>
               </CardContent>
@@ -123,12 +125,12 @@ export default function ProductAnnuaire() {
 
             <Card className="mt-6">
               <CardHeader>
-                <CardTitle className="text-base">Informations</CardTitle>
+                <CardTitle className="text-base">{t('product.annuaire.sidebar.info')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> Dernière mise à jour: {lastUpdate.toLocaleDateString('fr-FR')}</div>
-                <div className="flex items-center gap-2"><Download className="w-4 h-4" /> Export sur demande</div>
-                <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Sénégal (prioritaire)</div>
+                <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {t('product.annuaire.sidebar.last_update')}: {lastUpdate.toLocaleDateString('fr-FR')}</div>
+                <div className="flex items-center gap-2"><Download className="w-4 h-4" /> {t('product.annuaire.sidebar.export_on_request')}</div>
+                <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {t('product.annuaire.sidebar.sn_priority')}</div>
               </CardContent>
             </Card>
           </aside>
@@ -137,4 +139,3 @@ export default function ProductAnnuaire() {
     </>
   );
 }
-

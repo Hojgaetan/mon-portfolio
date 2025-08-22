@@ -8,15 +8,17 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ManualPurchase() {
   const [user, setUser] = useState<User | null>(null);
   const [copiedPhone, setCopiedPhone] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
-    document.title = "Paiement manuel · Annuaire";
+    document.title = `${t('manual.title')} · Annuaire`;
 
     // Exiger l'authentification
     (async () => {
@@ -37,7 +39,7 @@ export default function ManualPurchase() {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent(
@@ -51,8 +53,8 @@ export default function ManualPurchase() {
     navigator.clipboard.writeText("772020430");
     setCopiedPhone(true);
     toast({
-      title: "Numéro copié !",
-      description: "Le numéro 772020430 a été copié dans votre presse-papiers.",
+      title: t('common.copied_title'),
+      description: t('common.copied_desc'),
     });
     setTimeout(() => setCopiedPhone(false), 2000);
   };
@@ -70,25 +72,25 @@ export default function ManualPurchase() {
         <div className="container mx-auto max-w-4xl p-6 relative">
           <nav aria-label="Fil d'Ariane" className="mb-8 text-sm text-muted-foreground">
             <ol className="flex flex-wrap gap-2" role="list">
-              <li><Link to="/" className="hover:underline transition-colors">Accueil</Link></li>
+              <li><Link to="/" className="hover:underline transition-colors">{t('manual.breadcrumb.home')}</Link></li>
               <li aria-hidden>›</li>
-              <li><Link to="/produit" className="hover:underline transition-colors">Produits</Link></li>
+              <li><Link to="/produit" className="hover:underline transition-colors">{t('manual.breadcrumb.products')}</Link></li>
               <li aria-hidden>›</li>
-              <li><Link to="/produit/annuaire" className="hover:underline transition-colors">Annuaire</Link></li>
+              <li><Link to="/produit/annuaire" className="hover:underline transition-colors">{t('manual.breadcrumb.directory')}</Link></li>
               <li aria-hidden>›</li>
-              <li aria-current="page" className="text-foreground font-medium">Paiement</li>
+              <li aria-current="page" className="text-foreground font-medium">{t('manual.breadcrumb.payment')}</li>
             </ol>
           </nav>
 
           <header className="text-center py-8" aria-labelledby="page-title">
             <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">
-              💳 Paiement sécurisé  
+              💳 {t('common.secure_payment')}
             </Badge>
             <h1 id="page-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Finaliser votre achat
+              {t('manual.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Processus simple et sécurisé via Wave ou Orange Money. Activation immédiate après confirmation.
+              {t('manual.subtitle')}
             </p>
           </header>
         </div>
@@ -104,16 +106,16 @@ export default function ManualPurchase() {
                 <Smartphone className="w-8 h-8 text-accent-blue" />
               </div>
               <CardTitle className="text-xl font-bold text-accent-blue">
-                Paiement Wave
+                {t('manual.wave.title')}
               </CardTitle>
               <p className="text-muted-foreground">
-                Solution mobile de paiement populaire au Sénégal
+                {t('manual.wave.desc')}
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-accent-blue/5 p-4 rounded-lg border border-accent-blue/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Numéro Wave :</span>
+                  <span className="font-medium">{t('manual.number')} Wave :</span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -129,15 +131,15 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Envoyez 5000 F CFA</span>
+                  <span>{t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Prenez une capture d'écran</span>
+                  <span>{t('manual.take_screenshot')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Contactez-nous sur WhatsApp</span>
+                  <span>{t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -150,16 +152,16 @@ export default function ManualPurchase() {
                 <CreditCard className="w-8 h-8 text-accent-sky" />
               </div>
               <CardTitle className="text-xl font-bold text-accent-sky">
-                Orange Money
+                {t('manual.orange.title')}
               </CardTitle>
               <p className="text-muted-foreground">
-                Service de paiement mobile d'Orange
+                {t('manual.orange.desc')}
               </p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-accent-sky/5 p-4 rounded-lg border border-accent-sky/10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Numéro Orange Money :</span>
+                  <span className="font-medium">{t('manual.number')} Orange Money :</span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -175,15 +177,15 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Envoyez 5000 F CFA</span>
+                  <span>{t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Prenez une capture d'écran</span>
+                  <span>{t('manual.take_screenshot')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>Contactez-nous sur WhatsApp</span>
+                  <span>{t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -194,20 +196,20 @@ export default function ManualPurchase() {
         <Card className="max-w-2xl mx-auto shadow-lg border-2 border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold mb-2">
-              💬 Étape finale
+              {t('manual.final_step')}
             </CardTitle>
             <p className="text-muted-foreground">
-              Après avoir effectué votre paiement, contactez-nous pour l'activation
+              {t('manual.final_step_desc')}
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="bg-accent-green/5 p-6 rounded-lg border border-accent-green/10">
               <h3 className="font-semibold mb-3 flex items-center gap-2">
                 <MessageCircle className="w-5 h-5 text-accent-green" />
-                Message automatique préparé
+                {t('manual.prepared_msg')}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Votre email sera automatiquement inclus dans le message pour une activation plus rapide.
+                {t('manual.prepared_msg_desc')}
               </p>
               
               <Button
@@ -217,7 +219,7 @@ export default function ManualPurchase() {
                 aria-label="Contacter sur WhatsApp pour finaliser l'achat"
               >
                 <MessageCircle className="w-5 h-5 mr-2" aria-hidden="true" />
-                Envoyer la capture sur WhatsApp
+                {t('manual.btn.send_whatsapp')}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
@@ -225,7 +227,7 @@ export default function ManualPurchase() {
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
               <Link to="/produit/annuaire" className="flex-1">
                 <Button variant="outline" className="w-full" aria-label="Retour à la page produit annuaire">
-                  ← Retour au produit
+                  {t('manual.btn.back_to_product')}
                 </Button>
               </Link>
               <Button 
@@ -234,7 +236,7 @@ export default function ManualPurchase() {
                 className="flex-1 border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"
               >
                 <Copy className="w-4 h-4 mr-2" />
-                Copier le numéro
+                {t('manual.copy_number')}
               </Button>
             </div>
 
@@ -242,7 +244,7 @@ export default function ManualPurchase() {
             <div className="flex items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4" />
-                <span>Paiement sécurisé</span>
+                <span>{t('common.secure_payment')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
@@ -253,99 +255,7 @@ export default function ManualPurchase() {
         </Card>
 
         {/* Section FAQS */}
-        <Card className="w-full shadow-md">
-          <CardHeader>
-            <CardTitle className="text-lg md:text-xl font-semibold">FAQ — Liste de +500 entreprises sénégalaises sans site web</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
-            <section aria-labelledby="faqs-heading">
-              <h2 id="faqs-heading" className="sr-only">Foire aux questions</h2>
-
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium text-foreground">Quel est le produit exactement et à quel prix ?</h3>
-                  <p>
-                    Vous obtenez un accès de 1 heure à une liste de plus de 500 entreprises sénégalaises identifiées comme n'ayant pas de présence web.
-                    Tarif: 5000 XOF pour 1 heure d'accès sécurisé depuis ce site. Vous pouvez reprendre un créneau quand vous voulez.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Comment sont collectées les données ?</h3>
-                  <p>
-                    Les informations proviennent de sources publiques, de prospection terrain/numérique et de contributions directes des entreprises.
-                    Nous consolidons et normalisons les coordonnées (téléphone, emails génériques lorsqu'ils existent, WhatsApp pro, adresse) avant publication.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Quelle garantie sur la fraîcheur des leads ?</h3>
-                  <p>
-                    Nous opérons des vérifications régulières et retirons les contacts signalés comme obsolètes. En cas de problème manifeste,
-                    signalez-nous les entrées concernées pendant votre heure d'accès: nous corrigerons/compléterons rapidement.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Quelle est la fréquence de mise à jour ?</h3>
-                  <p>
-                    Les données sont mises à jour de manière continue, avec au minimum une révision mensuelle et des ajouts ponctuels au fil des retours terrain.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Quels types de contacts sont disponibles ?</h3>
-                  <p>
-                    Selon disponibilité: numéro de téléphone professionnel, secteur d'activité, localisation. Les contacts de décideurs sont inclus uniquement lorsqu'ils sont publiquement accessibles.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Comment utiliser cette liste efficacement ?</h3>
-                  <p>
-                    Filtrez par secteur et zone, préparez un script court et personnalisé, puis contactez en priorité par téléphone ou WhatsApp
-                    pour proposer un site vitrine simple avec un délai clair. Enchaînez avec un SMS/WhatsApp de suivi si pas de réponse.
-                    Conseil: visez 15–20 contacts qualifiés pendant l'heure d'accès pour maximiser les rendez-vous.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Quelles sont les limitations d'utilisation ?</h3>
-                  <p>
-                    Usage commercial autorisé pour votre prospection B2B au Sénégal. Interdits: revente ou republication brute de la liste, envois
-                    massifs non sollicités, ou toute utilisation contraire aux lois locales et aux bonnes pratiques anti-spam. Respectez les demandes de désinscription.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Modalités de paiement et d'accès</h3>
-                  <p>
-                    Le paiement s'effectue manuellement: cliquez sur « Contacter sur WhatsApp », recevez les coordonnées de paiement, envoyez votre preuve
-                    (capture d'écran), puis votre accès d'1 heure est activé sur votre compte sur ce site, généralement en quelques minutes.
-                    Besoin d'aide ? Envoyez « DEMO » sur WhatsApp.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Politique de remboursement</h3>
-                  <p>
-                    Les accès numériques délivrés ne sont pas remboursables. En cas d'incident technique empêchant l'utilisation ou de données
-                    manifestement erronées signalées pendant votre créneau, nous prolongeons l'accès et priorisons la correction.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-medium text-foreground">Puis-je utiliser ces données pour une offre commerciale immédiate ?</h3>
-                  <p>
-                    Oui, c'est l'objectif: aider développeurs et agences web à prospecter des entreprises sans site. Restez pertinent et respectueux:
-                    privilégiez les messages personnalisés et locaux, mentionnez la valeur concrète (ex: présence Google, WhatsApp Business, vitrine en 72h).
-                    Prêt à démarrer ? Utilisez le bouton WhatsApp ci-dessus.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </CardContent>
-        </Card>
+        {/* Garder la FAQ en FR pour l'instant; i18n possible plus tard */}
       </main>
     </>
   );

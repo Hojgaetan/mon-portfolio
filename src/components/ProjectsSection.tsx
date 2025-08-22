@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronDown, Folder, FolderOpen, FileCode, Calendar, Puzzle, Palette, PenTool, Code2 } from "lucide-react";
+import { ChevronRight, ChevronDown, Folder, FolderOpen, FileCode, Calendar, Puzzle, Palette, PenTool, Code2, Globe } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
@@ -19,10 +20,17 @@ interface Project {
   technologies: string[] | null;
   featured: boolean | null;
   planning_url?: string | null;
+  // Ancien nom conservé pour compatibilité
   modelisation_url?: string | null;
+  // Nouveau nom aligné avec la base
+  analysis_url?: string | null;
+  // Ancien nom conservé pour compatibilité
   charte_url?: string | null;
+  // Nouveau nom aligné avec la base
+  design_url?: string | null;
   prototype_url?: string | null;
   category: "personnel" | "professionnel" | "academique";
+  slug?: string | null;
 }
 
 
@@ -34,6 +42,7 @@ export const ProjectsSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | "all">("all");
   const isMobile = useIsMobile();
   const { t } = useLanguage();
+  const params = useParams<{ slug?: string }>();
 
   const projectCategories: Record<string, string> = {
     professionnel: t('projects.categories.professionnel'),
@@ -44,6 +53,20 @@ export const ProjectsSection = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  // Sélectionner par slug quand les projets sont chargés
+  useEffect(() => {
+    const slug = params.slug?.toLowerCase();
+    if (!slug) return;
+    const all = Object.values(groupedProjects).flat();
+    const found = all.find(p => (p.slug || "").toLowerCase() === slug);
+    if (found) {
+      setSelectedProject(found.id);
+      // Ouvrir le dossier de la catégorie correspondante
+      setOpenFolders(prev => ({ ...prev, [found.category]: true }));
+      setSelectedCategory(found.category);
+    }
+  }, [groupedProjects, params.slug]);
 
   const fetchProjects = async () => {
     try {
@@ -84,19 +107,27 @@ export const ProjectsSection = () => {
   // Phases dynamiques selon les liens présents dans le projet
   const projectPhases = [
     {
+      key: "project_url",
+      title: "Site du projet",
+      description: "Voir le site en ligne.",
+      icon: <Globe className="w-4 h-4" />,
+    },
+    {
       key: "planning_url",
       title: "Plannification du projet",
       description: "Organisation, tâches, avancement, Trello, etc.",
       icon: <Calendar className="w-4 h-4" />,
     },
     {
-      key: "modelisation_url",
+      key: "analysis_url",
+      fallbackKeys: ["modelisation_url"],
       title: "Modélisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
       icon: <Puzzle className="w-4 h-4" />,
     },
     {
-      key: "charte_url",
+      key: "design_url",
+      fallbackKeys: ["charte_url"],
       title: "Charte Graphique",
       description: "Palette de couleurs, typographies, logos, etc.",
       icon: <Palette className="w-4 h-4" />,
@@ -113,7 +144,7 @@ export const ProjectsSection = () => {
       description: "Lien vers le dépôt du projet.",
       icon: <Code2 className="w-4 h-4" />,
     },
-  ];
+  ] as const;
 
   const toggleFolder = (folderName: string) => {
     setOpenFolders(prev => ({ ...prev, [folderName]: !prev[folderName] }));
@@ -279,11 +310,16 @@ export const ProjectsSection = () => {
                     <h4 className="text-lg mb-3 border-b pb-2">{t('projects.phases_resources')}</h4>
                     <ul className="space-y-3">
                       {projectPhases.map(phase => {
-                        const url = currentProject[phase.key as keyof Project] as string | undefined;
+                        const main = currentProject[phase.key as keyof Project] as string | undefined;
+                        // @ts-expect-error ajout dynamique pour fallbackKeys présent sur certaines phases
+                        const fallbacks: string[] | undefined = phase.fallbackKeys;
+                        const fallbackUrl = fallbacks?.map(k => currentProject[k as keyof Project] as string | undefined).find(Boolean);
+                        const url = main || fallbackUrl;
                         if (url) {
+                          const href = /^(https?:)?\/\//i.test(url) ? url : `https://${url}`;
                           return (
-                            <li key={phase.key}>
-                              <a href={url} target="_blank" rel="noopener noreferrer" className="flex items-start p-3 rounded-lg hover:bg-muted transition-colors -mx-3">
+                            <li key={phase.key as string}>
+                              <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-start p-3 rounded-lg hover:bg-muted transition-colors -mx-3">
                                 <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center text-lg mr-4 mt-1">{phase.icon}</div>
                                 <div className="flex-grow">
                                   <p>{phase.title}</p>

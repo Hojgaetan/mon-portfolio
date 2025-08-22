@@ -68,7 +68,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
     { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" />, path: "/a-propos" },
     {
       id: "produits",
-      label: "Produits",
+      label: t('nav.products'),
       icon: <FolderKanban className="h-4 w-4" />,
       path: "/produit",
     },
@@ -181,7 +181,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                 }
               }}
             >
-              {user ? 'Se déconnecter' : 'Se connecter'}
+              {user ? t('auth.logout') : t('auth.login')}
             </Button>
           </div>
 
@@ -246,7 +246,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   }
                 }}
               >
-                {user ? 'Se déconnecter' : 'Se connecter'}
+                {user ? t('auth.logout') : t('auth.login')}
               </Button>
               <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="w-full">
                 <Button

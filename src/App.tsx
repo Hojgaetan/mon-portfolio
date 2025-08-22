@@ -36,6 +36,7 @@ function AppRoutes() {
           <Route path="/article/:slug" element={<ArticlePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/projets" element={<ProjectsPage />} />
+          <Route path="/projets/:slug" element={<ProjectsPage />} />
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
           {/* Produits */}

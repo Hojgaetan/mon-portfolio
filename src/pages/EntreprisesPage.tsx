@@ -11,6 +11,7 @@ import { getActiveAccessPass, getAccessPrice } from "@/lib/access";
 import { revokeActivePass } from "@/lib/access";
 import { toast } from "sonner";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 // Paiement Intech
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 // Nouveaux imports UI
@@ -65,6 +66,7 @@ export default function EntreprisesPage() {
   const [pendingDeepLink, setPendingDeepLink] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Debounce search input
   useEffect(() => {
@@ -452,7 +454,7 @@ export default function EntreprisesPage() {
     return (
       <>
         <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="container mx-auto max-w-5xl p-6">Vérification de l'accès...</div>
+        <div className="container mx-auto max-w-5xl p-6">{t('annuaire.loading')}</div>
       </>
     );
   }
@@ -464,12 +466,12 @@ export default function EntreprisesPage() {
         <div className="container mx-auto max-w-2xl p-6 space-y-4 text-center">
           <Card>
             <CardHeader>
-              <CardTitle>Annuaire des entreprises</CardTitle>
+              <CardTitle>{t('annuaire.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p>Connectez-vous pour acheter un accès et consulter la liste des entreprises.</p>
+              <p>{t('annuaire.require_login')}</p>
               <Button asChild>
-                <Link to="/auth">Se connecter</Link>
+                <Link to="/auth">{t('auth.login')}</Link>
               </Button>
             </CardContent>
           </Card>
@@ -485,26 +487,25 @@ export default function EntreprisesPage() {
         <div className="container mx-auto max-w-2xl p-6">
           <Card>
             <CardHeader>
-              <CardTitle>Annuaire des entreprises</CardTitle>
+              <CardTitle>{t('annuaire.title')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p>
-                L'accès à la liste des entreprises est réservé aux membres ayant un pass actif.
-                Durée: 1 heure. Tarif: {getAccessPrice().toLocaleString("fr-FR")} F CFA.
+                {t('annuaire.access_restricted')} {t('annuaire.duration')} {t('annuaire.price_label')} {getAccessPrice().toLocaleString("fr-FR")} F CFA.
               </p>
               <div className="flex gap-3 flex-wrap">
                 <Button asChild>
-                  <Link to="/paiement-manuel">Acheter l'accès</Link>
+                  <Link to="/paiement-manuel">{t('annuaire.btn.buy_access')}</Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <Link to="/auth">Changer de compte</Link>
+                  <Link to="/auth">{t('annuaire.btn.switch_account')}</Link>
                 </Button>
                 <Button asChild variant="ghost">
-                  <Link to="/produit/annuaire">Voir la page produit</Link>
+                  <Link to="/produit/annuaire">{t('annuaire.btn.view_product')}</Link>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Note: le contenu est consultable uniquement sur ce site. Le téléchargement et la copie sont limités.
+                {t('annuaire.note_protection')}
               </p>
             </CardContent>
           </Card>
@@ -513,17 +514,17 @@ export default function EntreprisesPage() {
           <Dialog open={purchaseOpen} onOpenChange={(o)=>{ if(!purchasing) setPurchaseOpen(o); }}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Acheter l'accès</DialogTitle>
+                <DialogTitle>{t('annuaire.purchase.title')}</DialogTitle>
                 <DialogDescription>
-                  Montant: {getAccessPrice().toLocaleString("fr-FR")} F CFA — choisissez votre opérateur et entrez votre numéro.
+                  {t('annuaire.purchase.amount')}: {getAccessPrice().toLocaleString("fr-FR")} F CFA — {t('annuaire.purchase.choose_operator')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-sm text-muted-foreground">Opérateur</label>
+                    <label className="text-sm text-muted-foreground">{t('annuaire.purchase.operator')}</label>
                     <Select value={buyerOperator} onValueChange={(v)=>setBuyerOperator(v as OperatorCode)}>
-                      <SelectTrigger><SelectValue placeholder="Opérateur" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={t('annuaire.purchase.operator_placeholder')} /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="WAVE_SN_API_CASH_IN">WAVE</SelectItem>
                         <SelectItem value="ORANGE_SN_API_CASH_IN">Orange Money</SelectItem>
@@ -534,18 +535,18 @@ export default function EntreprisesPage() {
                     </Select>
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground">Téléphone</label>
-                    <Input placeholder="Ex: 772345678" value={buyerPhone} onChange={(e)=>setBuyerPhone(e.target.value)} />
+                    <label className="text-sm text-muted-foreground">{t('annuaire.purchase.phone')}</label>
+                    <Input placeholder={t('annuaire.purchase.phone_placeholder')} value={buyerPhone} onChange={(e)=>setBuyerPhone(e.target.value)} />
                   </div>
                 </div>
                 {pendingDeepLink && (
                   <div className="text-xs text-muted-foreground">
-                    Si la fenêtre ne s'est pas ouverte, <a className="underline" href={pendingDeepLink} target="_blank">cliquez ici</a>.
+                    {t('annuaire.purchase.pending_info')} <a className="underline" href={pendingDeepLink} target="_blank">{t('annuaire.purchase.click_here')}</a>.
                   </div>
                 )}
                 <div className="flex gap-2 justify-end">
-                  <Button variant="outline" onClick={closePurchase} disabled={purchasing}>Annuler</Button>
-                  <Button onClick={handleConfirmPurchase} disabled={purchasing}>{purchasing ? "Traitement..." : "Payer"}</Button>
+                  <Button variant="outline" onClick={closePurchase} disabled={purchasing}>{t('annuaire.btn.cancel')}</Button>
+                  <Button onClick={handleConfirmPurchase} disabled={purchasing}>{purchasing ? t('annuaire.purchase.processing') : t('annuaire.btn.pay')}</Button>
                 </div>
               </div>
             </DialogContent>
@@ -558,35 +559,32 @@ export default function EntreprisesPage() {
   return (
     <>
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div
-        className="container mx-auto max-w-6xl p-0 sm:p-0 relative"
-        {...guardProps}
-      >
+      <div className="container mx-auto max-w-6xl p-0 sm:p-0 relative" {...guardProps}>
         {/* Hero */}
         <div className="relative overflow-hidden bg-gradient-to-br from-background via-background to-accent-sky/5 border-b">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%223%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
           <div className="relative px-4 sm:px-6 py-8 max-w-6xl mx-auto">
             <div className="flex flex-col gap-2">
-              <Badge className="w-fit bg-accent-sky/10 text-accent-sky border-accent-sky/20">📚 Annuaire</Badge>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Entreprises sans site web</h1>
-              <p className="text-sm sm:text-base text-muted-foreground">Accédez à une base à jour pour accélérer votre prospection B2B.</p>
+              <Badge className="w-fit bg-accent-sky/10 text-accent-sky border-accent-sky/20">📚 {t('annuaire.hero.badge')}</Badge>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('annuaire.hero.title')}</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">{t('annuaire.hero.subtitle')}</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
               <div className="text-center p-2">
                 <div className="text-xl font-bold text-accent-blue">{entreprises.length}</div>
-                <div className="text-xs text-muted-foreground">Entreprises</div>
+                <div className="text-xs text-muted-foreground">{t('annuaire.stats.companies')}</div>
               </div>
               <div className="text-center p-2">
                 <div className="text-xl font-bold text-accent-green">{categories.length}</div>
-                <div className="text-xs text-muted-foreground">Catégories</div>
+                <div className="text-xs text-muted-foreground">{t('annuaire.stats.categories')}</div>
               </div>
               <div className="text-center p-2">
                 <div className="text-xl font-bold text-accent-sky">{expiresAt ? countdown ?? "—" : "—"}</div>
-                <div className="text-xs text-muted-foreground">Temps restant</div>
+                <div className="text-xs text-muted-foreground">{t('annuaire.stats.time_left')}</div>
               </div>
               <div className="text-center p-2">
                 <div className="text-xl font-bold text-accent-yellow">{new Date().getFullYear()}</div>
-                <div className="text-xs text-muted-foreground">Année</div>
+                <div className="text-xs text-muted-foreground">{t('annuaire.stats.year')}</div>
               </div>
             </div>
           </div>
@@ -599,7 +597,7 @@ export default function EntreprisesPage() {
               <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 className="pl-8"
-                placeholder="Rechercher (nom, catégorie, téléphone...)"
+                placeholder={t('annuaire.search.placeholder')}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
@@ -608,10 +606,10 @@ export default function EntreprisesPage() {
               <div className="w-[200px]">
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Catégorie" />
+                    <SelectValue placeholder={t('annuaire.filter.category')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    <SelectItem value="all">{t('annuaire.filter.category') === 'Catégorie' ? 'Toutes les catégories' : 'All categories'}</SelectItem>
                     {categories.map((c) => (
                       <SelectItem key={c.id} value={c.id}>{c.nom}</SelectItem>
                     ))}
@@ -621,27 +619,26 @@ export default function EntreprisesPage() {
               <div className="w-[200px]">
                 <Select value={sortBy} onValueChange={(v)=>setSortBy(v as SortKey)}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Trier par" />
+                    <SelectValue placeholder={t('annuaire.sort.by')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="recent">Plus récents</SelectItem>
-                    <SelectItem value="name">Nom (A→Z)</SelectItem>
-                    <SelectItem value="category">Catégorie (A→Z)</SelectItem>
-                    <SelectItem value="views">Plus consultés</SelectItem>
+                    <SelectItem value="recent">{t('annuaire.sort.recent')}</SelectItem>
+                    <SelectItem value="name">{t('annuaire.sort.name')}</SelectItem>
+                    <SelectItem value="category">{t('annuaire.sort.category')}</SelectItem>
+                    <SelectItem value="views">{t('annuaire.sort.views')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <Button variant="ghost" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>
-                Réinitialiser
+                {t('annuaire.reset')}
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Corps */}
+        {/* Corps et overlay */}
         <div className="px-4 sm:px-6 py-6 space-y-6">
-          {/* Empêcher l'impression */}
-          <style>{`@media print { body { display: none !important; } }`}</style>
+          {/* Watermark + overlay */}
           {/* Styles responsives pour watermark */}
           <style>{`
             @media (max-width: 640px) { .wm-text { font-size: 12px; } }
@@ -667,13 +664,14 @@ export default function EntreprisesPage() {
           {hiddenOverlay && (
             <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
               <div>
-                <div className="text-lg font-semibold">Contenu protégé</div>
-                <div className="text-sm opacity-80 mt-1">L'onglet est inactif. Le contenu est masqué pour limiter la capture.</div>
+                <div className="text-lg font-semibold">{t('annuaire.protected.title')}</div>
+                <div className="text-sm opacity-80 mt-1">{t('annuaire.protected.subtitle')}</div>
               </div>
             </div>
           )}
 
           {loading ? (
+            // ...existing skeleton grid...
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 9 }).map((_, i) => (
                 <Card key={i} className="overflow-hidden">
@@ -694,8 +692,8 @@ export default function EntreprisesPage() {
           ) : paged.length === 0 ? (
             <div className="flex flex-col items-center text-center gap-2 py-12">
               <AlertCircle className="w-6 h-6 text-accent-yellow" />
-              <div className="text-sm text-muted-foreground">Aucune entreprise ne correspond à vos filtres.</div>
-              <Button variant="outline" size="sm" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>Réinitialiser les filtres</Button>
+              <div className="text-sm text-muted-foreground">{t('annuaire.empty')}</div>
+              <Button variant="outline" size="sm" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>{t('annuaire.reset_filters')}</Button>
             </div>
           ) : (
             <>
@@ -705,7 +703,7 @@ export default function EntreprisesPage() {
                     <CardHeader className="space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="px-2 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-sm">
-                          {e.categorie?.nom || 'Sans catégorie'}
+                          {e.categorie?.nom || '—'}
                         </span>
                         <span className="inline-flex items-center gap-1 text-xs text-accent-sky">
                           <Eye className="w-3 h-3" />{viewCounts[e.id] ?? 0}
@@ -713,24 +711,24 @@ export default function EntreprisesPage() {
                       </div>
                       <div className="min-w-0">
                         <CardTitle className="text-base sm:text-lg truncate text-foreground">
-                          {isAdmin ? e.nom : 'Nom masqué — cliquez pour voir'}
+                          {isAdmin ? e.nom : t('annuaire.card.hidden_name')}
                         </CardTitle>
                       </div>
                     </CardHeader>
                     <CardContent className="text-xs sm:text-sm text-muted-foreground space-y-1">
-                      <div className="flex items-center gap-1"><CalendarIcon className="w-3 h-3" />Ajouté le {formattedDate(e.created_at)}</div>
+                      <div className="flex items-center gap-1"><CalendarIcon className="w-3 h-3" />{t('annuaire.card.added_on')} {formattedDate(e.created_at)}</div>
                       {e.site_web ? (
                         <div className="flex items-center gap-2">
-                          <span>Site:</span>
+                          <span>{t('annuaire.card.website')}</span>
                           <span className="truncate max-w-[180px]">{e.site_web}</span>
                           {e.site_web_valide ? (
-                            <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
+                            <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20">{t('annuaire.card.verified')}</Badge>
                           ) : (
-                            <Badge variant="outline" className="bg-accent-red/10 text-accent-red border-accent-red/20">Site inaccessible</Badge>
+                            <Badge variant="outline" className="bg-accent-red/10 text-accent-red border-accent-red/20">{t('annuaire.card.site_inaccessible')}</Badge>
                           )}
                         </div>
                       ) : (
-                        <div><Badge variant="outline" className="bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">Pas de site</Badge></div>
+                        <div><Badge variant="outline" className="bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">{t('annuaire.card.no_website')}</Badge></div>
                       )}
                     </CardContent>
                   </Card>
@@ -740,17 +738,17 @@ export default function EntreprisesPage() {
               {/* Pagination */}
               <div className="flex items-center justify-center gap-3 pt-4">
                 <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page <= 1}>
-                  <ChevronLeft className="w-4 h-4" /> Précédent
+                  <ChevronLeft className="w-4 h-4" /> {t('pagination.prev')}
                 </Button>
                 <div className="text-sm text-muted-foreground">Page {page} / {totalPages}</div>
                 <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}>
-                  Suivant <ChevronRight className="w-4 h-4" />
+                  {t('pagination.next')} <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             </>
           )}
 
-          {/* Détails entreprise en modal */}
+          {/* Détails modal */}
           <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
             <DialogContent className="max-w-2xl w-[95vw] max-h-[85vh] overflow-auto">
               <DialogHeader>
@@ -762,39 +760,38 @@ export default function EntreprisesPage() {
               <div className="space-y-2 text-sm">
                 {selected?.telephone && (
                   <div className="flex gap-2">
-                    <span className="text-muted-foreground">Téléphone:</span>
+                    <span className="text-muted-foreground">{t('annuaire.card.phone')}:</span>
                     <span className="break-all">{selected.telephone}</span>
                   </div>
                 )}
                 {selected?.adresse && (
                   <div className="flex gap-2">
-                    <span className="text-muted-foreground">Adresse:</span>
+                    <span className="text-muted-foreground">{t('annuaire.card.address')}:</span>
                     <span className="break-words">{selected.adresse}</span>
                   </div>
                 )}
                 {selected?.site_web && (
                   <div className="flex gap-2 items-center flex-wrap">
-                    <span className="text-muted-foreground">Site:</span>
+                    <span className="text-muted-foreground">{t('annuaire.card.website')}</span>
                     <a href={selected.site_web} target="_blank" rel="noreferrer" className="underline break-all">
                       {selected.site_web}
                     </a>
                     {selected.site_web_valide ? (
-                      <Badge className="ml-2 bg-accent-green/10 text-accent-green border-accent-green/20">Validé</Badge>
+                      <Badge className="ml-2 bg-accent-green/10 text-accent-green border-accent-green/20">{t('annuaire.card.verified')}</Badge>
                     ) : (
-                      <Badge variant="outline" className="ml-2 bg-accent-red/10 text-accent-red border-accent-red/20">Site inaccessible</Badge>
+                      <Badge variant="outline" className="ml-2 bg-accent-red/10 text-accent-red border-accent-red/20">{t('annuaire.card.site_inaccessible')}</Badge>
                     )}
                   </div>
                 )}
                 <div className="pt-2">
-                  <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} consultations uniques</Badge>
+                  <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} {t('annuaire.card.unique_views')}</Badge>
                 </div>
               </div>
             </DialogContent>
           </Dialog>
 
           <p className="text-xs text-muted-foreground">
-            Protection: clic droit/copier désactivés, raccourcis impression/enregistrement bloqués, impression cachée.
-            Aucune option d'export n'est proposée.
+            {t('annuaire.note_protection')}
           </p>
         </div>
       </div>

@@ -16,6 +16,7 @@ interface Project {
   id: string;
   created_at: string;
   title: string;
+  slug: string | null;
   description: string | null;
   image_url: string | null;
   project_url: string | null;
@@ -32,6 +33,7 @@ interface Project {
 interface FormProject {
   id: string;
   title: string;
+  slug: string;
   description: string;
   image_url: string;
   project_url: string;
@@ -45,6 +47,17 @@ interface FormProject {
   category: string;
 }
 
+// Helper pour générer un slug depuis un titre
+const slugify = (text: string) =>
+  text
+    .toString()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}+/gu, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
 export function ProjectsManager() {
   const [projects, setProjects] = useState<FormProject[]>([]);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -54,6 +67,7 @@ export function ProjectsManager() {
 
   const [formData, setFormData] = useState({
     title: "",
+    slug: "",
     description: "",
     image_url: "",
     project_url: "",
@@ -83,6 +97,7 @@ export function ProjectsManager() {
         (data || []).map((project: Project) => ({
           id: project.id,
           title: project.title,
+          slug: project.slug ?? "",
           description: project.description ?? "",
           image_url: project.image_url ?? "",
           project_url: project.project_url ?? "",
@@ -106,6 +121,7 @@ export function ProjectsManager() {
   const resetForm = () => {
     setFormData({
       title: "",
+      slug: "",
       description: "",
       image_url: "",
       project_url: "",
@@ -128,6 +144,7 @@ export function ProjectsManager() {
       id: project.id,
       created_at: new Date().toISOString(), // Valeur temporaire
       title: project.title,
+      slug: project.slug || null,
       description: project.description,
       image_url: project.image_url,
       project_url: project.project_url,
@@ -143,6 +160,7 @@ export function ProjectsManager() {
 
     setFormData({
       title: project.title,
+      slug: project.slug || "",
       description: project.description || "",
       image_url: project.image_url || "",
       project_url: project.project_url || "",
@@ -168,6 +186,7 @@ export function ProjectsManager() {
     try {
       const projectData = {
         title: formData.title,
+        slug: formData.slug ? slugify(formData.slug) : slugify(formData.title),
         description: formData.description || null,
         image_url: formData.image_url || null,
         project_url: formData.project_url || null,
@@ -181,7 +200,7 @@ export function ProjectsManager() {
           : null,
         featured: formData.featured,
         category: formData.category,
-      };
+      } as const;
 
       if (editingProject) {
         const { error } = await supabase
@@ -210,10 +229,10 @@ export function ProjectsManager() {
 
       resetForm();
       fetchProjects();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Erreur",
-        description: "Une erreur s'est produite lors de la sauvegarde.",
+        description: error?.message || "Une erreur s'est produite lors de la sauvegarde.",
         variant: "destructive",
       });
     }
@@ -275,11 +294,30 @@ export function ProjectsManager() {
                 <Input
                   id="title"
                   value={formData.title}
-                  onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e) => {
+                    const title = e.target.value;
+                    setFormData(prev => ({
+                      ...prev,
+                      title,
+                      // auto-génération du slug si vide
+                      slug: prev.slug ? prev.slug : slugify(title),
+                    }));
+                  }}
                   required
                 />
               </div>
-              
+
+              <div className="space-y-2">
+                <Label htmlFor="slug">Slug</Label>
+                <Input
+                  id="slug"
+                  value={formData.slug}
+                  onChange={(e) => setFormData(prev => ({ ...prev, slug: slugify(e.target.value) }))}
+                  placeholder="mon-projet-super"
+                />
+                <p className="text-xs text-muted-foreground">Utilisé pour l’URL: /projets/mon-projet-super</p>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="description">Description</Label>
                 <Textarea
@@ -423,6 +461,7 @@ export function ProjectsManager() {
                       <Badge variant="secondary">En vedette</Badge>
                     )}
                     <Badge variant="outline" className="capitalize">{project.category}</Badge>
+                    {project.slug && <Badge variant="secondary">/{project.slug}</Badge>}
                   </CardTitle>
                   <CardDescription>{project.description}</CardDescription>
                 </div>

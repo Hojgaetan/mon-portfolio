@@ -21,6 +21,7 @@ interface ProjectPreview {
   category?: string | null;
   // Métadonnée ajoutée pour affichage
   created_at?: string;
+  slug?: string | null;
 }
 
 interface BlogPostPreview {
@@ -72,8 +73,8 @@ const Index = () => {
         setLoadingProjects(true);
         const { data, error } = await supabase
           .from("projects")
-          // Inclure created_at pour l'afficher
-          .select("id, title, description, image_url, category, created_at")
+          // Inclure created_at et slug pour l'afficher et la navigation
+          .select("id, title, description, image_url, category, created_at, slug")
           .order("created_at", { ascending: false })
           .limit(3);
         if (error) {
@@ -184,7 +185,7 @@ const Index = () => {
     <div className="min-h-screen h-auto bg-background flex flex-col">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1">
-        {/* Hero aligné au style produits/paiement */}
+        {/* Hero */}
         <section id="hero" className="scroll-mt-16 relative overflow-hidden bg-gradient-to-br from-background via-background to-accent-blue/5">
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
           <div className="container mx-auto max-w-5xl p-6 relative">
@@ -196,76 +197,76 @@ const Index = () => {
                   className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-2 ring-border shadow-lg"
                 />
               </div>
-              <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">✨ Salut, je me nommes</Badge>
+              <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">{t('home.greeting')}</Badge>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Joel Gaetan HASSAM OBAH
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-                Développement web, data et IA — découvrez mes travaux, produits et articles.
+                {t('home.subtitle')}
               </p>
 
               {/* Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
                 <div className="text-center p-4">
                   <div className="text-2xl font-bold text-accent-blue">{projectsCount !== null ? projectsCount.toLocaleString('fr-FR') : '—'}</div>
-                  <div className="text-sm text-muted-foreground">Projets récents</div>
+                  <div className="text-sm text-muted-foreground">{t('stats.projects_recent')}</div>
                 </div>
                 <div className="text-center p-4">
                   <div className="text-2xl font-bold text-accent-green">{publishedPostsCount !== null ? publishedPostsCount.toLocaleString('fr-FR') : '—'}</div>
-                  <div className="text-sm text-muted-foreground">Articles publiés</div>
+                  <div className="text-sm text-muted-foreground">{t('stats.articles_published')}</div>
                 </div>
                 <div className="text-center p-4">
                   <div className="text-2xl font-bold text-accent-yellow">24/7</div>
-                  <div className="text-sm text-muted-foreground">Accès</div>
+                  <div className="text-sm text-muted-foreground">{t('stats.access')}</div>
                 </div>
                 <div className="text-center p-4">
                   <div className="text-2xl font-bold text-accent-red">{new Date().getFullYear()}</div>
-                  <div className="text-sm text-muted-foreground">Année courante</div>
+                  <div className="text-sm text-muted-foreground">{t('stats.current_year')}</div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Liens rapides vers pages clés */}
+        {/* Liens rapides */}
         <section id="quick-links" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Découvrir</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">Accédez rapidement aux sections clés</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.discover.title')}</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('home.discover.subtitle')}</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
               <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/20 bg-gradient-to-br from-card to-accent-blue/5 cursor-pointer" onClick={() => navigate('/produit')}>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
                   <FolderKanban className="h-5 w-5 text-accent-blue" />
-                  <CardTitle className="text-base">Produits</CardTitle>
+                  <CardTitle className="text-base">{t('quick.products.title')}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">Outils et solutions proposés</CardContent>
+                <CardContent className="text-sm text-muted-foreground">{t('quick.products.desc')}</CardContent>
               </Card>
               <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-sky/20 bg-gradient-to-br from-card to-accent-sky/5 cursor-pointer" onClick={() => navigate('/projets')}>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
                   <Folder className="h-5 w-5 text-accent-sky" />
-                  <CardTitle className="text-base">Projets</CardTitle>
+                  <CardTitle className="text-base">{t('quick.projects.title')}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">Sélection de travaux récents</CardContent>
+                <CardContent className="text-sm text-muted-foreground">{t('quick.projects.desc')}</CardContent>
               </Card>
               <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5 cursor-pointer" onClick={() => navigate('/blog')}>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
                   <Newspaper className="h-5 w-5 text-accent-green" />
-                  <CardTitle className="text-base">Blog</CardTitle>
+                  <CardTitle className="text-base">{t('quick.blog.title')}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">Articles, notes et idées</CardContent>
+                <CardContent className="text-sm text-muted-foreground">{t('quick.blog.desc')}</CardContent>
               </Card>
               <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-red/20 bg-gradient-to-br from-card to-accent-red/5 cursor-pointer" onClick={() => navigate('/annuaire')}>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
                   <Building2 className="h-5 w-5 text-accent-red" />
-                  <CardTitle className="text-base">Annuaire</CardTitle>
+                  <CardTitle className="text-base">{t('quick.directory.title')}</CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">Entreprises et ressources</CardContent>
+                <CardContent className="text-sm text-muted-foreground">{t('quick.directory.desc')}</CardContent>
               </Card>
             </div>
           </div>
@@ -283,7 +284,7 @@ const Index = () => {
               </div>
               <div className="flex md:justify-end">
                 <Button className="bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg transition-all" onClick={() => navigate('/a-propos')}>
-                  En savoir plus
+                  {t('about.read_more')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -295,8 +296,8 @@ const Index = () => {
         <section id="projects" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Projets récents</h2>
-              <p className="text-lg text-muted-foreground">Un aperçu des 3 derniers projets</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('projects.recent.title')}</h2>
+              <p className="text-lg text-muted-foreground">{t('projects.recent.subtitle')}</p>
             </div>
 
             {loadingProjects ? (
@@ -306,11 +307,15 @@ const Index = () => {
                 ))}
               </div>
             ) : projects.length === 0 ? (
-              <div className="text-muted-foreground">Aucun projet disponible.</div>
+              <div className="text-muted-foreground">{t('projects.none')}</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {projects.map((p) => (
-                  <Card key={p.id} className="relative group overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/30 bg-gradient-to-br from-card to-accent-blue/5">
+                  <Card
+                    key={p.id}
+                    className="relative group overflow-hidden hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/30 bg-gradient-to-br from-card to-accent-blue/5 cursor-pointer"
+                    onClick={() => p.slug ? navigate(`/projets/${p.slug}`) : navigate('/projets')}
+                  >
                     {/* Image avec overlay */}
                     <div className="relative h-40 w-full">
                       {p.image_url ? (
@@ -325,7 +330,7 @@ const Index = () => {
                         </span>
                       )}
                       {isNew(p.created_at) && (
-                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">Nouveau</span>
+                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">{t('common.new')}</span>
                       )}
                     </div>
 
@@ -351,7 +356,7 @@ const Index = () => {
 
             <div className="mt-8 flex justify-center">
               <Button onClick={() => navigate('/projets')} className="bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg">
-                Voir tous les projets
+                {t('projects.view_all')}
               </Button>
             </div>
           </div>
@@ -361,8 +366,8 @@ const Index = () => {
         <section id="blog" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Articles récents</h2>
-              <p className="text-lg text-muted-foreground">Les 3 derniers billets du blog</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('blog.recent.title')}</h2>
+              <p className="text-lg text-muted-foreground">{t('blog.recent.subtitle')}</p>
             </div>
 
             {loadingPosts ? (
@@ -372,7 +377,7 @@ const Index = () => {
                 ))}
               </div>
             ) : posts.length === 0 ? (
-              <div className="text-muted-foreground">Aucun article publié.</div>
+              <div className="text-muted-foreground">{t('blog.none')}</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {posts.map((post) => {
@@ -392,7 +397,7 @@ const Index = () => {
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-95" />
                         {isNew(post.created_at) && (
-                          <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">Nouveau</span>
+                          <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">{t('common.new')}</span>
                         )}
                       </div>
 
@@ -422,7 +427,7 @@ const Index = () => {
 
             <div className="mt-8 flex justify-center">
               <Button onClick={() => navigate('/blog')} className="bg-gradient-to-r from-accent-green to-accent-green/80 hover:from-accent-green/90 hover:to-accent-green/70 text-white shadow-lg">
-                Lire le blog
+                {t('blog.read_blog')}
               </Button>
             </div>
           </div>
@@ -430,13 +435,13 @@ const Index = () => {
 
         {/* Indicateurs de confiance */}
         <section className="py-12 text-center">
-          <h3 className="text-xl font-semibold mb-6">Fiable et sécurisé</h3>
+          <h3 className="text-xl font-semibold mb-6">{t('common.trust_title')}</h3>
           <div className="flex items-center justify-center gap-8 opacity-80">
-            <div className="flex items-center gap-2 text-sm"><Shield className="w-4 h-4" /><span>Paiement sécurisé</span></div>
+            <div className="flex items-center gap-2 text-sm"><Shield className="w-4 h-4" /><span>{t('common.secure_payment')}</span></div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="flex items-center gap-2 text-sm"><Clock className="w-4 h-4" /><span>Accès 24/7</span></div>
+            <div className="flex items-center gap-2 text-sm"><Clock className="w-4 h-4" /><span>{t('common.access_24_7')}</span></div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="flex items-center gap-2 text-sm"><Star className="w-4 h-4" /><span>Qualité soignée</span></div>
+            <div className="flex items-center gap-2 text-sm"><Star className="w-4 h-4" /><span>{t('common.quality')}</span></div>
           </div>
         </section>
 
