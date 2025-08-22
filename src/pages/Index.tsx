@@ -41,6 +41,10 @@ const Index = () => {
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [posts, setPosts] = useState<BlogPostPreview[]>([]);
 
+  // Etats pour stats dynamiques
+  const [projectsCount, setProjectsCount] = useState<number | null>(null);
+  const [publishedPostsCount, setPublishedPostsCount] = useState<number | null>(null);
+
   // Scroll vers section quand on change d’onglet depuis la navigation
   useEffect(() => {
     const sectionId = activeTab === 'hello' ? 'hero' : activeTab;
@@ -110,6 +114,39 @@ const Index = () => {
     loadPosts();
   }, []);
 
+  // Charger les compteurs (projets total, articles publiés)
+  useEffect(() => {
+    const loadCounts = async () => {
+      try {
+        const { count: pCount, error: pErr } = await supabase
+          .from("projects")
+          .select("id", { count: "exact", head: true });
+        if (pErr) {
+          console.error("Erreur compteur projets:", pErr);
+          setProjectsCount(0);
+        } else {
+          setProjectsCount(typeof pCount === 'number' ? pCount : 0);
+        }
+
+        const { count: bCount, error: bErr } = await supabase
+          .from("blog_posts")
+          .select("id", { count: "exact", head: true })
+          .eq("published", true);
+        if (bErr) {
+          console.error("Erreur compteur articles:", bErr);
+          setPublishedPostsCount(0);
+        } else {
+          setPublishedPostsCount(typeof bCount === 'number' ? bCount : 0);
+        }
+      } catch (e) {
+        console.error("Erreur chargement compteurs:", e);
+        setProjectsCount(0);
+        setPublishedPostsCount(0);
+      }
+    };
+    loadCounts();
+  }, []);
+
   const formattedDate = (iso?: string) => {
     if (!iso) return "";
     try {
@@ -135,7 +172,7 @@ const Index = () => {
                   className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-2 ring-border shadow-lg"
                 />
               </div>
-              <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">✨ Bienvenue</Badge>
+              <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">✨ Salut, je me nommes</Badge>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                 Joel Gaetan HASSAM OBAH
               </h1>
@@ -146,11 +183,11 @@ const Index = () => {
               {/* Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
                 <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-blue">3+</div>
+                  <div className="text-2xl font-bold text-accent-blue">{projectsCount !== null ? projectsCount.toLocaleString('fr-FR') : '—'}</div>
                   <div className="text-sm text-muted-foreground">Projets récents</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-green">3</div>
+                  <div className="text-2xl font-bold text-accent-green">{publishedPostsCount !== null ? publishedPostsCount.toLocaleString('fr-FR') : '—'}</div>
                   <div className="text-sm text-muted-foreground">Articles publiés</div>
                 </div>
                 <div className="text-center p-4">
@@ -158,7 +195,7 @@ const Index = () => {
                   <div className="text-sm text-muted-foreground">Accès</div>
                 </div>
                 <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-red">2025</div>
+                  <div className="text-2xl font-bold text-accent-red">{new Date().getFullYear()}</div>
                   <div className="text-sm text-muted-foreground">Année courante</div>
                 </div>
               </div>

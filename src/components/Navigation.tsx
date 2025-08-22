@@ -11,12 +11,12 @@ import {
 	Menu,
 	User,
 	X,
+  FileDown,
 } from "lucide-react";
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
 import { useTheme } from "next-themes";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { PdfIcon } from "./PdfIcon";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavigationProps {
@@ -189,7 +189,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
           <div className="flex items-center space-x-2">
             <a href="/CV__Joel Gaetan_HASSAM OBAH.pdf" download className="hidden lg:block">
                 <Button variant="accent-red" className="h-12 rounded-none px-3 py-2 flex items-center">
-                    <PdfIcon className="h-5 w-5 mr-2" />
+                    <FileDown className="h-5 w-5 mr-2" />
                     {t('nav.download_cv')}
                 </Button>
             </a>
@@ -253,7 +253,7 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                   variant="accent-red"
                   className="w-full justify-start font-sans text-sm px-4 py-3 rounded-none"
                 >
-                  <PdfIcon className="h-5 w-5 mr-2" />
+                  <FileDown className="h-5 w-5 mr-2" />
                   {t('nav.download_cv_mobile')}
                 </Button>
               </a>

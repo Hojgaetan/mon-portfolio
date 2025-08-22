@@ -1,18 +1,13 @@
 import { useState, useEffect } from "react";
-import { ChevronRight, ChevronDown, Folder, FolderOpen } from "lucide-react";
+import { ChevronRight, ChevronDown, Folder, FolderOpen, FileCode, Calendar, Puzzle, Palette, PenTool, Code2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
-import { FigmaIcon } from "@/components/FigmaIcon";
-import { GithubIcon } from "@/components/GithubIcon";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { FileCode } from "lucide-react";
 
 interface Project {
   id: string;
@@ -57,7 +52,11 @@ export const ProjectsSection = () => {
         .select("*, category")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erreur lors du chargement des projets:", error);
+        setGroupedProjects({});
+        return;
+      }
 
       const grouped = (data || []).reduce((acc, project) => {
         const category = project.category || "personnel";
@@ -70,15 +69,13 @@ export const ProjectsSection = () => {
 
       setGroupedProjects(grouped);
 
-      // On page load, show all projects, but select none.
-      // Open the "professionnel" folder by default if it exists.
-      if (data && data.length > 0) {
-          if (grouped.professionnel) {
-              setOpenFolders({ professionnel: true });
-          }
+      // Ouvrir le dossier "professionnel" par défaut s'il existe
+      if (grouped.professionnel) {
+        setOpenFolders({ professionnel: true });
       }
     } catch (error) {
       console.error("Erreur lors du chargement des projets:", error);
+      setGroupedProjects({});
     } finally {
       setLoading(false);
     }
@@ -90,31 +87,31 @@ export const ProjectsSection = () => {
       key: "planning_url",
       title: "Plannification du projet",
       description: "Organisation, tâches, avancement, Trello, etc.",
-      icon: "📅",
+      icon: <Calendar className="w-4 h-4" />,
     },
     {
       key: "modelisation_url",
-      title: "Mod������lisation & Analyse",
+      title: "Modélisation & Analyse",
       description: "Diagrammes, analyse fonctionnelle, cahier des charges, etc.",
-      icon: "🧩",
+      icon: <Puzzle className="w-4 h-4" />,
     },
     {
       key: "charte_url",
       title: "Charte Graphique",
       description: "Palette de couleurs, typographies, logos, etc.",
-      icon: "🎨",
+      icon: <Palette className="w-4 h-4" />,
     },
     {
       key: "prototype_url",
       title: "Maquette & Prototype",
       description: "Wireframes, maquettes Figma, prototypes interactifs, etc.",
-      icon: <FigmaIcon className="w-4 h-4" />,
+      icon: <PenTool className="w-4 h-4" />,
     },
     {
       key: "github_url",
-      title: "Code Github",
-      description: "Lien vers le dépôt Github du projet.",
-      icon: <GithubIcon className="w-4 h-4" />,
+      title: "Code source",
+      description: "Lien vers le dépôt du projet.",
+      icon: <Code2 className="w-4 h-4" />,
     },
   ];
 
@@ -128,8 +125,6 @@ export const ProjectsSection = () => {
 
   const handleCategoryClick = (category: string | "all") => {
     setSelectedCategory(category);
-    // Don't automatically select a project when a category is clicked.
-    // The user must explicitly click on a project card or file.
     setSelectedProject(null);
   };
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileCode, FileStack, FileBarChart2, Mail, Phone } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, FolderOpen, FileText, FileMusic, FileStack, FileBarChart2, Mail, Phone, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
@@ -7,6 +7,35 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TechIcon } from "@/components/TechIcon";
 import { supabase } from "@/integrations/supabase/client";
+
+// Types pour la table about_sections
+type SectionType = 'info' | 'education' | 'experience' | string;
+interface AboutSectionRow {
+  id?: string;
+  section_key: string;
+  section_type: SectionType;
+  is_active?: boolean;
+  order_index?: number;
+  title: string;
+  content: unknown; // JSON ou string
+  icon_name: string | null;
+}
+
+// Types de contenu possibles
+interface LineItem { type?: 'comment' | 'highlight' | 'emphasis' | string; text: string; }
+interface ContentLines { lines: LineItem[]; }
+interface ExperienceTask { type?: 'highlight' | 'emphasis' | string; text: string; }
+interface ExperienceContent { company?: string; description?: string; period?: string; tasks?: ExperienceTask[]; }
+
+function isObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null;
+}
+function isContentLines(v: unknown): v is ContentLines {
+  return isObject(v) && Array.isArray((v as any).lines);
+}
+function isExperienceContent(v: unknown): v is ExperienceContent {
+  return isObject(v) && ('company' in (v as any) || 'description' in (v as any) || 'tasks' in (v as any));
+}
 
 // Types pour une meilleure structure des données
 interface SidebarItem {
@@ -16,41 +45,31 @@ interface SidebarItem {
   content: JSX.Element;
 }
 
-interface SidebarSection {
-  id: string;
-  label: string;
-  icon: { closed: JSX.Element; open: JSX.Element };
-  items: SidebarItem[];
-}
-
 export const AboutSection = () => {
   const isMobile = useIsMobile();
   const [selectedInfo, setSelectedInfo] = useState("bio");
-  const [aboutSections, setAboutSections] = useState<any[]>([]);
+  const [aboutSections, setAboutSections] = useState<AboutSectionRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [expandedFoldersInOverlay, setExpandedFoldersInOverlay] = useState<string[]>([]); // Nouvel état pour les dossiers ouverts dans l'overlay
+  const [expandedFoldersInOverlay, setExpandedFoldersInOverlay] = useState<string[]>([]);
   const [isSkillsPanelGlowing, setIsSkillsPanelGlowing] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsSkillsPanelGlowing(false);
-    }, 5000); // L'animation s'arrête après 5 secondes
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
   // État d'ouverture des sections calculé dynamiquement basé sur le fichier sélectionné
   const getOpenSections = () => {
-    // Trouver la section qui contient le fichier sélectionné
     const selectedSection = aboutSections.find(section => section.section_key === selectedInfo);
     const selectedSectionType = selectedSection?.section_type;
-
-    // Ouvrir seulement la section qui contient le fichier sélectionné
     return {
       info: selectedSectionType === 'info',
       education: selectedSectionType === 'education',
       experience: selectedSectionType === 'experience',
-    };
+    } as Record<SectionType, boolean> & { info: boolean; education: boolean; experience: boolean };
   };
 
   const openSections = getOpenSections();
@@ -85,12 +104,14 @@ export const AboutSection = () => {
         .order("section_type", { ascending: true })
         .order("order_index", { ascending: true });
 
-      if (error) throw error;
-      setAboutSections(data || []);
-      
-      // Set first available section as default
-      if (data && data.length > 0) {
-        setSelectedInfo(data[0].section_key);
+      if (error) {
+        console.error("Erreur lors du chargement des sections:", error);
+        setAboutSections([]);
+      } else {
+        setAboutSections((data as AboutSectionRow[]) || []);
+        if (data && data.length > 0) {
+          setSelectedInfo((data[0] as AboutSectionRow).section_key);
+        }
       }
     } catch (error) {
       console.error("Erreur lors du chargement des sections:", error);
@@ -99,10 +120,8 @@ export const AboutSection = () => {
     }
   };
 
-  // Helper function pour gérer le clic sur une section
-  // Sélectionne le premier fichier de la section, ce qui ouvrira automatiquement le bon dossier
+  // Helper pour cliquer une section
   const handleSectionClick = (sectionId: string) => {
-    // Trouver le premier fichier dans cette section
     const section = sidebarData.find(s => s.id === sectionId);
     if (section && section.items.length > 0) {
       setSelectedInfo(section.items[0].id);
@@ -110,27 +129,21 @@ export const AboutSection = () => {
   };
 
   // Fonction helper pour créer le contenu formaté à partir des données de la DB
-  const renderContentFromDB = (section: any) => {
+  const renderContentFromDB = (section: AboutSectionRow) => {
     const { title } = section;
-    let content = section.content;
-    
-    // Ensure content is parsed as object if it's a string
-    if (typeof content === 'string') {
+    let raw = section.content;
+
+    // Si content est une string JSON, tenter de parser
+    if (typeof raw === 'string') {
       try {
-        content = JSON.parse(content);
-      } catch (error) {
-        console.error('Error parsing content JSON:', error);
-        return <div className="text-red-500">Erreur de format du contenu</div>;
+        const parsed = JSON.parse(raw);
+        raw = parsed;
+      } catch {
+        // Ce sera traité comme texte brut plus bas
       }
     }
-    
-    // Validate content structure
-    if (!content || typeof content !== 'object') {
-      return <div className="text-muted-foreground">Contenu non disponible</div>;
-    }
-    
-    // Handle different content formats
-    if (content?.lines && Array.isArray(content.lines)) {
+
+    if (isContentLines(raw)) {
       return (
         <div className="space-y-2 min-w-max font-sans">
           <div className="flex">
@@ -145,7 +158,7 @@ export const AboutSection = () => {
             <span className="text-muted-foreground mr-4 select-none w-6">3.</span>
             <span className="text-code-comment">*/</span>
           </div>
-          {content.lines.map((item: any, index: number) => (
+          {raw.lines.map((item, index) => (
             <div key={index} className="flex">
               <span className="text-muted-foreground mr-4 select-none w-6">{index + 4}.</span>
               <span className={
@@ -161,22 +174,21 @@ export const AboutSection = () => {
         </div>
       );
     }
-    
-    // Handle experience format
-    if (content?.company || content?.description) {
+
+    if (isExperienceContent(raw)) {
       return (
         <div className="space-y-2 min-w-max font-sans">
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">1.</span><span className="text-code-comment">/**</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">2.</span><span className="text-code-comment">* {title}</span></div>
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">3.</span><span className="text-code-comment">*/</span></div>
-          {content.description && (
-            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>{content.description}</i></span></div>
+          {raw.description && (
+            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">4.</span><span className="text-foreground"><i>{raw.description}</i></span></div>
           )}
-          {content.period && (
-            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>{content.period}</i></span></div>
+          {raw.period && (
+            <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">5.</span><span className="text-foreground text-[#df3821]"><i>{raw.period}</i></span></div>
           )}
           <div className="flex"><span className="text-muted-foreground mr-4 select-none w-6">6.</span><span className="text-foreground"></span></div>
-          {content.tasks && Array.isArray(content.tasks) && content.tasks.map((task: any, index: number) => (
+          {raw.tasks && Array.isArray(raw.tasks) && raw.tasks.map((task, index) => (
             <div key={index} className="flex">
               <span className="text-muted-foreground mr-4 select-none w-6">{index + 7}</span>
               <span className={
@@ -191,9 +203,8 @@ export const AboutSection = () => {
         </div>
       );
     }
-    
-    // Fallback for simple text content
-    if (typeof content === 'string') {
+
+    if (typeof raw === 'string') {
       return (
         <div className="space-y-2 min-w-max font-sans">
           <div className="flex">
@@ -210,16 +221,16 @@ export const AboutSection = () => {
           </div>
           <div className="flex">
             <span className="text-muted-foreground mr-4 select-none w-6">4.</span>
-            <span className="text-foreground">{content}</span>
+            <span className="text-foreground">{raw}</span>
           </div>
         </div>
       );
     }
-    
-    return <div className="text-muted-foreground">Format de contenu non reconnu</div>;
+
+    return <div className="text-muted-foreground">Contenu non disponible</div>;
   };
 
-  // Get icon component by name
+  // Icône fichier selon nom
   const getIconComponent = (iconName: string | null) => {
     switch (iconName) {
       case 'FileText': return <FileText className="w-4 h-4" />;
@@ -237,7 +248,7 @@ export const AboutSection = () => {
     }
     acc[section.section_type].push(section);
     return acc;
-  }, {} as Record<string, any[]>);
+  }, {} as Record<string, AboutSectionRow[]>);
 
   // Configuration des données de la sidebar avec données de la DB
   const sidebarData = Object.entries(groupedSections).map(([type, sections]) => ({
@@ -249,29 +260,27 @@ export const AboutSection = () => {
       closed: <Folder className="w-4 h-4 mr-1" />,
       open: <FolderOpen className="w-4 h-4 mr-1" />
     },
-    items: Array.isArray(sections) ? sections.map(section => ({
+    items: Array.isArray(sections) ? sections.map((section) => ({
       id: section.section_key,
       label: section.section_key,
       icon: getIconComponent(section.icon_name),
       content: renderContentFromDB(section)
-    })) : []
+    })) : [] as SidebarItem[]
   }));
 
-  // Trouver le contenu sélectionn��
+  // Trouver le contenu sélectionné
   const getSelectedContent = () => {
     for (const section of sidebarData) {
-      const item = section.items.find((item: any) => item.id === selectedInfo);
+      const item = section.items.find((item) => item.id === selectedInfo);
       if (item) return item.content;
     }
     return <div>Contenu non trouvé</div>;
   };
 
   // Fonction pour obtenir les fichiers du dossier actif seulement
-  const getActiveFolderFiles = () => {
+  const getActiveFolderFiles = (): SidebarItem[] => {
     const selectedSection = aboutSections.find(section => section.section_key === selectedInfo);
     const selectedSectionType = selectedSection?.section_type;
-
-    // Trouver la section correspondante dans sidebarData
     const activeSection = sidebarData.find(section => section.id === selectedSectionType);
     return activeSection ? activeSection.items : [];
   };
@@ -344,8 +353,9 @@ export const AboutSection = () => {
                       <button
                         onClick={() => setIsSidebarOpen(false)}
                         className="p-2 hover:bg-muted rounded-full transition-colors"
+                        aria-label="Fermer"
                       >
-                        ✕
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
