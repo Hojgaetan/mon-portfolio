@@ -1,20 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArticleInteractions } from "@/components/ArticleInteractions";
 import { ArticleComments } from "@/components/ArticleComments";
-import { ArrowLeft, Eye, Calendar, User, Clock } from "lucide-react";
+import { ArrowLeft, Eye, Calendar, Clock } from "lucide-react";
+import { getClientIP } from "@/lib/utils";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  color: string;
-}
-
+interface Category { id: string; name: string; slug: string; color: string; }
 interface BlogPost {
   id: string;
   title: string;
@@ -37,6 +31,30 @@ export default function ArticlePage() {
   const [error, setError] = useState<string | null>(null);
   const [views, setViews] = useState(0);
 
+  const getUserIP = async () => {
+    const ip = await getClientIP();
+    return ip || "unknown";
+  };
+
+  const trackView = useCallback(async (articleId: string) => {
+    try {
+      const userIP = await getUserIP();
+      const userAgent = navigator.userAgent;
+      await supabase
+        .from("article_views")
+        .upsert(
+          {
+            article_id: articleId,
+            ip_address: userIP,
+            user_agent: userAgent,
+          },
+          { onConflict: "article_id,ip_address" }
+        );
+    } catch (e) {
+      console.error("Erreur lors de l'enregistrement de la vue:", e);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -54,50 +72,22 @@ export default function ArticlePage() {
           .eq("slug", slug)
           .eq("published", true)
           .single();
-          
+
         if (error) {
           setError("Article introuvable");
-        } else {
-          setPost(data);
+        } else if (data) {
+          setPost(data as unknown as BlogPost);
           await trackView(data.id);
           await fetchViews(data.id);
         }
-      } catch (error) {
+      } catch {
         setError("Article introuvable");
       } finally {
         setLoading(false);
       }
     };
-    
     fetchPost();
-  }, [slug]);
-
-  const getUserIP = async () => {
-    try {
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      return data.ip;
-    } catch {
-      return 'unknown';
-    }
-  };
-
-  const trackView = async (articleId: string) => {
-    try {
-      const userIP = await getUserIP();
-      const userAgent = navigator.userAgent;
-      
-      await supabase
-        .from("article_views")
-        .insert({
-          article_id: articleId,
-          ip_address: userIP,
-          user_agent: userAgent
-        });
-    } catch (error) {
-      console.error("Erreur lors de l'enregistrement de la vue:", error);
-    }
-  };
+  }, [slug, trackView]);
 
   const fetchViews = async (articleId: string) => {
     try {
@@ -105,16 +95,15 @@ export default function ArticlePage() {
         .from("article_views")
         .select("id")
         .eq("article_id", articleId);
-      
       setViews(data?.length || 0);
-    } catch (error) {
-      console.error("Erreur lors du chargement des vues:", error);
+    } catch (e) {
+      console.error("Erreur lors du chargement des vues:", e);
     }
   };
 
   const getReadingTime = (content: string) => {
     const wordsPerMinute = 200;
-    const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+    const wordCount = content.replace(/<[^>]*>/g, "").split(/\s+/).length;
     return Math.ceil(wordCount / wordsPerMinute);
   };
 
@@ -141,7 +130,7 @@ export default function ArticlePage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{error || "Article introuvable"}</h1>
-          <Button onClick={() => navigate('/blog')} variant="outline">
+          <Button onClick={() => navigate("/blog")} variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour au blog
           </Button>
@@ -155,11 +144,7 @@ export default function ArticlePage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Navigation */}
         <div className="mb-8">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/blog')}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => navigate("/blog")} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour au blog
           </Button>
@@ -169,10 +154,10 @@ export default function ArticlePage() {
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             {post.categories && (
-              <Badge 
-                variant="secondary" 
+              <Badge
+                variant="secondary"
                 className="text-sm"
-                style={{ backgroundColor: `${post.categories.color}20`, color: post.categories.color }}
+                style={{ backgroundColor: (post.categories?.color ?? "") + "20", color: post.categories?.color }}
               >
                 {post.categories.name}
               </Badge>
@@ -181,8 +166,8 @@ export default function ArticlePage() {
               <Calendar className="w-4 h-4" />
               {new Date(post.created_at).toLocaleDateString("fr-FR", {
                 day: "numeric",
-                month: "long", 
-                year: "numeric"
+                month: "long",
+                year: "numeric",
               })}
             </span>
             <span className="text-sm text-muted-foreground flex items-center gap-1">
@@ -194,19 +179,17 @@ export default function ArticlePage() {
               {views} vues
             </span>
           </div>
-          
+
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          
-          {post.excerpt && (
-            <p className="text-xl text-muted-foreground mb-6">{post.excerpt}</p>
-          )}
+
+          {post.excerpt && <p className="text-xl text-muted-foreground mb-6">{post.excerpt}</p>}
         </header>
 
         {/* Featured Image */}
         {post.image_url && (
           <div className="mb-8">
-            <img 
-              src={post.image_url} 
+            <img
+              src={post.image_url}
               alt={post.title}
               className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
             />
@@ -215,19 +198,15 @@ export default function ArticlePage() {
 
         {/* Article Content */}
         <article className="mb-8">
-          <div 
+          <div
             className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-accent-blue hover:prose-a:text-accent-blue/80"
-            dangerouslySetInnerHTML={{ __html: post.content }} 
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </article>
 
         {/* Article Interactions */}
         <div className="mb-8">
-          <ArticleInteractions 
-            articleId={post.id}
-            articleTitle={post.title}
-            articleUrl={window.location.href}
-          />
+          <ArticleInteractions articleId={post.id} articleTitle={post.title} articleUrl={window.location.href} />
         </div>
 
         {/* Comments Section */}
@@ -236,4 +215,3 @@ export default function ArticlePage() {
     </div>
   );
 }
-

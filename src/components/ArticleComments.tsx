@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, User, Calendar } from "lucide-react";
+import { getClientIP } from "@/lib/utils";
 
 interface Comment {
   id: string;
@@ -72,13 +73,8 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
   }, [fetchComments]);
 
   const getUserIP = async () => {
-    try {
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      return data.ip;
-    } catch {
-      return 'unknown';
-    }
+    const ip = await getClientIP();
+    return ip || 'unknown';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

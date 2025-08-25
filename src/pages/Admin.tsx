@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { User, Session } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
@@ -14,10 +14,10 @@ import { EntrepriseManager } from "@/components/admin/EntrepriseManager";
 import { UsersManager } from "@/components/admin/UsersManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AccessManager } from "@/components/admin/AccessManager";
+import { CommentsManager } from "@/components/admin/CommentsManager";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -30,7 +30,6 @@ export default function Admin() {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setSession(session);
         setUser(session?.user ?? null);
         if (!session?.user && event !== 'INITIAL_SESSION') {
           navigate("/auth");
@@ -41,7 +40,6 @@ export default function Admin() {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
       setUser(session?.user ?? null);
       if (!session?.user) {
         navigate("/auth");
@@ -67,7 +65,7 @@ export default function Admin() {
           .select("user_id")
           .eq("user_id", user.id)
           .maybeSingle();
-        if (error) throw error;
+        if (error) console.warn(error);
         setIsAdmin(!!data);
       } catch (e) {
         console.warn("Vérification admin échouée:", e);
@@ -77,7 +75,7 @@ export default function Admin() {
       }
     };
     checkAdmin();
-  }, [user?.id]);
+  }, [user]);
 
   // Redirection si non-admin
   useEffect(() => {
@@ -128,6 +126,8 @@ export default function Admin() {
         return <AboutManager />;
       case "messages":
         return <ContactMessagesManager />;
+      case "comments":
+        return <CommentsManager />;
       case "categories":
         return <CategorieManager />;
       case "entreprises":

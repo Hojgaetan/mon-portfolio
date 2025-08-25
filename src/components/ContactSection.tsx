@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getClientIP } from "@/lib/utils";
 
 export const ContactSection = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -24,14 +25,7 @@ export const ContactSection = () => {
         throw new Error(t('contact.all_fields_required'));
       }
 
-      // Obtenir l'adresse IP et user agent (optionnel)
-      let ipData = null;
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        ipData = await ipResponse.json();
-      } catch (ipError) {
-        console.warn('Impossible d\'obtenir l\'adresse IP:', ipError);
-      }
+      const ip = await getClientIP();
 
       const { error } = await supabase
         .from('contact_messages')
@@ -39,7 +33,7 @@ export const ContactSection = () => {
           name: form.name.trim(),
           email: form.email.trim(),
           message: form.message.trim(),
-          ip_address: ipData?.ip || null,
+          ip_address: ip || null,
           user_agent: navigator.userAgent || null
         });
 

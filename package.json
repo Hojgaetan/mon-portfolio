@@ -9,7 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "update-types": "supabase gen types typescript --project-id yxwnxtflqibzxtiamjfr > src/integrations/supabase/types.ts"
+    "update-types": "supabase gen types typescript --project-id yavxlxrttdcqbknhxiph > src/integrations/supabase/types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

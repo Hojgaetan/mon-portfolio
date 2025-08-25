@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Share2, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
+import { getClientIP } from "@/lib/utils";
 
 interface ArticleInteractionsProps {
   articleId: string;
@@ -76,13 +77,8 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
   }, [fetchInteractionData]);
 
   const getUserIP = async () => {
-    try {
-      const response = await fetch('https://api.ipify.org?format=json');
-      const data = await response.json();
-      return data.ip;
-    } catch {
-      return 'unknown';
-    }
+    const ip = await getClientIP();
+    return ip || 'unknown';
   };
 
   const handleLike = async () => {
