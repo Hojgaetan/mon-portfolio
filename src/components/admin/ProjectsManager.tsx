@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Plus, Edit, Trash2, ExternalLink, Github } from "lucide-react";
+import { Plus, Edit, Trash2, ExternalLink, Github, Download } from "lucide-react";
+import { useExcelExport } from "@/hooks/useExcelExport";
 
 // Types pour les projets (remplaçant les types Supabase manquants)
 interface Project {
@@ -64,6 +65,7 @@ export function ProjectsManager() {
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { exportToExcel, isExporting } = useExcelExport();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -266,6 +268,29 @@ export function ProjectsManager() {
     }
   };
 
+  const handleExportToExcel = () => {
+    const exportData = projects.map(project => ({
+      'Titre': project.title,
+      'Slug': project.slug || '',
+      'Description': project.description || '',
+      'Catégorie': project.category || '',
+      'Technologies': project.technologies?.join(', ') || '',
+      'En vedette': project.featured ? 'Oui' : 'Non',
+      'URL du projet': project.project_url || '',
+      'URL GitHub': project.github_url || '',
+      'URL Planning': project.planning_url || '',
+      'URL Analyse': project.analysis_url || '',
+      'URL Design': project.design_url || '',
+      'URL Prototype': project.prototype_url || '',
+      'URL Image': project.image_url || ''
+    }));
+
+    exportToExcel(exportData, {
+      filename: 'projets',
+      sheetName: 'Projets'
+    });
+  };
+
   if (loading) {
     return <div className="text-center">Chargement des projets...</div>;
   }
@@ -274,10 +299,20 @@ export function ProjectsManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Gestion des Projets</h2>
-        <Button onClick={handleCreate}>
-          <Plus className="w-4 h-4 mr-2" />
-          Nouveau projet
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleExportToExcel}
+            disabled={isExporting || projects.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {isExporting ? 'Export...' : 'Exporter Excel'}
+          </Button>
+          <Button onClick={handleCreate}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nouveau projet
+          </Button>
+        </div>
       </div>
 
       {(isCreating || editingProject) && (

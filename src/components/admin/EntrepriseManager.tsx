@@ -11,10 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Edit, Trash2, ExternalLink, Download } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useExcelExport } from "@/hooks/useExcelExport";
 
 const entrepriseSchema = z.object({
   nom: z.string().min(1, "Le nom est requis"),
@@ -73,6 +74,8 @@ export function EntrepriseManager() {
   const dateFromId = useId();
   const dateToId = useId();
   const sortId = useId();
+
+  const { exportToExcel, isExporting } = useExcelExport();
 
   const form = useForm<EntrepriseFormData>({
     resolver: zodResolver(entrepriseSchema),
@@ -269,6 +272,24 @@ export function EntrepriseManager() {
     setSortBy("date_desc");
   };
 
+  const handleExportToExcel = () => {
+    const exportData = filteredEntreprises.map(entreprise => ({
+      'Nom': entreprise.nom,
+      'Téléphone': entreprise.telephone || '',
+      'Adresse': entreprise.adresse || '',
+      'Site Web': entreprise.site_web || '',
+      'Site Web Valide': entreprise.site_web_valide ? 'Oui' : 'Non',
+      'Catégorie': entreprise.categorie?.nom || 'Aucune',
+      'Date de création': new Date(entreprise.created_at).toLocaleDateString('fr-FR'),
+      'Dernière modification': new Date(entreprise.updated_at).toLocaleDateString('fr-FR')
+    }));
+
+    exportToExcel(exportData, {
+      filename: 'entreprises',
+      sheetName: 'Entreprises'
+    });
+  };
+
   if (loading) {
     return <div>Chargement...</div>;
   }
@@ -280,10 +301,21 @@ export function EntrepriseManager() {
           <h2 className="text-2xl font-bold tracking-tight">Gestion des Entreprises</h2>
           <p className="text-muted-foreground">Gérez la base de données des entreprises</p>
         </div>
-        <Button type="button" onClick={() => { setIsDialogOpen(true); }}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nouvelle Entreprise
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={handleExportToExcel}
+            disabled={isExporting || filteredEntreprises.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? 'Export...' : 'Exporter Excel'}
+          </Button>
+          <Button type="button" onClick={() => { setIsDialogOpen(true); }}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvelle Entreprise
+          </Button>
+        </div>
       </div>
 
       {/* Barre de recherche et filtres - accessible et responsive */}

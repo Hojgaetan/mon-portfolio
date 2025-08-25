@@ -8,10 +8,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Download } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useExcelExport } from "@/hooks/useExcelExport";
 
 const categorieSchema = z.object({
   nom: z.string().min(1, "Le nom est requis"),
@@ -32,6 +33,8 @@ export function CategorieManager() {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategorie, setEditingCategorie] = useState<Categorie | null>(null);
+
+  const { exportToExcel, isExporting } = useExcelExport();
 
   const form = useForm<CategorieFormData>({
     resolver: zodResolver(categorieSchema),
@@ -127,6 +130,19 @@ export function CategorieManager() {
     form.reset();
   };
 
+  const handleExportToExcel = () => {
+    const exportData = categories.map(categorie => ({
+      'Nom': categorie.nom,
+      'Description': categorie.description || 'Aucune description',
+      'Date de création': new Date(categorie.created_at).toLocaleDateString('fr-FR')
+    }));
+
+    exportToExcel(exportData, {
+      filename: 'categories',
+      sheetName: 'Catégories'
+    });
+  };
+
   if (loading) {
     return <div>Chargement...</div>;
   }
@@ -140,14 +156,23 @@ export function CategorieManager() {
             Gérez les catégories pour organiser les entreprises
           </p>
         </div>
-        {/* Utilisation contrôlée du Dialog: on déclenche l'ouverture avec le bouton directement */}
-        <Button onClick={() => {
-          console.log("Button clicked, opening dialog");
-          setIsDialogOpen(true);
-        }}>
-          <Plus className="mr-2 h-4 w-4" />
-          Nouvelle Catégorie
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleExportToExcel}
+            disabled={isExporting || categories.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            {isExporting ? 'Export...' : 'Exporter Excel'}
+          </Button>
+          <Button onClick={() => {
+            console.log("Button clicked, opening dialog");
+            setIsDialogOpen(true);
+          }}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvelle Catégorie
+          </Button>
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
             <DialogHeader>

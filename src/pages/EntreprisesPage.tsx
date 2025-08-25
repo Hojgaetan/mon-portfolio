@@ -16,7 +16,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 // Nouveaux imports UI
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, Download } from "lucide-react";
+import { useExcelExport } from "@/hooks/useExcelExport";
 
 interface EntrepriseRow {
   id: string;
@@ -67,6 +68,7 @@ export default function EntreprisesPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { exportToExcel, isExporting } = useExcelExport();
 
   // Debounce search input
   useEffect(() => {
@@ -631,6 +633,30 @@ export default function EntreprisesPage() {
               </div>
               <Button variant="ghost" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>
                 {t('annuaire.reset')}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  const exportData = paged.map(e => ({
+                    'Nom': e.nom,
+                    'Téléphone': e.telephone || '',
+                    'Adresse': e.adresse || '',
+                    'Site Web': e.site_web || '',
+                    'Site Web Valide': e.site_web_valide ? 'Oui' : 'Non',
+                    'Catégorie': e.categorie?.nom || 'Aucune',
+                    'Date de création': formattedDate(e.created_at),
+                    'Vues': viewCounts[e.id] ?? 0
+                  }));
+                  exportToExcel(exportData, {
+                    filename: 'entreprises_annuaire',
+                    sheetName: 'Entreprises'
+                  });
+                }}
+                disabled={isExporting || paged.length === 0}
+              >
+                <Download className="w-4 h-4 mr-1" />
+                {isExporting ? 'Export...' : 'Excel'}
               </Button>
             </div>
           </div>

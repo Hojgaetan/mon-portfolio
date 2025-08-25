@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, CircleOff, Trash2, Calendar, User, MessageSquare } from "lucide-react";
+import { CheckCircle2, CircleOff, Trash2, Calendar, User, MessageSquare, Download } from "lucide-react";
+import { useExcelExport } from "@/hooks/useExcelExport";
 
 interface CommentRow {
   id: string;
@@ -21,6 +22,7 @@ export function CommentsManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "approved" | "pending">("all");
   const { toast } = useToast();
+  const { exportToExcel, isExporting } = useExcelExport();
 
   const fetchComments = useCallback(async () => {
     setLoading(true);
@@ -79,6 +81,28 @@ export function CommentsManager() {
     filter === "all" ? true : filter === "approved" ? c.approved : !c.approved
   );
 
+  const handleExportToExcel = () => {
+    const exportData = filtered.map(comment => ({
+      'Auteur': comment.author_name,
+      'Email': comment.author_email,
+      'Article ID': comment.article_id,
+      'Contenu': comment.content,
+      'Statut': comment.approved ? 'Approuvé' : 'En attente',
+      'Date de création': new Date(comment.created_at).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    }));
+
+    exportToExcel(exportData, {
+      filename: 'commentaires',
+      sheetName: 'Commentaires'
+    });
+  };
+
   if (loading) return <div className="flex justify-center py-8">Chargement...</div>;
 
   return (
@@ -90,6 +114,14 @@ export function CommentsManager() {
           <Button variant={filter === "pending" ? "secondary" : "ghost"} onClick={() => setFilter("pending")}>En attente</Button>
           <Button variant={filter === "approved" ? "secondary" : "ghost"} onClick={() => setFilter("approved")}>Approuvés</Button>
           <Button variant="outline" onClick={fetchComments}>Rafraîchir</Button>
+          <Button 
+            variant="outline" 
+            onClick={handleExportToExcel}
+            disabled={isExporting || filtered.length === 0}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {isExporting ? 'Export...' : 'Excel'}
+          </Button>
         </div>
       </div>
 
