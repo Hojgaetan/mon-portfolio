@@ -356,6 +356,39 @@ export type Database = {
         }
         Relationships: []
       }
+      comment_reactions: {
+        Row: {
+          active: boolean
+          client_id: string | null
+          comment_id: string
+          created_at: string | null
+          id: string
+          ip_address: unknown | null
+          reaction_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          client_id?: string | null
+          comment_id: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          reaction_type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          client_id?: string | null
+          comment_id?: string
+          created_at?: string | null
+          id?: string
+          ip_address?: unknown | null
+          reaction_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string | null

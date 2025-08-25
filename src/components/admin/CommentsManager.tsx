@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { CommentReactionsStats } from "@/components/admin/CommentReactionsStats";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircle2, CircleOff, Trash2, Calendar, User, MessageSquare } from "lucide-react";
+import { CheckCircle2, CircleOff, Trash2, Calendar, User, MessageSquare, Heart } from "lucide-react";
 
 interface CommentRow {
   id: string;
@@ -118,6 +119,7 @@ export function CommentsManager() {
                           day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
                         })}
                       </span>
+                      <CommentReactionsStats commentId={c.id} />
                       <span className="text-xs text-muted-foreground">Article: {c.article_id}</span>
                     </CardDescription>
                   </div>

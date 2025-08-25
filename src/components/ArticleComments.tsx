@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { CommentReactions } from "@/components/CommentReactions";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, User, Calendar } from "lucide-react";
 import { getClientIP } from "@/lib/utils";
@@ -162,19 +163,22 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
             <div className="space-y-6">
               {comments.map((comment) => (
                 <div key={comment.id} className="border-l-2 border-muted pl-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{comment.author_name}</span>
-                    <span className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(comment.created_at).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
-                    </span>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="font-medium">{comment.author_name}</span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(comment.created_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
+                      </span>
+                    </div>
+                    <CommentReactions commentId={comment.id} />
                   </div>
                   <p className="text-sm leading-relaxed">{comment.content}</p>
                 </div>
