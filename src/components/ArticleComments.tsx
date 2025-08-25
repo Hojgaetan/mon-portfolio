@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,11 +33,23 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
     content: ""
   });
 
-  useEffect(() => {
-    fetchComments();
-  }, [articleId]);
+  // Génère/récupère un client_id persistant côté navigateur
+  const getClientId = () => {
+    try {
+      const key = "article_client_id";
+      let cid = localStorage.getItem(key);
+      if (!cid) {
+        const uuid = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}-${Math.random().toString(36).slice(2, 10)}`;
+        localStorage.setItem(key, uuid);
+        cid = uuid;
+      }
+      return cid;
+    } catch {
+      return "anonymous";
+    }
+  };
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("article_comments")
@@ -53,7 +65,11 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [articleId]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const getUserIP = async () => {
     try {
@@ -67,18 +83,25 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateEmail(formData.author_email) || !formData.author_name.trim() || !formData.content.trim()) {
+      toast({ title: "Champs invalides", description: "Veuillez vérifier le formulaire.", variant: "destructive" });
+      return;
+    }
+
     setSubmitting(true);
 
     try {
+      const clientId = getClientId();
       const userIP = await getUserIP();
-      
+
       const { error } = await supabase
         .from("article_comments")
         .insert({
           article_id: articleId,
-          author_name: formData.author_name,
-          author_email: formData.author_email,
-          content: formData.content,
+          author_name: formData.author_name.trim(),
+          author_email: formData.author_email.trim(),
+          content: formData.content.trim(),
+          client_id: clientId,
           ip_address: userIP
         });
 
@@ -182,7 +205,7 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
                   placeholder="Votre nom"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="author_email">Email *</Label>
                 <Input
@@ -195,7 +218,7 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="content">Commentaire *</Label>
               <Textarea
@@ -207,8 +230,8 @@ export function ArticleComments({ articleId }: ArticleCommentsProps) {
                 placeholder="Partagez votre réflexion..."
               />
             </div>
-            
-            <Button 
+
+            <Button
               type="submit" 
               disabled={submitting || !formData.author_name || !formData.author_email || !formData.content || !validateEmail(formData.author_email)}
               className="w-full md:w-auto bg-accent-blue hover:bg-accent-blue/90 text-white"

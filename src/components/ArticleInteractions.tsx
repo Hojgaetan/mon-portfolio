@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Heart, Share2, MessageCircle, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
+import { Heart, Share2, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -17,42 +17,63 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
   const [shares, setShares] = useState(0);
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchInteractionData();
-  }, [articleId]);
-
-  const fetchInteractionData = async () => {
+  // Génère/récupère un client_id persistant côté navigateur
+  const getClientId = () => {
     try {
-      // Check if user has liked
-      const userIP = await getUserIP();
-      const { data: likeData } = await supabase
+      const key = "article_client_id";
+      let cid = localStorage.getItem(key);
+      if (!cid) {
+        const uuid = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}-${Math.random().toString(36).slice(2, 10)}`;
+        localStorage.setItem(key, uuid);
+        cid = uuid;
+      }
+      return cid;
+    } catch {
+      return "anonymous";
+    }
+  };
+
+  const fetchInteractionData = useCallback(async () => {
+    try {
+      const clientId = getClientId();
+
+      // Vérifie si l'utilisateur (client) a liké
+      const { data: likeRow, error: likeErr } = await supabase
+        .from("article_likes")
+        .select("id, active")
+        .eq("article_id", articleId)
+        .eq("client_id", clientId)
+        .maybeSingle();
+
+      if (likeErr) console.warn("like check error", likeErr);
+      setLiked(!!likeRow?.active);
+
+      // Total likes (actifs uniquement)
+      const { data: likesData, error: likesErr } = await supabase
         .from("article_likes")
         .select("id")
         .eq("article_id", articleId)
-        .eq("ip_address", userIP)
-        .single();
+        .eq("active", true);
 
-      setLiked(!!likeData);
-
-      // Get total likes
-      const { data: likesData } = await supabase
-        .from("article_likes")
-        .select("id")
-        .eq("article_id", articleId);
-
+      if (likesErr) console.warn("likes count error", likesErr);
       setLikes(likesData?.length || 0);
 
-      // Get total shares
-      const { data: sharesData } = await supabase
+      // Total shares
+      const { data: sharesData, error: sharesErr } = await supabase
         .from("article_shares")
         .select("id")
         .eq("article_id", articleId);
 
+      if (sharesErr) console.warn("shares count error", sharesErr);
       setShares(sharesData?.length || 0);
     } catch (error) {
       console.error("Erreur lors du chargement des interactions:", error);
     }
-  };
+  }, [articleId]);
+
+  useEffect(() => {
+    fetchInteractionData();
+  }, [fetchInteractionData]);
 
   const getUserIP = async () => {
     try {
@@ -66,28 +87,33 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
 
   const handleLike = async () => {
     try {
-      const userIP = await getUserIP();
-      
+      const clientId = getClientId();
+      const ip = await getUserIP();
+
       if (liked) {
-        // Remove like
-        await supabase
+        // Désactiver le like existant
+        const { error } = await supabase
           .from("article_likes")
-          .delete()
+          .update({ active: false })
           .eq("article_id", articleId)
-          .eq("ip_address", userIP);
-        
+          .eq("client_id", clientId);
+
+        if (error) throw error;
         setLiked(false);
-        setLikes(prev => prev - 1);
+        setLikes(prev => Math.max(0, prev - 1));
         toast({ title: "Like retiré" });
       } else {
-        // Add like
-        await supabase
+        // Créer/activer le like (upsert)
+        const { error } = await supabase
           .from("article_likes")
-          .insert({
+          .upsert({
             article_id: articleId,
-            ip_address: userIP
-          });
-        
+            client_id: clientId,
+            ip_address: ip,
+            active: true,
+          }, { onConflict: "article_id,client_id" });
+
+        if (error) throw error;
         setLiked(true);
         setLikes(prev => prev + 1);
         toast({ title: "Article aimé !" });
@@ -103,22 +129,26 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
 
   const handleShare = async (platform: string, url: string) => {
     try {
+      const clientId = getClientId();
       const userIP = await getUserIP();
-      
-      // Track share
-      await supabase
+
+      // Trace le partage
+      const { error } = await supabase
         .from("article_shares")
         .insert({
           article_id: articleId,
           platform,
+          client_id: clientId,
           ip_address: userIP
         });
 
+      if (error) console.warn("share track error", error);
+
       setShares(prev => prev + 1);
-      
-      // Open share URL
+
+      // Ouvre l'URL de partage
       window.open(url, '_blank', 'width=600,height=400');
-      
+
       toast({ title: `Partagé sur ${platform}` });
     } catch (error) {
       console.error("Erreur lors du partage:", error);
@@ -129,17 +159,20 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
     try {
       await navigator.clipboard.writeText(window.location.href);
       toast({ title: "Lien copié dans le presse-papier" });
-      
-      // Track as link share
+
+      // Trace comme partage de lien
+      const clientId = getClientId();
       const userIP = await getUserIP();
-      await supabase
+      const { error } = await supabase
         .from("article_shares")
         .insert({
           article_id: articleId,
           platform: 'link',
+          client_id: clientId,
           ip_address: userIP
         });
-      
+      if (error) console.warn("link share track error", error);
+
       setShares(prev => prev + 1);
     } catch (error) {
       toast({
@@ -170,7 +203,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
               <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} />
               {likes}
             </Button>
-            
+
             <span className="flex items-center gap-1 text-sm text-muted-foreground">
               <Share2 className="w-4 h-4" />
               {shares}
@@ -186,7 +219,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             >
               <Twitter className="w-4 h-4" />
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -195,7 +228,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             >
               <Linkedin className="w-4 h-4" />
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -204,7 +237,7 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
             >
               <Facebook className="w-4 h-4" />
             </Button>
-            
+
             <Button
               variant="outline"
               size="sm"

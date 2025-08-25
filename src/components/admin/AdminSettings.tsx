@@ -76,8 +76,9 @@ export function AdminSettings() {
                     <Button
                       key={option.value}
                       variant={theme === option.value ? "default" : "outline"}
-                      className={theme === option.value ? "bg-accent-blue text-white" : "border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5"}
-                      className="justify-start"
+                      className={(theme === option.value
+                        ? "bg-accent-blue text-white"
+                        : "border-accent-blue/20 text-accent-blue hover:bg-accent-blue/5") + " justify-start"}
                       onClick={() => setTheme(option.value as "light" | "dark" | "system")}
                     >
                       <Icon className="h-4 w-4 mr-2" />
