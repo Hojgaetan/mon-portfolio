@@ -140,77 +140,122 @@ export default function ArticlePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Navigation */}
-        <div className="mb-8">
-          <Button variant="ghost" onClick={() => navigate("/blog")} className="mb-4">
+    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+      {/* Hero Section with Navigation */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-accent-blue/5"></div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate("/blog")} 
+            className="mb-6 hover:bg-background/80 backdrop-blur-sm"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour au blog
           </Button>
-        </div>
-
-        {/* Article Header */}
-        <header className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+          
+          {/* Article Meta Info */}
+          <div className="flex flex-wrap items-center gap-4 mb-6">
             {post.categories && (
               <Badge
                 variant="secondary"
-                className="text-sm"
-                style={{ backgroundColor: (post.categories?.color ?? "") + "20", color: post.categories?.color }}
+                className="text-sm font-medium px-3 py-1 rounded-full"
+                style={{ 
+                  backgroundColor: (post.categories?.color ?? "") + "15", 
+                  color: post.categories?.color,
+                  border: `1px solid ${post.categories?.color}30`
+                }}
               >
                 {post.categories.name}
               </Badge>
             )}
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
-              <Calendar className="w-4 h-4" />
-              {new Date(post.created_at).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              {getReadingTime(post.content)} min de lecture
-            </span>
-            <span className="text-sm text-muted-foreground flex items-center gap-1">
-              <Eye className="w-4 h-4" />
-              {views} vues
-            </span>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                <Calendar className="w-4 h-4" />
+                {new Date(post.created_at).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                <Clock className="w-4 h-4" />
+                {getReadingTime(post.content)} min
+              </span>
+              <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
+                <Eye className="w-4 h-4" />
+                {views} vues
+              </span>
+            </div>
           </div>
 
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+          {/* Article Title */}
+          <div className="max-w-4xl">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              {post.title}
+            </h1>
+            
+            {post.excerpt && (
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl">
+                {post.excerpt}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
 
-          {post.excerpt && <p className="text-xl text-muted-foreground mb-6">{post.excerpt}</p>}
-        </header>
-
-        {/* Featured Image */}
-        {post.image_url && (
-          <div className="mb-8">
+      {/* Featured Image */}
+      {post.image_url && (
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="relative overflow-hidden rounded-2xl shadow-2xl">
             <img
               src={post.image_url}
               alt={post.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+              className="w-full h-64 md:h-96 lg:h-[500px] object-cover transition-transform duration-700 hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Container */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Article Content */}
+        <article className="mb-16">
+          <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-border/50">
+            <div
+              className="prose prose-lg md:prose-xl max-w-none 
+                         prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight
+                         prose-h1:text-3xl prose-h1:md:text-4xl prose-h1:mb-6 prose-h1:mt-8
+                         prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:mb-4 prose-h2:mt-6
+                         prose-h3:text-xl prose-h3:md:text-2xl prose-h3:mb-3 prose-h3:mt-5
+                         prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
+                         prose-strong:text-foreground prose-strong:font-semibold
+                         prose-a:text-accent-blue prose-a:font-medium prose-a:no-underline 
+                         hover:prose-a:text-accent-blue/80 hover:prose-a:underline
+                         prose-blockquote:border-l-accent-blue prose-blockquote:bg-muted/30 
+                         prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
+                         prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+                         prose-ul:my-4 prose-ol:my-4 prose-li:my-2
+                         prose-img:rounded-xl prose-img:shadow-lg"
+              dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>
-        )}
-
-        {/* Article Content */}
-        <article className="mb-8">
-          <div
-            className="prose prose-lg max-w-none prose-headings:text-foreground prose-p:text-foreground prose-strong:text-foreground prose-a:text-accent-blue hover:prose-a:text-accent-blue/80"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
         </article>
 
         {/* Article Interactions */}
-        <div className="mb-8">
-          <ArticleInteractions articleId={post.id} articleTitle={post.title} articleUrl={window.location.href} />
+        <div className="mb-12">
+          <div className="bg-card/30 backdrop-blur-sm rounded-2xl p-6 border border-border/50">
+            <ArticleInteractions articleId={post.id} articleTitle={post.title} articleUrl={window.location.href} />
+          </div>
         </div>
 
         {/* Comments Section */}
-        <ArticleComments articleId={post.id} />
+        <div className="mb-12">
+          <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden">
+            <ArticleComments articleId={post.id} />
+          </div>
+        </div>
       </div>
     </div>
   );
