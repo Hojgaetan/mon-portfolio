@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArticleInteractions } from "@/components/ArticleInteractions";
 import { ArticleComments } from "@/components/ArticleComments";
+import { RecentArticlesSidebar } from "@/components/RecentArticlesSidebar";
 import { ArrowLeft, Eye, Calendar, Clock } from "lucide-react";
 import { getClientIP } from "@/lib/utils";
 
@@ -219,41 +220,53 @@ export default function ArticlePage() {
       )}
 
       {/* Main Content Container */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Article Content */}
-        <article className="mb-16">
-          <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-border/50">
-            <div
-              className="prose prose-lg md:prose-xl max-w-none 
-                         prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight
-                         prose-h1:text-3xl prose-h1:md:text-4xl prose-h1:mb-6 prose-h1:mt-8
-                         prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:mb-4 prose-h2:mt-6
-                         prose-h3:text-xl prose-h3:md:text-2xl prose-h3:mb-3 prose-h3:mt-5
-                         prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
-                         prose-strong:text-foreground prose-strong:font-semibold
-                         prose-a:text-accent-blue prose-a:font-medium prose-a:no-underline 
-                         hover:prose-a:text-accent-blue/80 hover:prose-a:underline
-                         prose-blockquote:border-l-accent-blue prose-blockquote:bg-muted/30 
-                         prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
-                         prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                         prose-ul:my-4 prose-ol:my-4 prose-li:my-2
-                         prose-img:rounded-xl prose-img:shadow-lg"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-          </div>
-        </article>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Article Content - Left Column */}
+          <div className="flex-1 max-w-4xl">
+            {/* Article Content */}
+            <article className="mb-16">
+              <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-lg border border-border/50">
+                <div
+                  className="prose prose-lg md:prose-xl max-w-none 
+                             prose-headings:text-foreground prose-headings:font-bold prose-headings:tracking-tight
+                             prose-h1:text-3xl prose-h1:md:text-4xl prose-h1:mb-6 prose-h1:mt-8
+                             prose-h2:text-2xl prose-h2:md:text-3xl prose-h2:mb-4 prose-h2:mt-6
+                             prose-h3:text-xl prose-h3:md:text-2xl prose-h3:mb-3 prose-h3:mt-5
+                             prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-4
+                             prose-strong:text-foreground prose-strong:font-semibold
+                             prose-a:text-accent-blue prose-a:font-medium prose-a:no-underline 
+                             hover:prose-a:text-accent-blue/80 hover:prose-a:underline
+                             prose-blockquote:border-l-accent-blue prose-blockquote:bg-muted/30 
+                             prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
+                             prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+                             prose-ul:my-4 prose-ol:my-4 prose-li:my-2
+                             prose-img:rounded-xl prose-img:shadow-lg"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              </div>
+            </article>
 
-        {/* Article Interactions */}
-        <div className="mb-12">
-          <div className="bg-card/30 backdrop-blur-sm rounded-2xl p-6 border border-border/50">
-            <ArticleInteractions articleId={post.id} articleTitle={post.title} articleUrl={window.location.href} />
-          </div>
-        </div>
+            {/* Article Interactions */}
+            <div className="mb-12">
+              <div className="bg-card/30 backdrop-blur-sm rounded-2xl p-6 border border-border/50">
+                <ArticleInteractions articleId={post.id} articleTitle={post.title} articleUrl={window.location.href} />
+              </div>
+            </div>
 
-        {/* Comments Section */}
-        <div className="mb-12">
-          <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden">
-            <ArticleComments articleId={post.id} />
+            {/* Comments Section */}
+            <div className="mb-12">
+              <div className="bg-card/30 backdrop-blur-sm rounded-2xl border border-border/50 overflow-hidden">
+                <ArticleComments articleId={post.id} />
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar - Right Column */}
+          <div className="lg:w-80 flex-shrink-0">
+            <div className="sticky top-8">
+              <RecentArticlesSidebar currentArticleId={post.id} />
+            </div>
           </div>
         </div>
       </div>
