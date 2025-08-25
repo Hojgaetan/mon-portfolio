@@ -16,10 +16,8 @@ import {
   User,
   MessageSquare,
   Eye,
-  EyeOff,
-  Download
+  EyeOff
 } from "lucide-react";
-import { useExcelExport } from "@/hooks/useExcelExport";
 
 interface ContactMessage {
   id: string;
@@ -38,7 +36,6 @@ export function ContactMessagesManager() {
   const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState(false);
   const { toast } = useToast();
-  const { exportToExcel, isExporting } = useExcelExport();
 
   useEffect(() => {
     fetchMessages();
@@ -180,28 +177,6 @@ export function ContactMessagesManager() {
   const unreadCount = messages.filter(msg => !msg.read).length;
   const repliedCount = messages.filter(msg => msg.replied).length;
 
-  const handleExportToExcel = () => {
-    const exportData = messages.map(message => ({
-      'Nom': message.name,
-      'Email': message.email,
-      'Message': message.message,
-      'Lu': message.read ? 'Oui' : 'Non',
-      'Répondu': message.replied ? 'Oui' : 'Non',
-      'Date de réception': new Date(message.created_at).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    }));
-
-    exportToExcel(exportData, {
-      filename: 'messages_contact',
-      sheetName: 'Messages de contact'
-    });
-  };
-
   if (loading) {
     return <div className="flex justify-center py-8">Chargement des messages...</div>;
   }
@@ -210,21 +185,10 @@ export function ContactMessagesManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Messages de contact</h2>
-        <div className="flex items-center gap-4">
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <span>Total: {messages.length}</span>
-            <span>Non lus: {unreadCount}</span>
-            <span>Répondus: {repliedCount}</span>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleExportToExcel}
-            disabled={isExporting || messages.length === 0}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            {isExporting ? 'Export...' : 'Exporter Excel'}
-          </Button>
+        <div className="flex gap-4 text-sm text-muted-foreground">
+          <span>Total: {messages.length}</span>
+          <span>Non lus: {unreadCount}</span>
+          <span>Répondus: {repliedCount}</span>
         </div>
       </div>
 

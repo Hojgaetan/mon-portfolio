@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Clock, User, Mail, Calendar, Plus, CheckCircle, Download } from "lucide-react";
+import { Clock, User, Mail, Calendar, Plus, CheckCircle } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useExcelExport } from "@/hooks/useExcelExport";
 
 interface UserProfile {
   user_id: string;
@@ -41,7 +40,6 @@ export function AccessManager() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { exportToExcel, isExporting } = useExcelExport();
 
   useEffect(() => {
     fetchAccessPasses();
@@ -172,26 +170,6 @@ export function AccessManager() {
     return `${remainingMinutes}min`;
   };
 
-  const handleExportToExcel = () => {
-    const exportData = accessPasses.map(pass => ({
-      'Utilisateur': pass.profiles ? `${pass.profiles.first_name || ''} ${pass.profiles.last_name || ''}`.trim() : '',
-      'Ville': pass.profiles?.city || '',
-      'Profession': pass.profiles?.profession || '',
-      'Statut': pass.status,
-      'Montant': pass.amount,
-      'Devise': pass.currency,
-      'Date de création': new Date(pass.created_at).toLocaleDateString('fr-FR'),
-      'Date d\'expiration': new Date(pass.expires_at).toLocaleDateString('fr-FR'),
-      'Temps restant': getTimeRemaining(pass.expires_at),
-      'Actif': isAccessActive(pass) ? 'Oui' : 'Non'
-    }));
-
-    exportToExcel(exportData, {
-      filename: 'acces_utilisateurs',
-      sheetName: 'Accès'
-    });
-  };
-
   if (loading) {
     return <div className="text-center">Chargement des accès...</div>;
   }
@@ -208,14 +186,6 @@ export function AccessManager() {
             Accordez l'accès à l'annuaire des entreprises
           </p>
         </div>
-        <Button 
-          variant="outline" 
-          onClick={handleExportToExcel}
-          disabled={isExporting || accessPasses.length === 0}
-        >
-          <Download className="w-4 h-4 mr-2" />
-          {isExporting ? 'Export...' : 'Exporter Excel'}
-        </Button>
       </div>
 
       {/* Stats */}

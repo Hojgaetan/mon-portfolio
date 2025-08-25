@@ -6,9 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Plus, User, Mail, Calendar, Shield, Download } from "lucide-react";
+import { Trash2, Plus, User, Mail, Calendar, Shield } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useExcelExport } from "@/hooks/useExcelExport";
 
 interface UserData {
   id: string;
@@ -23,7 +22,6 @@ export function UsersManager() {
   const [isCreating, setIsCreating] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { exportToExcel, isExporting } = useExcelExport();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -141,21 +139,6 @@ export function UsersManager() {
     }
   };
 
-  const handleExportToExcel = () => {
-    const exportData = users.map(user => ({
-      'Email': user.email,
-      'Statut': user.email_confirmed_at ? 'Vérifié' : 'Non vérifié',
-      'Date de création': new Date(user.created_at).toLocaleDateString('fr-FR'),
-      'Dernière connexion': user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString('fr-FR') : 'Jamais',
-      'Email confirmé le': user.email_confirmed_at ? new Date(user.email_confirmed_at).toLocaleDateString('fr-FR') : 'Non confirmé'
-    }));
-
-    exportToExcel(exportData, {
-      filename: 'utilisateurs',
-      sheetName: 'Utilisateurs'
-    });
-  };
-
   if (loading) {
     return <div className="text-center">Chargement des utilisateurs...</div>;
   }
@@ -169,20 +152,10 @@ export function UsersManager() {
             Gérez les comptes utilisateurs de votre application
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleExportToExcel}
-            disabled={isExporting || users.length === 0}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            {isExporting ? 'Export...' : 'Exporter Excel'}
-          </Button>
-          <Button onClick={handleCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvel utilisateur
-          </Button>
-        </div>
+        <Button onClick={handleCreate}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nouvel utilisateur
+        </Button>
       </div>
 
       {/* Stats */}

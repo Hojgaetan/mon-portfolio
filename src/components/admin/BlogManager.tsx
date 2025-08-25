@@ -10,8 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { RichTextEditor } from "./RichTextEditor";
-import { Plus, Edit, Trash2, Eye, Download } from "lucide-react";
-import { useExcelExport } from "@/hooks/useExcelExport";
+import { Plus, Edit, Trash2, Eye } from "lucide-react";
 
 // Types pour les tables blog (à défaut des types Supabase)
 interface BlogPost {
@@ -43,7 +42,6 @@ export function BlogManager() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const { toast } = useToast();
-  const { exportToExcel, isExporting } = useExcelExport();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -222,23 +220,6 @@ export function BlogManager() {
     }
   };
 
-  const handleExportToExcel = () => {
-    const exportData = filteredPosts.map(post => ({
-      'Titre': post.title,
-      'Slug': post.slug || '',
-      'Extrait': post.excerpt || '',
-      'Statut': post.published ? 'Publié' : 'Brouillon',
-      'Catégorie': post.category_id ? categories.find(c => c.id === post.category_id)?.name || '' : '',
-      'Date de création': new Date(post.created_at).toLocaleDateString('fr-FR'),
-      'Contenu': post.content.replace(/<[^>]*>/g, '').substring(0, 500) + '...'
-    }));
-
-    exportToExcel(exportData, {
-      filename: 'articles_blog',
-      sheetName: 'Articles'
-    });
-  };
-
   if (loading) {
     return <div className="text-center">Chargement des articles...</div>;
   }
@@ -260,20 +241,10 @@ export function BlogManager() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Gestion du Blog</h2>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            onClick={handleExportToExcel}
-            disabled={isExporting || filteredPosts.length === 0}
-          >
-            <Download className="w-4 h-4 mr-2" />
-            {isExporting ? 'Export...' : 'Exporter Excel'}
-          </Button>
-          <Button onClick={handleCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Nouvel article
-          </Button>
-        </div>
+        <Button onClick={handleCreate}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nouvel article
+        </Button>
       </div>
       
       <div className="flex gap-2 mb-4">
