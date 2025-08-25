@@ -81,7 +81,15 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "access_pass_user_id_fkey_profiles"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
       }
       admins: {
         Row: {
@@ -104,6 +112,7 @@ export type Database = {
           article_id: string
           author_email: string
           author_name: string
+          client_id: string | null
           content: string
           created_at: string | null
           id: string
@@ -115,6 +124,7 @@ export type Database = {
           article_id: string
           author_email: string
           author_name: string
+          client_id?: string | null
           content: string
           created_at?: string | null
           id?: string
@@ -126,6 +136,7 @@ export type Database = {
           article_id?: string
           author_email?: string
           author_name?: string
+          client_id?: string | null
           content?: string
           created_at?: string | null
           id?: string
@@ -144,22 +155,31 @@ export type Database = {
       }
       article_likes: {
         Row: {
+          active: boolean
           article_id: string
+          client_id: string | null
           created_at: string | null
           id: string
           ip_address: unknown
+          updated_at: string
         }
         Insert: {
+          active?: boolean
           article_id: string
+          client_id?: string | null
           created_at?: string | null
           id?: string
           ip_address: unknown
+          updated_at?: string
         }
         Update: {
+          active?: boolean
           article_id?: string
+          client_id?: string | null
           created_at?: string | null
           id?: string
           ip_address?: unknown
+          updated_at?: string
         }
         Relationships: [
           {
@@ -174,6 +194,7 @@ export type Database = {
       article_shares: {
         Row: {
           article_id: string
+          client_id: string | null
           created_at: string | null
           id: string
           ip_address: unknown | null
@@ -181,6 +202,7 @@ export type Database = {
         }
         Insert: {
           article_id: string
+          client_id?: string | null
           created_at?: string | null
           id?: string
           ip_address?: unknown | null
@@ -188,6 +210,7 @@ export type Database = {
         }
         Update: {
           article_id?: string
+          client_id?: string | null
           created_at?: string | null
           id?: string
           ip_address?: unknown | null
@@ -208,21 +231,21 @@ export type Database = {
           article_id: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: string | null
           user_agent: string | null
         }
         Insert: {
           article_id: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: string | null
           user_agent?: string | null
         }
         Update: {
           article_id?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: string | null
           user_agent?: string | null
         }
         Relationships: [
@@ -449,6 +472,7 @@ export type Database = {
         Row: {
           city: string | null
           created_at: string
+          email: string | null
           first_name: string | null
           id: string
           last_name: string | null
@@ -460,6 +484,7 @@ export type Database = {
         Insert: {
           city?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
@@ -471,6 +496,7 @@ export type Database = {
         Update: {
           city?: string | null
           created_at?: string
+          email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
@@ -495,6 +521,7 @@ export type Database = {
           planning_url: string | null
           project_url: string | null
           prototype_url: string | null
+          slug: string | null
           technologies: string[] | null
           title: string
           updated_at: string | null
@@ -512,6 +539,7 @@ export type Database = {
           planning_url?: string | null
           project_url?: string | null
           prototype_url?: string | null
+          slug?: string | null
           technologies?: string[] | null
           title: string
           updated_at?: string | null
@@ -529,6 +557,7 @@ export type Database = {
           planning_url?: string | null
           project_url?: string | null
           prototype_url?: string | null
+          slug?: string | null
           technologies?: string[] | null
           title?: string
           updated_at?: string | null
