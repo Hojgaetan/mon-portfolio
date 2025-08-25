@@ -99,22 +99,73 @@ export function ArticleInteractions({ articleId, articleTitle, articleUrl }: Art
         setLikes(prev => Math.max(0, prev - 1));
         toast({ title: "Like retiré" });
       } else {
-        // Créer/activer le like (upsert)
-        const { error } = await supabase
+        // Vérifier d'abord si un enregistrement existe déjà
+        const { data: existingLike, error: checkError } = await supabase
           .from("article_likes")
-          .upsert({
-            article_id: articleId,
-            client_id: clientId,
-            ip_address: ip,
-            active: true,
-          }, { onConflict: "article_id,client_id" });
+          .select("id, active")
+          .eq("article_id", articleId)
+          .eq("client_id", clientId)
+          .maybeSingle();
 
-        if (error) throw error;
+        if (checkError && checkError.code !== 'PGRST116') {
+          throw checkError;
+        }
+
+        if (existingLike) {
+          // Mettre à jour l'enregistrement existant
+          const { error } = await supabase
+            .from("article_likes")
+            .update({ active: true, updated_at: new Date().toISOString() })
+            .eq("id", existingLike.id);
+
+          if (error) throw error;
+        } else {
+          // Créer un nouvel enregistrement
+          const { error } = await supabase
+            .from("article_likes")
+            .insert({
+              article_id: articleId,
+              client_id: clientId,
+              ip_address: ip,
+              active: true,
+            });
+
+          if (error) {
+            // Si erreur de contrainte unique, essayer de récupérer et mettre à jour
+            if (error.code === '23505') {
+              const { data: conflictLike, error: conflictError } = await supabase
+                .from("article_likes")
+                .select("id")
+                .eq("article_id", articleId)
+                .eq("ip_address", ip)
+                .maybeSingle();
+
+              if (conflictError) throw conflictError;
+
+              if (conflictLike) {
+                const { error: updateError } = await supabase
+                  .from("article_likes")
+                  .update({ 
+                    active: true, 
+                    client_id: clientId,
+                    updated_at: new Date().toISOString() 
+                  })
+                  .eq("id", conflictLike.id);
+
+                if (updateError) throw updateError;
+              }
+            } else {
+              throw error;
+            }
+          }
+        }
+
         setLiked(true);
         setLikes(prev => prev + 1);
         toast({ title: "Article aimé !" });
       }
     } catch (error) {
+      console.error("Erreur lors du like:", error);
       toast({
         title: "Erreur",
         description: "Impossible de liker l'article",
