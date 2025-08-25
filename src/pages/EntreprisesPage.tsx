@@ -16,8 +16,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 // Nouveaux imports UI
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, Download } from "lucide-react";
+import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, Download, ExternalLink, Globe, Phone, MapPin, Building, Users, Grid3X3, List, Star } from "lucide-react";
 import { useExcelExport } from "@/hooks/useExcelExport";
+import { Separator } from "@/components/ui/separator";
 
 interface EntrepriseRow {
   id: string;
