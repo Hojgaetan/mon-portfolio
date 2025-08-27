@@ -2,7 +2,8 @@ import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useEffect } from "react";
+import { MaquetteQuoteForm } from "@/components/MaquetteQuoteForm";
+import { useEffect, useState } from "react";
 import { 
   Palette, 
   Linkedin, 
@@ -19,6 +20,8 @@ import {
 } from "lucide-react";
 
 export default function ServicesPage() {
+  const [showMaquetteForm, setShowMaquetteForm] = useState(false);
+  
   useEffect(() => {
     document.title = "Mes Services · Développement Web";
   }, []);
@@ -190,7 +193,11 @@ export default function ServicesPage() {
 
                     {/* CTA */}
                     <div className={`bg-gradient-to-r from-${service.color}/10 via-${service.color}/5 to-transparent p-4 rounded-xl border border-${service.color}/20`}>
-                      <Button size="lg" className={`w-full bg-gradient-to-r from-${service.color} to-${service.color}/80 hover:from-${service.color}/90 hover:to-${service.color}/70 text-white shadow-lg hover:shadow-xl transition-all duration-300`}>
+                      <Button 
+                        size="lg" 
+                        onClick={() => service.id === "maquettes" ? setShowMaquetteForm(true) : undefined}
+                        className={`w-full bg-gradient-to-r from-${service.color} to-${service.color}/80 hover:from-${service.color}/90 hover:to-${service.color}/70 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
+                      >
                         Demander un devis →
                       </Button>
                     </div>
@@ -252,6 +259,10 @@ export default function ServicesPage() {
           </div>
         </section>
       </div>
+      
+      {showMaquetteForm && (
+        <MaquetteQuoteForm onClose={() => setShowMaquetteForm(false)} />
+      )}
     </>
   );
 }
