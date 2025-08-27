@@ -6,10 +6,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { 
-  ExternalLink, 
-  Github, 
-  Figma, 
-  Globe, 
+  Github,
+  Globe,
   Code, 
   Palette,
   Star,
@@ -25,9 +23,10 @@ interface Project {
   description: string;
   category: string;
   image_url?: string;
-  live_url?: string;
+  project_url?: string; // added: URL fournie pour le projet
+  // live_url?: string; // deprecated in favor of project_url
   github_url?: string;
-  figma_url?: string;
+  // figma_url?: string; // non présent dans le schéma, utiliser design_url si besoin
   technologies: string[];
   slug?: string;
   created_at: string;
@@ -67,10 +66,9 @@ const ProjectsPage = () => {
   const featuredProjects = filteredProjects.slice(0, 6);
 
   const getProjectResources = (project: Project) => {
-    const resources = [];
-    if (project.live_url) resources.push({ type: 'live', url: project.live_url, icon: Globe, label: 'Site live' });
+    const resources: { type: string; url: string; icon: any; label: string }[] = [];
+    if (project.project_url) resources.push({ type: 'live', url: project.project_url, icon: Globe, label: 'Site live' });
     if (project.github_url) resources.push({ type: 'github', url: project.github_url, icon: Github, label: 'Code source' });
-    if (project.figma_url) resources.push({ type: 'figma', url: project.figma_url, icon: Figma, label: 'Design' });
     return resources;
   };
 
@@ -253,18 +251,18 @@ const ProjectsPage = () => {
 
                       {/* CTA */}
                       <div className="bg-gradient-to-r from-accent-blue/10 via-accent-blue/5 to-transparent p-4 rounded-xl border border-accent-blue/20">
-                        {project.slug ? (
+                        {project.project_url ? (
+                          <a href={project.project_url} target="_blank" rel="noopener noreferrer">
+                            <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                              Voir le projet →
+                            </Button>
+                          </a>
+                        ) : project.slug ? (
                           <Link to={`/projets/${project.slug}`}>
                             <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                               Voir le projet →
                             </Button>
                           </Link>
-                        ) : project.live_url ? (
-                          <a href={project.live_url} target="_blank" rel="noopener noreferrer">
-                            <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                              Voir le projet →
-                            </Button>
-                          </a>
                         ) : (
                           <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300" disabled>
                             Bientôt disponible

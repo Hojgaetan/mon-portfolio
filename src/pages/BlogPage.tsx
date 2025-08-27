@@ -7,10 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { 
   Calendar, 
-  User, 
-  BookOpen, 
-  TrendingUp, 
-  Eye, 
+  BookOpen,
+  Eye,
   MessageCircle,
   Star,
   Clock,
@@ -22,7 +20,7 @@ interface BlogPost {
   title: string;
   content: string;
   excerpt: string;
-  published_at: string;
+  created_at: string; // use existing column
   slug: string;
   category_id: string;
   image_url?: string;
@@ -30,10 +28,6 @@ interface BlogPost {
   categories?: {
     id: string;
     name: string;
-  };
-  profiles?: {
-    id: string;
-    display_name: string;
   };
 }
 
@@ -57,23 +51,30 @@ const BlogPage = () => {
   const fetchData = async () => {
     try {
       // Fetch posts
-      const { data: postsData } = await supabase
+      const { data: postsData, error: postsError } = await supabase
         .from('blog_posts')
         .select(`
           *,
-          categories (id, name),
-          profiles (id, display_name)
+          categories (id, name)
         `)
         .eq('published', true)
-        .order('published_at', { ascending: false });
+        .order('created_at', { ascending: false });
+
+      if (postsError) {
+        console.error('Erreur chargement posts:', postsError);
+      }
 
       // Fetch categories with post counts
-      const { data: categoriesData } = await supabase
+      const { data: categoriesData, error: categoriesError } = await supabase
         .from('categories')
         .select('*')
         .order('name');
 
-      if (postsData) setPosts(postsData);
+      if (categoriesError) {
+        console.error('Erreur chargement catégories:', categoriesError);
+      }
+
+      if (postsData) setPosts(postsData as unknown as BlogPost[]);
       if (categoriesData) setCategories(categoriesData);
     } catch (error) {
       console.error('Error fetching blog data:', error);
@@ -218,7 +219,7 @@ const BlogPage = () => {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>{new Date(post.published_at).toLocaleDateString('fr-FR')}</span>
+                          <span>{new Date(post.created_at).toLocaleDateString('fr-FR')}</span>
                         </div>
                         {post.reading_time && (
                           <div className="flex items-center gap-1">
@@ -234,17 +235,9 @@ const BlogPage = () => {
                         {post.excerpt || post.content.substring(0, 150) + '...'}
                       </p>
 
-                      {/* Author */}
-                      {post.profiles && (
-                        <div className="flex items-center gap-2 pt-2">
-                          <User className="w-4 h-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">{post.profiles.display_name}</span>
-                        </div>
-                      )}
-
                       {/* CTA */}
                       <div className="bg-gradient-to-r from-accent-blue/10 via-accent-blue/5 to-transparent p-4 rounded-xl border border-accent-blue/20">
-                        <Link to={`/blog/${post.slug}`}>
+                        <Link to={`/article/${post.slug}`}>
                           <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
                             Lire l'article →
                           </Button>
