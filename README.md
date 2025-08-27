@@ -1,122 +1,100 @@
-# Welcome to your Lovable project
+# Portfolio de Joël Gaëtan Hassam Obah
 
-## Project info
+Un site personnel pour présenter mon profil, mes projets, mes articles et mes services, avec un produit payant (Annuaire B2B) destiné aux indépendants et petites équipes souhaitant prospecter rapidement.
 
-**URL**: https://lovable.dev/projects/ae41e432-6ed1-4ddc-9913-5993d6ae5a61
 
-## How can I edit this code?
+## Présentation rapide
+- Mission: valoriser mon travail, partager mes idées et proposer des outils utiles (Annuaire) pour créer des opportunités.
+- Public visé: recruteurs, clients, partenaires, étudiants et curieux.
+- Formats: portfolio de projets, blog, page services, produit Annuaire protégé, formulaire de contact, téléchargement de CV.
+- Confort: interface moderne, thème clair/sombre, FR/EN, navigation fluide (SPA), design responsive.
 
-There are several ways of editing your application.
 
-**Use Lovable**
+## Ce que vous trouverez sur le site
+- Accueil
+  - Présentation, photo, stats dynamiques (nombre de projets, d’articles), accès rapide aux sections clés.
+- Projets (/projets)
+  - Sélection de travaux (professionnels, personnels, académiques). Vignettes avec image, catégorie, date; navigation vers les détails.
+- Blog (/blog et /article/:slug)
+  - Articles courts et billets techniques. Extraits, date, estimation du temps de lecture, page article dédiée.
+- À propos (/a-propos)
+  - Parcours, compétences, centres d’intérêt et quelques éléments personnels.
+- Services (/services)
+  - Offres (développement web, data, IA). Objectif: rendre l’offre claire et actionnable.
+- Produits (/produit)
+  - Annuaire B2B: « Entreprises sans site web » (priorité Sénégal). Page dédiée: /produit/annuaire.
+- Annuaire (/annuaire)
+  - Accès consultable aux données pour membres avec pass actif. Filtres, tri, indicateurs, et protections anti-copie basiques.
+- Paiement manuel (/paiement-manuel)
+  - Parcours assisté (Wave, Orange Money) avec message WhatsApp prérempli pour une activation rapide.
+- Démo Intech (/intech-demo)
+  - Espace de tests/intégration côté paiement (technique).
+- Contact (/ via la section Me contacter)
+  - Formulaire pour me joindre facilement. Notifications instantanées côté interface.
+- CV
+  - Téléchargement direct: [Mon CV](public/CV__Joel%20Gaetan_HASSAM%20OBAH.pdf)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ae41e432-6ed1-4ddc-9913-5993d6ae5a61) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Objectifs et valeurs
+- Transparence: montrer le réel (projets, drafts d’articles, itérations) plutôt que du contenu trop « parfait ».
+- Utilité: proposer un produit simple, focalisé, qui fait gagner du temps (Annuaire).
+- Accessibilité: site responsive, interface lisible et claire.
+- Évolution continue: itérations fréquentes, retours bienvenus.
 
-**Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Le produit Annuaire, en bref
+- Problème: identifier rapidement des entreprises locales sans présence web pour une offre de création/refonte de site.
+- Solution: base normalisée et filtrable (nom, secteur, localisation, téléphone, statut web, notes).
+- Accès: via un « pass » à durée limitée (ex: 1 heure) après paiement.
+- Paiement: intégration Intech (API) et parcours manuel (Wave/Orange Money) si besoin.
+- Protection: consultation sur site, blocage léger quand l’onglet est inactif, limitations de copie/téléchargement.
+- Support: WhatsApp avec message prérempli pour accélérer l’activation.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-Follow these steps:
+## Parcours type
+- Recruteur/Client: découvre l’accueil → consulte projets et services → lit 1–2 articles → télécharge le CV → prend contact.
+- Indépendant: découvre le produit Annuaire → achète un pass → filtre et consulte des leads → contacte pour export ou support.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Feuille de route (extraits)
+- Blog: pagination, tags, recherche, flux RSS.
+- Projets: pages détaillées enrichies (galeries, étapes, ressources, stack).
+- Annuaire: suivi d’accès, exports à la demande, métriques d’usage, catégories avancées.
+- SEO/Partage: métadonnées par page, images sociales dédiées.
+- Qualité: tests E2E, suivi de perf, améliorations d’accessibilité.
 
-# Step 3: Install the necessary dependencies.
-npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Me contacter
+- Utiliser le formulaire de contact (section en bas de page).
+- Ou passer par mes liens (GitHub/LinkedIn) visibles dans le site.
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/ae41e432-6ed1-4ddc-9913-5993d6ae5a61) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
 ---
 
-## Configuration Intech (API + secrets)
+## Pour les développeurs
+Ce bloc résume la partie technique si vous souhaitez cloner et faire tourner le projet en local.
 
-Nous intégrons l’API Intech via des Supabase Edge Functions (Deno). Un client HTTP centralisé a été ajouté côté fonctions pour éviter la duplication de code.
+- Stack: React 18 + TypeScript + Vite 5, Tailwind + shadcn-ui, React Router, React Query.
+- i18n: FR/EN via LanguageContext; thème clair/sombre via ThemeProvider (localStorage).
+- Supabase: auth, base de données, Edge Functions (Intech), génération de types.
+- Routage principal: voir src/App.tsx et src/pages/*.
 
-- Client central: `supabase/functions/_shared/intechClient.ts`
-  - Lit les variables d’environnement `INTECH_BASE_URL`, `INTECH_API_KEY`, `INTECH_CALLBACK_SECRET`.
-  - Initialise un fetch JSON avec URL de base et en-têtes par défaut: `Content-Type: application/json`, `Accept: application/json`, et `Secretkey: <INTECH_API_KEY>`.
-  - Fournit `IntechClient.get/post/...` et un helper `verifyWebhookSignature` (HMAC-SHA256) pour les webhooks.
+Démarrage rapide:
+```bash
+npm install
+npm run dev
+```
 
-- Exemple d’usage: la fonction `intech-services` consomme ce client: `supabase/functions/intech-services/index.ts`.
+Scripts utiles:
+- build, preview, lint, update-types (génère src/integrations/supabase/types.ts).
 
-### Où définir les variables d’environnement
+Fonctions Edge (Intech + utilitaires):
+- supabase/functions/intech-*: services, balance, operation (POST), transaction-status; get-ip pour debug.
+- Variables d’environnement (côté fonctions uniquement): INTECH_BASE_URL, INTECH_API_KEY, INTECH_CALLBACK_URL, INTECH_CALLBACK_SECRET.
+- Exemple: supabase/.env.example → copier en supabase/.env puis servir/déployer avec la CLI.
 
-Ces secrets ne doivent pas être exposés au frontend (Vite/React). Définissez-les uniquement côté Supabase (Edge Functions).
+Déploiement:
+- SPA: Netlify/Vercel (public/_redirects pour fallback 200).
+- Fonctions: Supabase CLI (deploy) + secrets dans Project Settings → Functions → Secrets.
 
-1) En local (CLI Supabase):
-
-- Créez votre fichier `supabase/.env` à partir de l’exemple fourni:
-  - Fichier exemple: `supabase/.env.example`
-  - Copiez-le vers `supabase/.env` et remplissez:
-    - `INTECH_BASE_URL=https://api.intech.sn`
-    - `INTECH_API_KEY=...`
-    - `INTECH_CALLBACK_SECRET=...` (pour vérifier les webhooks)
-
-- Lors du développement de fonctions:
-  - Option A: servez une fonction avec les secrets chargés depuis ce fichier
-    - `supabase functions serve <function-name> --env-file supabase/.env`
-  - Option B: stockez les secrets via la CLI, puis servez sans `--env-file`:
-    - `supabase secrets set INTECH_BASE_URL=... INTECH_API_KEY=... INTECH_CALLBACK_SECRET=...`
-
-2) En production (projet Supabase hébergé):
-
-- Utilisez le tableau de bord Supabase: Project Settings → Functions/Secrets (ou utilisez la CLI):
-  - `supabase secrets set INTECH_BASE_URL=... INTECH_API_KEY=... INTECH_CALLBACK_SECRET=...`
-- Déployez les fonctions si nécessaire: `supabase functions deploy <function-name>`.
-
-Note: Ne placez pas ces variables dans `.env` à la racine frontend ni en variables Vite (`VITE_*`). Elles doivent rester côté serveur.
-
-### Webhook callback
-
-- La fonction `supabase/functions/intech-callback` reçoit les notifications Intech. Vous pouvez brancher `verifyWebhookSignature` depuis `_shared/intechClient.ts` pour valider la signature envoyée par Intech (selon leur format exact). Le secret à utiliser est `INTECH_CALLBACK_SECRET`.
-
-### Vérification rapide
-
-- Fichier d’exemple des variables: `supabase/.env.example` (ajouté)
-- Aucun avertissement/erreur de typage trouvé sur le client partagé et la fonction `intech-services` après migration.
+Support/bugs: ouvrez une issue ou envoyez un message via le formulaire de contact du site.
