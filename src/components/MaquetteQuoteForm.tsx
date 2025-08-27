@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import type { Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Clock, CheckCircle } from "lucide-react";
 
 const formSchema = z.object({
@@ -81,13 +81,42 @@ export function MaquetteQuoteForm({ onClose }: MaquetteQuoteFormProps) {
     }
   });
 
+  // Helper: renvoie la liste des champs à valider pour chaque section
+  const getSectionFields = (section: number): Path<FormData>[] => {
+    switch (section) {
+      case 1:
+        return ["fullName", "companyName", "email"] as Path<FormData>[]; // requis en section 1
+      case 2:
+        return ["projectName", "projectDescription", "objectives", "hasDocuments"] as Path<FormData>[]; // requis en section 2
+      case 3:
+        return [] as Path<FormData>[]; // aucun champ strictement requis ici
+      case 4:
+        return ["platforms", "needsInteractiveStates", "needsDesignSystem"] as Path<FormData>[]; // requis en section 4
+      case 5:
+        return ["contentProvider", "hasGraphicChart"] as Path<FormData>[]; // requis en section 5
+      case 6:
+        return ["deadline", "isUrgent"] as Path<FormData>[]; // requis en section 6
+      case 7:
+        return [] as Path<FormData>[]; // récapitulatif
+      default:
+        return [] as Path<FormData>[];
+    }
+  };
+
   const watchedObjectives = watch("objectives");
   const watchedPlatforms = watch("platforms");
   const watchedAdditionalServices = watch("additionalServices");
   const watchedNeedsInteractiveStates = watch("needsInteractiveStates");
 
   const handleNext = async () => {
-    const isValid = await trigger();
+    const fields = getSectionFields(currentSection);
+    if (fields.length === 0) {
+      // Pas de champs requis pour cette section: on avance directement
+      if (currentSection < totalSections) setCurrentSection(currentSection + 1);
+      return;
+    }
+
+    const isValid = await trigger(fields, { shouldFocus: true });
     if (isValid && currentSection < totalSections) {
       setCurrentSection(currentSection + 1);
     }
