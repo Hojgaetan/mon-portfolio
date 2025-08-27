@@ -3,6 +3,7 @@
 declare const Deno: any;
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+import { verifyWebhookSignature, getIntechEnv } from "../_shared/intechClient.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -33,11 +34,34 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
   if (!SUPABASE_URL || !SERVICE_ROLE_KEY) return new Response("Missing Supabase admin env", { status: 500 });
 
+  // Optional webhook signature verification if secret present
+  const { callbackSecretPresent } = getIntechEnv();
+  let rawBody = "";
+  try {
+    rawBody = await req.text();
+  } catch {
+    return new Response(JSON.stringify({ ok: false, reason: "invalid_body" }), { status: 400, headers: { "Content-Type": "application/json" } });
+  }
+
+  if (callbackSecretPresent) {
+    const signature = req.headers.get("x-intech-signature")
+      || req.headers.get("x-signature")
+      || req.headers.get("signature")
+      || req.headers.get("intech-signature")
+      || "";
+    if (signature) {
+      const ok = await verifyWebhookSignature(rawBody, signature);
+      if (!ok) {
+        return new Response(JSON.stringify({ ok: false, reason: "invalid_signature" }), { status: 401, headers: { "Content-Type": "application/json" } });
+      }
+    }
+  }
+
   let payload: any = null;
   try {
-    payload = await req.json();
+    payload = JSON.parse(rawBody);
   } catch {
-    return new Response(JSON.stringify({ ok: false, reason: "invalid_json" }), { status: 400 });
+    return new Response(JSON.stringify({ ok: false, reason: "invalid_json" }), { status: 400, headers: { "Content-Type": "application/json" } });
   }
 
   // Attempt to read externalTransactionId across shapes

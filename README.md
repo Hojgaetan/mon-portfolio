@@ -71,3 +71,52 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+---
+
+## Configuration Intech (API + secrets)
+
+Nous intégrons l’API Intech via des Supabase Edge Functions (Deno). Un client HTTP centralisé a été ajouté côté fonctions pour éviter la duplication de code.
+
+- Client central: `supabase/functions/_shared/intechClient.ts`
+  - Lit les variables d’environnement `INTECH_BASE_URL`, `INTECH_API_KEY`, `INTECH_CALLBACK_SECRET`.
+  - Initialise un fetch JSON avec URL de base et en-têtes par défaut: `Content-Type: application/json`, `Accept: application/json`, et `Secretkey: <INTECH_API_KEY>`.
+  - Fournit `IntechClient.get/post/...` et un helper `verifyWebhookSignature` (HMAC-SHA256) pour les webhooks.
+
+- Exemple d’usage: la fonction `intech-services` consomme ce client: `supabase/functions/intech-services/index.ts`.
+
+### Où définir les variables d’environnement
+
+Ces secrets ne doivent pas être exposés au frontend (Vite/React). Définissez-les uniquement côté Supabase (Edge Functions).
+
+1) En local (CLI Supabase):
+
+- Créez votre fichier `supabase/.env` à partir de l’exemple fourni:
+  - Fichier exemple: `supabase/.env.example`
+  - Copiez-le vers `supabase/.env` et remplissez:
+    - `INTECH_BASE_URL=https://api.intech.sn`
+    - `INTECH_API_KEY=...`
+    - `INTECH_CALLBACK_SECRET=...` (pour vérifier les webhooks)
+
+- Lors du développement de fonctions:
+  - Option A: servez une fonction avec les secrets chargés depuis ce fichier
+    - `supabase functions serve <function-name> --env-file supabase/.env`
+  - Option B: stockez les secrets via la CLI, puis servez sans `--env-file`:
+    - `supabase secrets set INTECH_BASE_URL=... INTECH_API_KEY=... INTECH_CALLBACK_SECRET=...`
+
+2) En production (projet Supabase hébergé):
+
+- Utilisez le tableau de bord Supabase: Project Settings → Functions/Secrets (ou utilisez la CLI):
+  - `supabase secrets set INTECH_BASE_URL=... INTECH_API_KEY=... INTECH_CALLBACK_SECRET=...`
+- Déployez les fonctions si nécessaire: `supabase functions deploy <function-name>`.
+
+Note: Ne placez pas ces variables dans `.env` à la racine frontend ni en variables Vite (`VITE_*`). Elles doivent rester côté serveur.
+
+### Webhook callback
+
+- La fonction `supabase/functions/intech-callback` reçoit les notifications Intech. Vous pouvez brancher `verifyWebhookSignature` depuis `_shared/intechClient.ts` pour valider la signature envoyée par Intech (selon leur format exact). Le secret à utiliser est `INTECH_CALLBACK_SECRET`.
+
+### Vérification rapide
+
+- Fichier d’exemple des variables: `supabase/.env.example` (ajouté)
+- Aucun avertissement/erreur de typage trouvé sur le client partagé et la fonction `intech-services` après migration.
