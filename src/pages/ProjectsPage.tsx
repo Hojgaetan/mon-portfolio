@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { 
   Github,
   Globe,
-  Code,
+  Code, 
   Palette,
   Star,
   Clock,
@@ -16,7 +16,6 @@ import {
   Eye,
   Calendar
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 interface Project {
   id: string;
@@ -67,9 +66,9 @@ const ProjectsPage = () => {
   const featuredProjects = filteredProjects.slice(0, 6);
 
   const getProjectResources = (project: Project) => {
-    const resources: { type: string; url: string; icon: LucideIcon; label: string }[] = [];
-    if (project.project_url) resources.push({ type: 'live', url: project.project_url, icon: Globe as LucideIcon, label: 'Site live' });
-    if (project.github_url) resources.push({ type: 'github', url: project.github_url, icon: Github as LucideIcon, label: 'Code source' });
+    const resources: { type: string; url: string; icon: any; label: string }[] = [];
+    if (project.project_url) resources.push({ type: 'live', url: project.project_url, icon: Globe, label: 'Site live' });
+    if (project.github_url) resources.push({ type: 'github', url: project.github_url, icon: Github, label: 'Code source' });
     return resources;
   };
 
