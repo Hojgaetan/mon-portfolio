@@ -7,11 +7,11 @@ import { LanguageToggle } from "@/components/LanguageToggle";
 import {
 	FolderKanban,
 	Hand,
-	Mail,
 	Menu,
-	User,
 	X,
   FileDown,
+  Briefcase,
+  Newspaper,
 } from "lucide-react";
 import logoBeige from "@/assets/logo fond beige 1.png";
 import logoNuit from "@/assets/logo fond nuit 1.png";
@@ -65,40 +65,10 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
 
   const navItems: NavItem[] = [
     { id: "hello", label: t('nav.hello'), icon: <Hand className="h-4 w-4" /> },
-    { id: "about", label: t('nav.about'), icon: <User className="h-4 w-4" />, path: "/a-propos" },
-    {
-      id: "produits",
-      label: t('nav.products'),
-      icon: <FolderKanban className="h-4 w-4" />,
-      path: "/produit",
-    },
-    /* {
-      id: "projects",
-      label: t('nav.projects'),
-      icon: <FolderKanban className="h-4 w-4" />,
-      path: "/projets",
-    },
-    {
-      id: "blog",
-      label: t('nav.blog'),
-      icon: <Newspaper className="h-4 w-4" />,
-      path: "/blog",
-    },
-    {
-      id: "formations",
-      label: t('nav.formations'),
-      icon: <GraduationCap className="h-4 w-4" />,
-    },
-    {
-      id: "services",
-      label: t('nav.services'),
-      icon: <Briefcase className="h-4 w-4" />,
-    }, */
-    {
-      id: "contact",
-      label: t('nav.contact'),
-      icon: <Mail className="h-4 w-4" />,
-    },
+    { id: "produits", label: t('nav.products'), icon: <FolderKanban className="h-4 w-4" />, path: "/produit" },
+    { id: "services", label: t('nav.services'), icon: <Briefcase className="h-4 w-4" />, path: "/services" },
+    { id: "projects", label: t('nav.projects'), icon: <FolderKanban className="h-4 w-4" />, path: "/projets" },
+    { id: "blog", label: t('nav.blog'), icon: <Newspaper className="h-4 w-4" />, path: "/blog" },
   ];
 
 
