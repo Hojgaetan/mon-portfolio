@@ -19,6 +19,7 @@ import ProductAnnuaire from "./pages/ProductAnnuaire";
 import ManualPurchase from "./pages/ManualPurchase";
 import ProductIndex from "./pages/ProductIndex";
 import AboutPage from "./pages/AboutPage";
+import ServicesPage from "./pages/ServicesPage";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ function AppRoutes() {
           <Route path="/intech-demo" element={<IntechDemo />} />
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/about" element={<Navigate to="/a-propos" replace />} />
+          <Route path="/services" element={<ServicesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
