@@ -2,29 +2,29 @@ import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MaquetteQuoteForm } from "@/components/MaquetteQuoteForm";
-import { useEffect, useState } from "react";
-import { 
+import { useEffect } from "react";
+import {
   Palette, 
   Linkedin, 
   Globe, 
   ShoppingCart, 
   CheckCircle, 
   Star, 
-  Users, 
-  Clock, 
+  Clock,
   Shield,
-  Smartphone,
-  Monitor,
   Zap
 } from "lucide-react";
 
 export default function ServicesPage() {
-  const [showMaquetteForm, setShowMaquetteForm] = useState(false);
-  
   useEffect(() => {
     document.title = "Mes Services · Développement Web";
   }, []);
+
+  const openWhatsApp = (serviceTitle: string) => {
+    const message = `Bonjour, je souhaite un devis pour: ${serviceTitle} ?`;
+    const url = `https://wa.me/221708184010?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+  };
 
   const services = [
     {
@@ -32,7 +32,7 @@ export default function ServicesPage() {
       title: "Conception de maquettes web/mobile",
       description: "Design moderne et responsive pour vos applications web et mobiles",
       icon: Palette,
-      price: "À partir de 25 000 F CFA",
+      price: "À partir de 4000 F CFA / écran",
       features: [
         "Design responsive",
         "Prototype interactif",
@@ -44,10 +44,10 @@ export default function ServicesPage() {
     },
     {
       id: "linkedin",
-      title: "Création de page LinkedIn Pro",
-      description: "Optimisez votre présence professionnelle sur LinkedIn",
+      title: "Création de publicité LinkedIn Pro",
+      description: "Optimisation de profil et stratégie de contenu pour booster votre présence",
       icon: Linkedin,
-      price: "À partir de 15 000 F CFA",
+      price: "À 10 000 F CFA",
       features: [
         "Profil optimisé",
         "Rédaction bio",
@@ -112,7 +112,7 @@ export default function ServicesPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
               <div className="text-center p-4">
-                <div className="text-2xl font-bold text-accent-blue">50+</div>
+                <div className="text-2xl font-bold text-accent-blue">03+</div>
                 <div className="text-sm text-muted-foreground">Projets</div>
               </div>
               <div className="text-center p-4">
@@ -124,7 +124,7 @@ export default function ServicesPage() {
                 <div className="text-sm text-muted-foreground">Support</div>
               </div>
               <div className="text-center p-4">
-                <div className="text-2xl font-bold text-accent-red">7j</div>
+                <div className="text-2xl font-bold text-accent-red">15j</div>
                 <div className="text-sm text-muted-foreground">Livraison</div>
               </div>
             </div>
@@ -195,7 +195,7 @@ export default function ServicesPage() {
                     <div className={`bg-gradient-to-r from-${service.color}/10 via-${service.color}/5 to-transparent p-4 rounded-xl border border-${service.color}/20`}>
                       <Button 
                         size="lg" 
-                        onClick={() => service.id === "maquettes" ? setShowMaquetteForm(true) : undefined}
+                        onClick={() => openWhatsApp(service.title)}
                         className={`w-full bg-gradient-to-r from-${service.color} to-${service.color}/80 hover:from-${service.color}/90 hover:to-${service.color}/70 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
                       >
                         Demander un devis →
@@ -233,14 +233,14 @@ export default function ServicesPage() {
                 <span className="text-accent-blue font-bold">1</span>
               </div>
               <h4 className="font-semibold">Contact</h4>
-              <p className="text-sm text-muted-foreground">Décrivez votre projet</p>
+              <p className="text-sm text-muted-foreground">Demandez un devis</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-green/10 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-accent-green font-bold">2</span>
               </div>
               <h4 className="font-semibold">Devis</h4>
-              <p className="text-sm text-muted-foreground">Proposition personnalisée</p>
+              <p className="text-sm text-muted-foreground">Proposition du devis</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-sky/10 rounded-full flex items-center justify-center mx-auto">
@@ -254,15 +254,11 @@ export default function ServicesPage() {
                 <span className="text-accent-red font-bold">4</span>
               </div>
               <h4 className="font-semibold">Livraison</h4>
-              <p className="text-sm text-muted-foreground">Mise en ligne & formation</p>
+              <p className="text-sm text-muted-foreground">Livraison & formation</p>
             </div>
           </div>
         </section>
       </div>
-      
-      {showMaquetteForm && (
-        <MaquetteQuoteForm onClose={() => setShowMaquetteForm(false)} />
-      )}
     </>
   );
 }
