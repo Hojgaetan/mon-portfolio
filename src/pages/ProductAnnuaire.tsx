@@ -101,13 +101,13 @@ export default function ProductAnnuaire() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
-                  Accès sécurisé pendant 1 heure au tableau complet. Activation en quelques minutes après paiement.
+                  🔥 <strong>Promotion flash 24h !</strong> Accès sécurisé pendant 1 heure au tableau complet. Activation en quelques minutes après paiement.
                 </div>
                 <div className="bg-accent-blue/5 p-4 rounded-lg border border-accent-blue/10">
                   <div className="text-sm text-muted-foreground">{t('product.annuaire.sidebar.todays_price')}</div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-3xl font-bold text-accent-blue">{price.toLocaleString('fr-FR')} F CFA</span>
-                    <span className="text-muted-foreground line-through">10 000 F</span>
+                    <span className="text-muted-foreground line-through">5 000 F</span>
                   </div>
                 </div>
                 <div className="flex flex-col gap-3">

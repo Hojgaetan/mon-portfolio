@@ -11,7 +11,7 @@ export type AccessPass = {
   created_at: string;
 };
 
-const ACCESS_PRICE_XOF = 5000;
+const ACCESS_PRICE_XOF = 1500; // Prix promotionnel valable 24h
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export async function getActiveAccessPass(): Promise<AccessPass | null> {
@@ -154,6 +154,17 @@ export async function purchaseAccessPass(): Promise<AccessPass> {
 
 export function getAccessPrice(): number {
   return ACCESS_PRICE_XOF;
+}
+
+export function getPromotionEndTime(): Date {
+  // Promotion valable 24h à partir de maintenant
+  return new Date(Date.now() + 24 * 60 * 60 * 1000);
+}
+
+export function isPromotionActive(): boolean {
+  // Pour cet exemple, la promotion est toujours active pendant 24h
+  // Vous pouvez ajuster cette logique selon vos besoins
+  return true;
 }
 
 // Révoque immédiatement le pass actif (utilisé lors d’une tentative de capture)

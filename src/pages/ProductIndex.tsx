@@ -126,15 +126,15 @@ export default function ProductIndex() {
                         <span className="text-3xl md:text-4xl font-bold text-accent-blue">
                           {price.toLocaleString("fr-FR")} F CFA
                         </span>
-                        <span className="text-lg text-muted-foreground line-through">10 000 F</span>
+                        <span className="text-lg text-muted-foreground line-through">5 000 F</span>
                       </div>
                     </div>
                     <Badge className="bg-accent-red/10 text-accent-red border-accent-red/20">
-                      -50%
+                      -70% • 24h
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    ⚡ Accès immédiat pendant 1 heure • Activation en quelques minutes
+                    🔥 Promotion flash 24h • ⚡ Accès immédiat pendant 1 heure • Activation en quelques minutes
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link to="/produit/annuaire" className="flex-1">
