@@ -16,7 +16,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 // Nouveaux imports UI
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, FileDown } from "lucide-react";
+// Ajout PDF
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+// Logo pour filigrane (URL Vite)
+import logoUrl from "@/assets/logo fond beige 1.png?url";
+// Excel export
+import * as XLSX from "xlsx";
 
 interface EntrepriseRow {
   id: string;
@@ -223,6 +230,181 @@ export default function EntreprisesPage() {
     const start = (page - 1) * pageSize;
     return sorted.slice(start, start + pageSize);
   }, [sorted, page]);
+
+  // Export PDF (admin uniquement)
+  const handleExportPdf = useCallback(async () => {
+    try {
+      if (!isAdmin) {
+        toast.info("Export réservé aux administrateurs.");
+        return;
+      }
+      const doc = new jsPDF({ unit: "pt", format: "a4" });
+      const now = new Date();
+      const title = "Annuaire des entreprises — Export";
+      const subtitle = `${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR")}`;
+      const textWatermark = userEmail ? `${userEmail} · ${now.toLocaleDateString("fr-FR")}` : "Export admin";
+
+      // Helper pour charger l'image du logo
+      const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+
+      // Dessin en-tête et pied de page
+      const header = () => {
+        doc.setFontSize(14);
+        doc.setTextColor(20);
+        doc.text(title, 40, 40);
+        doc.setFontSize(10);
+        doc.setTextColor(90);
+        doc.text(subtitle, 40, 58);
+      };
+      const footer = (pageNumber: number, totalPages: number) => {
+        doc.setFontSize(9);
+        doc.setTextColor(120);
+        doc.text(`Page ${pageNumber} / ${totalPages}`, doc.internal.pageSize.getWidth() - 80, doc.internal.pageSize.getHeight() - 24);
+      };
+
+      // Préparer données (toutes les entreprises filtrées/triées)
+      const rows = sorted.map((e) => [
+        e.nom || "—",
+        e.categorie?.nom || "—",
+        e.telephone || "—",
+        e.adresse || "—",
+        e.site_web || "—",
+        e.site_web_valide ? "Vérifié" : (e.site_web ? "Inaccessible" : "—"),
+        new Date(e.created_at).toLocaleDateString("fr-FR"),
+        String(viewCounts[e.id] ?? 0),
+      ]);
+
+      // Charger le logo (avec fallback texte)
+      let logoImg: HTMLImageElement | null = null;
+      try {
+        logoImg = await loadImage(logoUrl);
+      } catch {
+        logoImg = null;
+      }
+
+      autoTable(doc, {
+        head: [[
+          "Nom",
+          "Catégorie",
+          "Téléphone",
+          "Adresse",
+          "Site web",
+          "Statut site",
+          "Ajouté le",
+          "Vues uniques",
+        ]],
+        body: rows,
+        startY: 76,
+        styles: { fontSize: 9, cellPadding: 4, overflow: "linebreak" },
+        headStyles: { fillColor: [17, 24, 39] },
+        didDrawPage: ({ pageNumber, doc: d }) => {
+          // Filigrane: logo en transparence si dispo, sinon texte
+          const pw = d.internal.pageSize.getWidth();
+          const ph = d.internal.pageSize.getHeight();
+          if (logoImg) {
+            const AnyDoc: any = d as any;
+            const GState = AnyDoc.GState;
+            if (GState && AnyDoc.setGState) {
+              AnyDoc.setGState(new GState({ opacity: 0.08 }));
+            }
+            const maxW = Math.min(360, pw * 0.6);
+            const ratio = logoImg.width / logoImg.height || 1;
+            const w = maxW;
+            const h = w / ratio;
+            const x = (pw - w) / 2;
+            const y = (ph - h) / 2;
+            d.addImage(logoImg, "PNG", x, y, w, h, undefined, "FAST", -30);
+            if (GState && AnyDoc.setGState) {
+              AnyDoc.setGState(new GState({ opacity: 1 }));
+            }
+          } else {
+            d.setTextColor(180);
+            d.setFontSize(48);
+            d.text(textWatermark, pw / 2, ph / 2, { align: "center", angle: -30 });
+          }
+
+          // En-tête + pied de page
+          header();
+          const total = (d as any).internal.getNumberOfPages?.() || pageNumber;
+          footer(pageNumber, total);
+        },
+        columnStyles: {
+          0: { cellWidth: 120 },
+          1: { cellWidth: 90 },
+          2: { cellWidth: 90 },
+          3: { cellWidth: 130 },
+          4: { cellWidth: 120 },
+          5: { cellWidth: 80 },
+          6: { cellWidth: 70 },
+          7: { cellWidth: 70 },
+        },
+      });
+
+      const fileName = `annuaire_${now.toISOString().slice(0,10)}.pdf`;
+      doc.save(fileName);
+      toast.success("Export PDF généré.");
+    } catch (e) {
+      console.error(e);
+      toast.error("Échec de l'export PDF.");
+    }
+  }, [isAdmin, sorted, userEmail, viewCounts]);
+
+  // Export Excel (admin uniquement)
+  const handleExportExcel = useCallback(() => {
+    try {
+      if (!isAdmin) {
+        toast.info("Export réservé aux administrateurs.");
+        return;
+      }
+      const header = [
+        "Nom",
+        "Catégorie",
+        "Téléphone",
+        "Adresse",
+        "Site web",
+        "Statut site",
+        "Ajouté le",
+        "Vues uniques",
+      ];
+      const body = sorted.map((e) => [
+        e.nom || "—",
+        e.categorie?.nom || "—",
+        e.telephone || "—",
+        e.adresse || "—",
+        e.site_web || "—",
+        e.site_web_valide ? "Vérifié" : (e.site_web ? "Inaccessible" : "—"),
+        new Date(e.created_at).toLocaleDateString("fr-FR"),
+        String(viewCounts[e.id] ?? 0),
+      ]);
+      const data = [header, ...body];
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(data);
+
+      // Largeurs de colonnes approx selon contenu max
+      const colMaxLens = header.map((_, colIdx) =>
+        Math.max(
+          header[colIdx].length,
+          ...body.map((row) => String(row[colIdx] ?? "").length)
+        )
+      );
+      ws['!cols'] = colMaxLens.map((len) => ({ wch: Math.min(50, Math.max(12, len + 2)) }));
+
+      XLSX.utils.book_append_sheet(wb, ws, "Entreprises");
+      const fileName = `annuaire_${new Date().toISOString().slice(0,10)}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+      toast.success("Export Excel généré.");
+    } catch (e) {
+      console.error(e);
+      toast.error("Échec de l'export Excel.");
+    }
+  }, [isAdmin, sorted, viewCounts]);
 
   useEffect(() => {
     const init = async () => {
@@ -632,6 +814,16 @@ export default function EntreprisesPage() {
               <Button variant="ghost" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>
                 {t('annuaire.reset')}
               </Button>
+              {isAdmin && (
+                <>
+                  <Button onClick={handleExportExcel} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
+                    <FileDown className="w-4 h-4" /> Exporter Excel
+                  </Button>
+                  <Button onClick={handleExportPdf} className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white">
+                    <FileDown className="w-4 h-4" /> Exporter PDF
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
