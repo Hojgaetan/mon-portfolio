@@ -1,4 +1,8 @@
 # Portfolio de Joël Gaëtan Hassam Obah
+![forks](https://img.shields.io/github/forks/Hojgaetan/mon-portfolio)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Hojgaetan/mon-portfolio)
+![GitHub contributors](https://img.shields.io/github/contributors/Hojgaetan/mon-portfolio)
+![MIT License Badge](https://img.shields.io/badge/license-MIT-green)
 
 Un site personnel pour présenter mon profil, mes projets, mes articles et mes services, avec un produit payant (Annuaire B2B) destiné aux indépendants et petites équipes souhaitant prospecter rapidement.
 
