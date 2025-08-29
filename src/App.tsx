@@ -20,6 +20,7 @@ import ManualPurchase from "./pages/ManualPurchase";
 import ProductIndex from "./pages/ProductIndex";
 import AboutPage from "./pages/AboutPage";
 import ServicesPage from "./pages/ServicesPage";
+import ProjectPage from "./pages/ProjectPage";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +38,7 @@ function AppRoutes() {
           <Route path="/article/:slug" element={<ArticlePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/projets" element={<ProjectsPage />} />
-          <Route path="/projets/:slug" element={<ProjectsPage />} />
+          <Route path="/projets/:slug" element={<ProjectPage />} />
           <Route path="/annuaire" element={<EntreprisesPage />} />
           <Route path="/entreprises" element={<Navigate to="/annuaire" replace />} />
           {/* Produits */}

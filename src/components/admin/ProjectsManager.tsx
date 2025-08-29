@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Edit, Trash2, ExternalLink, Github } from "lucide-react";
+import { RichTextEditor } from "./RichTextEditor";
 
 // Types pour les projets (remplaçant les types Supabase manquants)
 interface Project {
@@ -18,6 +19,7 @@ interface Project {
   title: string;
   slug: string | null;
   description: string | null;
+  content: string | null;
   image_url: string | null;
   project_url: string | null;
   github_url: string | null;
@@ -35,6 +37,7 @@ interface FormProject {
   title: string;
   slug: string;
   description: string;
+  content: string;
   image_url: string;
   project_url: string;
   github_url: string;
@@ -69,6 +72,7 @@ export function ProjectsManager() {
     title: "",
     slug: "",
     description: "",
+    content: "",
     image_url: "",
     project_url: "",
     github_url: "",
@@ -99,6 +103,7 @@ export function ProjectsManager() {
           title: project.title,
           slug: project.slug ?? "",
           description: project.description ?? "",
+          content: project.content ?? "",
           image_url: project.image_url ?? "",
           project_url: project.project_url ?? "",
           github_url: project.github_url ?? "",
@@ -123,6 +128,7 @@ export function ProjectsManager() {
       title: "",
       slug: "",
       description: "",
+      content: "",
       image_url: "",
       project_url: "",
       github_url: "",
@@ -146,6 +152,7 @@ export function ProjectsManager() {
       title: project.title,
       slug: project.slug || null,
       description: project.description,
+      content: project.content,
       image_url: project.image_url,
       project_url: project.project_url,
       github_url: project.github_url,
@@ -162,6 +169,7 @@ export function ProjectsManager() {
       title: project.title,
       slug: project.slug || "",
       description: project.description || "",
+      content: project.content || "",
       image_url: project.image_url || "",
       project_url: project.project_url || "",
       github_url: project.github_url || "",
@@ -188,6 +196,7 @@ export function ProjectsManager() {
         title: formData.title,
         slug: formData.slug ? slugify(formData.slug) : slugify(formData.title),
         description: formData.description || null,
+        content: formData.content || null,
         image_url: formData.image_url || null,
         project_url: formData.project_url || null,
         github_url: formData.github_url || null,
@@ -327,7 +336,14 @@ export function ProjectsManager() {
                   rows={3}
                 />
               </div>
-              
+
+              <RichTextEditor
+                value={formData.content}
+                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                placeholder="Rédigez la description détaillée du projet (HTML)"
+                label="Contenu détaillé"
+              />
+
               <div className="space-y-2">
                 <Label htmlFor="image_url">URL de l'image</Label>
                 <Input
@@ -466,6 +482,17 @@ export function ProjectsManager() {
                   <CardDescription>{project.description}</CardDescription>
                 </div>
                 <div className="flex space-x-2">
+                  {project.slug && (
+                    <a href={`/projets/${project.slug}`} target="_blank" rel="noopener noreferrer">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mr-1"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                      </Button>
+                    </a>
+                  )}
                   <Button
                     variant="outline"
                     size="sm"
