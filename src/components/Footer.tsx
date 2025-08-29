@@ -1,4 +1,4 @@
-import { Github, Linkedin, User, FileDown } from "lucide-react";
+import { Github, Linkedin, Instagram, Facebook, User, FileDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
@@ -20,6 +20,12 @@ export const Footer = () => {
                                 </a>
                                 <a href="https://github.com/Hojgaetan" target="_blank" rel="noopener noreferrer" className="p-2 bg-card/60 backdrop-blur-sm rounded border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
                                     <Github className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </a>
+                                <a href="https://www.instagram.com/joel_hassam/" target="_blank" rel="noopener noreferrer" className="p-2 bg-card/60 backdrop-blur-sm rounded border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </a>
+                                <a href="https://www.facebook.com/joelgaetanhassamobah" target="_blank" rel="noopener noreferrer" className="p-2 bg-card/60 backdrop-blur-sm rounded border border-border hover:bg-accent hover:text-accent-foreground transition-colors">
+                                    <Facebook className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </a>
 							</div>
 						</div>
