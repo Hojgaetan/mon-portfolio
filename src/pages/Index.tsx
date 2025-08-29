@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FolderKanban, Newspaper, Building2, ArrowRight, Folder, Shield, Clock, Star } from "lucide-react";
+import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
@@ -244,6 +244,14 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">{t('quick.products.desc')}</CardContent>
               </Card>
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-red/20 bg-gradient-to-br from-card to-accent-red/5 cursor-pointer" onClick={() => navigate('/services')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+                <CardHeader className="relative flex flex-row items-center gap-3">
+                  <Briefcase className="h-5 w-5 text-accent-red" />
+                  <CardTitle className="text-base">{t('quick.services.title')}</CardTitle>
+                </CardHeader>
+                <CardContent className="text-sm text-muted-foreground">{t('quick.services.desc')}</CardContent>
+              </Card>
               <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-sky/20 bg-gradient-to-br from-card to-accent-sky/5 cursor-pointer" onClick={() => navigate('/projets')}>
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
@@ -259,14 +267,6 @@ const Index = () => {
                   <CardTitle className="text-base">{t('quick.blog.title')}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">{t('quick.blog.desc')}</CardContent>
-              </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-red/20 bg-gradient-to-br from-card to-accent-red/5 cursor-pointer" onClick={() => navigate('/annuaire')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
-                <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Building2 className="h-5 w-5 text-accent-red" />
-                  <CardTitle className="text-base">{t('quick.directory.title')}</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{t('quick.directory.desc')}</CardContent>
               </Card>
             </div>
           </div>

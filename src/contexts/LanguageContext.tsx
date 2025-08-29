@@ -131,6 +131,8 @@ const translations = {
     'quick.blog.desc': 'Articles, notes et idées',
     'quick.directory.title': 'Annuaire',
     'quick.directory.desc': 'Entreprises et ressources',
+    'quick.services.title': 'Services',
+    'quick.services.desc': 'Prestations web et accompagnement',
 
     // Commun / Trust
     'common.trust_title': 'Fiable et sécurisé',
@@ -425,9 +427,9 @@ const translations = {
     'products.title': 'Produits',
 
     // Ajouts titres pages
-    'blog.title': 'Blog',
-    'projects.title': 'Projets',
-    'services.title': 'Services',
+    // 'blog.title': 'Blog',
+    // 'projects.title': 'Projets',
+    // 'services.title': 'Services',
 
     // Ajout tags produit annuaire
     'product.annuaire.tag.commerce': 'Commerce',
@@ -563,6 +565,8 @@ const translations = {
     'quick.blog.desc': 'Articles, notes and ideas',
     'quick.directory.title': 'Directory',
     'quick.directory.desc': 'Companies and resources',
+    'quick.services.title': 'Services',
+    'quick.services.desc': 'Web development services and guidance',
 
     // Common / Trust
     'common.trust_title': 'Reliable and secure',
@@ -857,9 +861,9 @@ const translations = {
     'products.title': 'Produits',
 
     // Ajouts titres pages
-    'blog.title': 'Blog',
-    'projects.title': 'Projets',
-    'services.title': 'Services',
+    // 'blog.title': 'Blog',
+    // 'projects.title': 'Projets',
+    // 'services.title': 'Services',
 
     // Ajout tags produit annuaire
     'product.annuaire.tag.commerce': 'Commerce',
