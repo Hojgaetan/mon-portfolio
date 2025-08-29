@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Shield, Clock, CheckCircle, Copy, Smartphone, CreditCard, ArrowRight } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -16,9 +16,11 @@ export default function ManualPurchase() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useLanguage();
+  const location = useLocation();
+  const isExportFull = new URLSearchParams(location.search).get('export') === '1';
 
   useEffect(() => {
-    document.title = `${t('manual.title')} · Annuaire`;
+    document.title = `${isExportFull ? 'Export complet (5000 F)' : t('manual.title')} · Annuaire`;
 
     // Exiger l'authentification
     (async () => {
@@ -43,7 +45,9 @@ export default function ManualPurchase() {
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent(
-      `🚀 Bonjour ! Je souhaite acheter l'accès à l'annuaire des entreprises.\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci d'activer mon accès ! ⚡`
+      isExportFull
+        ? `📦 Bonjour ! Je souhaite acheter l'export complet de l'annuaire (5000 F CFA).\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci de m'envoyer le fichier Excel complet via WhatsApp.`
+        : `🚀 Bonjour ! Je souhaite acheter l'accès à l'annuaire des entreprises.\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci d'activer mon accès ! ⚡`
     );
     const url = `https://wa.me/221708184010?text=${message}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -87,16 +91,21 @@ export default function ManualPurchase() {
               💳 {t('common.secure_payment')}
             </Badge>
             <h1 id="page-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              {t('manual.title')}
+              {isExportFull ? 'Paiement — Export complet' : t('manual.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              {t('manual.subtitle')}
+              {isExportFull ? "Payez 5000 F CFA. Ensuite, envoyez la capture du paiement via WhatsApp pour recevoir l'intégralité de la liste en Excel." : t('manual.subtitle')}
             </p>
           </header>
         </div>
       </div>
 
       <main role="main" className="container mx-auto max-w-4xl p-6">
+        {isExportFull && (
+          <div className="mb-6 p-4 rounded-lg border bg-yellow-50 text-yellow-900 border-yellow-200">
+            <strong>Mode export complet</strong> — Montant: 5000 F CFA. Après paiement, envoyez la capture via WhatsApp; vous recevrez le fichier Excel complet par WhatsApp.
+          </div>
+        )}
         {/* Payment Methods */}
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
           {/* Wave Payment */}
@@ -131,7 +140,7 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{t('manual.sent_amount')}</span>
+                  <span>{isExportFull ? 'Envoyez 5000 F CFA au numéro ci-dessous.' : t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
@@ -139,7 +148,7 @@ export default function ManualPurchase() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{t('manual.contact_whatsapp')}</span>
+                  <span>{isExportFull ? 'Contactez-nous sur WhatsApp pour recevoir le fichier.' : t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -177,7 +186,7 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{t('manual.sent_amount')}</span>
+                  <span>{isExportFull ? 'Envoyez 5000 F CFA au numéro ci-dessous.' : t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
@@ -185,7 +194,7 @@ export default function ManualPurchase() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{t('manual.contact_whatsapp')}</span>
+                  <span>{isExportFull ? 'Contactez-nous sur WhatsApp pour recevoir le fichier.' : t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -196,10 +205,10 @@ export default function ManualPurchase() {
         <Card className="max-w-2xl mx-auto shadow-lg border-2 border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold mb-2">
-              {t('manual.final_step')}
+              {isExportFull ? 'Dernière étape — Export complet' : t('manual.final_step')}
             </CardTitle>
             <p className="text-muted-foreground">
-              {t('manual.final_step_desc')}
+              {isExportFull ? "Après paiement, envoyez la capture sur WhatsApp pour recevoir l'Excel complet." : t('manual.final_step_desc')}
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -209,7 +218,7 @@ export default function ManualPurchase() {
                 {t('manual.prepared_msg')}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {t('manual.prepared_msg_desc')}
+                {isExportFull ? 'Message WhatsApp pré-rempli pour l’export complet.' : t('manual.prepared_msg_desc')}
               </p>
               
               <Button

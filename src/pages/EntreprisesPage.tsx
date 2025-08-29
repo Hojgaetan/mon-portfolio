@@ -74,6 +74,8 @@ export default function EntreprisesPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  // Pop-up export payant après usage gratuit
+  const [exportPayDialogOpen, setExportPayDialogOpen] = useState(false);
 
   // Debounce search input
   useEffect(() => {
@@ -231,18 +233,75 @@ export default function EntreprisesPage() {
     return sorted.slice(start, start + pageSize);
   }, [sorted, page]);
 
-  // Export PDF (admin uniquement)
+  // Sélection aléatoire jusqu'à n éléments
+  const pickRandomUpTo = useCallback((arr: EntrepriseRow[], n: number) => {
+    if (arr.length <= n) return arr;
+    // Shuffle léger suffisant côté client
+    const shuffled = [...arr].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, n);
+  }, []);
+
+  // Vérifie si l'utilisateur a déjà utilisé son export gratuit (DB + fallback local)
+  const hasUsedFreeExport = useCallback(async (): Promise<boolean> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+      const { count, error } = await supabase
+        .from('export_usage')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .eq('kind', 'excel_free');
+      if (error) throw error;
+      if ((count ?? 0) > 0) return true;
+      // Fallback local si pas trouvé
+      return localStorage.getItem('export_free_used') === '1';
+    } catch {
+      // Table absente ou RLS: fallback local
+      return localStorage.getItem('export_free_used') === '1';
+    }
+  }, []);
+
+  const markFreeExportUsed = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        localStorage.setItem('export_free_used', '1');
+        return;
+      }
+      const { error } = await supabase
+        .from('export_usage')
+        .insert({ user_id: user.id, kind: 'excel_free' });
+      if (error) throw error;
+    } catch {
+      localStorage.setItem('export_free_used', '1');
+    }
+  }, []);
+
+  const openWhatsAppForPaidExport = useCallback(() => {
+    const msg = encodeURIComponent(
+      `Bonjour, je souhaite acheter l'export complet de l'annuaire (5000 F CFA).\n\nMon email : ${userEmail ?? ''}\n\nJ'ai payé et je vous envoie la capture d'écran. Merci de m'envoyer le fichier Excel complet via WhatsApp.`
+    );
+    const url = `https://wa.me/221708184010?text=${msg}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }, [userEmail]);
+
+  // Export PDF (admin: tout, client: 50 aléatoires max) — PDF réservé admin (guard plus bas)
   const handleExportPdf = useCallback(async () => {
     try {
       if (!isAdmin) {
-        toast.info("Export réservé aux administrateurs.");
+        toast.info("Export PDF réservé aux administrateurs.");
+        return;
+      }
+      const exportRows = isAdmin ? sorted : pickRandomUpTo(sorted, 50);
+      if (exportRows.length === 0) {
+        toast.info("Aucune donnée à exporter.");
         return;
       }
       const doc = new jsPDF({ unit: "pt", format: "a4" });
       const now = new Date();
-      const title = "Annuaire des entreprises — Export";
+      const title = "Annuaire des entreprises — Export" + (isAdmin ? "" : " (échantillon 50)");
       const subtitle = `${now.toLocaleDateString("fr-FR")} ${now.toLocaleTimeString("fr-FR")}`;
-      const textWatermark = userEmail ? `${userEmail} · ${now.toLocaleDateString("fr-FR")}` : "Export admin";
+      const textWatermark = userEmail ? `${userEmail} · ${now.toLocaleDateString("fr-FR")}` : (isAdmin ? "Export admin" : "Export client");
 
       // Helper pour charger l'image du logo
       const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
@@ -268,8 +327,8 @@ export default function EntreprisesPage() {
         doc.text(`Page ${pageNumber} / ${totalPages}`, doc.internal.pageSize.getWidth() - 80, doc.internal.pageSize.getHeight() - 24);
       };
 
-      // Préparer données (toutes les entreprises filtrées/triées)
-      const rows = sorted.map((e) => [
+      // Préparer données
+      const rows = exportRows.map((e) => [
         e.nom || "—",
         e.categorie?.nom || "—",
         e.telephone || "—",
@@ -346,20 +405,29 @@ export default function EntreprisesPage() {
         },
       });
 
-      const fileName = `annuaire_${now.toISOString().slice(0,10)}.pdf`;
+      const fileName = `annuaire_${now.toISOString().slice(0,10)}${isAdmin ? '' : '_echantillon50'}.pdf`;
       doc.save(fileName);
-      toast.success("Export PDF généré.");
+      toast.success(isAdmin ? "Export PDF généré." : "Export PDF (50 max) généré.");
     } catch (e) {
       console.error(e);
       toast.error("Échec de l'export PDF.");
     }
-  }, [isAdmin, sorted, userEmail, viewCounts]);
+  }, [isAdmin, sorted, userEmail, viewCounts, pickRandomUpTo]);
 
-  // Export Excel (admin uniquement)
-  const handleExportExcel = useCallback(() => {
+  // Export Excel (admin: tout, client: 1 gratuit limité à 50; 2e fois payant -> pop-up)
+  const handleExportExcel = useCallback(async () => {
     try {
       if (!isAdmin) {
-        toast.info("Export réservé aux administrateurs.");
+        const already = await hasUsedFreeExport();
+        if (already) {
+          setExportPayDialogOpen(true);
+          return;
+        }
+      }
+
+      const exportRows = isAdmin ? sorted : pickRandomUpTo(sorted, 50);
+      if (exportRows.length === 0) {
+        toast.info("Aucune donnée à exporter.");
         return;
       }
       const header = [
@@ -372,7 +440,7 @@ export default function EntreprisesPage() {
         "Ajouté le",
         "Vues uniques",
       ];
-      const body = sorted.map((e) => [
+      const body = exportRows.map((e) => [
         e.nom || "—",
         e.categorie?.nom || "—",
         e.telephone || "—",
@@ -394,17 +462,23 @@ export default function EntreprisesPage() {
           ...body.map((row) => String(row[colIdx] ?? "").length)
         )
       );
-      ws['!cols'] = colMaxLens.map((len) => ({ wch: Math.min(50, Math.max(12, len + 2)) }));
+      (ws as any)['!cols'] = colMaxLens.map((len) => ({ wch: Math.min(50, Math.max(12, len + 2)) }));
 
       XLSX.utils.book_append_sheet(wb, ws, "Entreprises");
-      const fileName = `annuaire_${new Date().toISOString().slice(0,10)}.xlsx`;
+      const fileName = `annuaire_${new Date().toISOString().slice(0,10)}${isAdmin ? '' : '_echantillon50'}.xlsx`;
       XLSX.writeFile(wb, fileName);
-      toast.success("Export Excel généré.");
+
+      if (!isAdmin) {
+        await markFreeExportUsed();
+        toast.success("Votre export gratuit a été utilisé.");
+      } else {
+        toast.success("Export Excel généré.");
+      }
     } catch (e) {
       console.error(e);
       toast.error("Échec de l'export Excel.");
     }
-  }, [isAdmin, sorted, viewCounts]);
+  }, [isAdmin, sorted, viewCounts, pickRandomUpTo, hasUsedFreeExport, markFreeExportUsed]);
 
   useEffect(() => {
     const init = async () => {
@@ -814,16 +888,17 @@ export default function EntreprisesPage() {
               <Button variant="ghost" onClick={() => { setQ(""); setSelectedCategory("all"); setSortBy("recent"); }}>
                 {t('annuaire.reset')}
               </Button>
-              {isAdmin && (
-                <>
-                  <Button onClick={handleExportExcel} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
-                    <FileDown className="w-4 h-4" /> Exporter Excel
-                  </Button>
+              {/* Bouton Excel visible pour tout utilisateur ayant accès; PDF réservé aux admins */}
+              <>
+                <Button onClick={handleExportExcel} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
+                  <FileDown className="w-4 h-4" /> {isAdmin ? 'Exporter Excel' : 'Exporter Excel (50)'}
+                </Button>
+                {isAdmin && (
                   <Button onClick={handleExportPdf} className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white">
                     <FileDown className="w-4 h-4" /> Exporter PDF
                   </Button>
-                </>
-              )}
+                )}
+              </>
             </div>
           </div>
         </div>
@@ -977,6 +1052,26 @@ export default function EntreprisesPage() {
                 )}
                 <div className="pt-2">
                   <Badge variant="outline" className="bg-accent-sky/10 text-accent-sky border-accent-sky/20">{viewCounts[selected?.id ?? ""] ?? 0} {t('annuaire.card.unique_views')}</Badge>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          {/* Pop-up export payant (après 1er export gratuit) */}
+          <Dialog open={exportPayDialogOpen} onOpenChange={setExportPayDialogOpen}>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Export complet (payant)</DialogTitle>
+                <DialogDescription>
+                  La seconde exportation est payante: 5000 F CFA pour recevoir l'intégralité de la liste en Excel. Payez comme la première fois, envoyez la capture via WhatsApp et nous vous remettrons le fichier complet par WhatsApp.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3 text-sm">
+                <p>Montant: <strong>5000 F CFA</strong></p>
+                <div className="flex flex-wrap gap-2 justify-end pt-2">
+                  <Button variant="outline" onClick={() => setExportPayDialogOpen(false)}>Fermer</Button>
+                  <Button variant="outline" onClick={openWhatsAppForPaidExport}>Contacter WhatsApp</Button>
+                  <Button onClick={() => { setExportPayDialogOpen(false); navigate('/paiement-manuel?export=1'); }}>Procéder au paiement</Button>
                 </div>
               </div>
             </DialogContent>
