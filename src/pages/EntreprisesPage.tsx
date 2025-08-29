@@ -905,37 +905,17 @@ export default function EntreprisesPage() {
 
         {/* Corps et overlay */}
         <div className="px-4 sm:px-6 py-6 space-y-6">
-          {/* Watermark + overlay */}
-          {/* Styles responsives pour watermark */}
-          <style>{`
-            @media (max-width: 640px) { .wm-text { font-size: 12px; } }
-            @media (min-width: 641px) { .wm-text { font-size: 16px; } }
-          `}</style>
+          {/* Overlay seulement (filigrane retiré) */}
 
-          {/* Watermark répétitif */}
-          <div aria-hidden className="fixed inset-0 pointer-events-none select-none z-[60]" style={{ opacity: 0.12 }}>
-            <div className="absolute inset-0" style={{ transform: 'rotate(-30deg)' }}>
-              {Array.from({ length: 8 }).map((_, r) => (
-                <div key={r} className="flex gap-24" style={{ position: 'absolute', top: `${r * 180}px`, left: 0 }}>
-                  {Array.from({ length: 8 }).map((_, c) => (
-                    <span key={c} className="wm-text font-bold" style={{ color: '#000' }}>
-                      {userEmail ?? 'Utilisateur'} · {new Date().toLocaleDateString('fr-FR')}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Voile quand l'onglet est caché */}
-          {hiddenOverlay && (
-            <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
-              <div>
-                <div className="text-lg font-semibold">{t('annuaire.protected.title')}</div>
-                <div className="text-sm opacity-80 mt-1">{t('annuaire.protected.subtitle')}</div>
-              </div>
-            </div>
-          )}
+           {/* Voile quand l'onglet est caché */}
+           {hiddenOverlay && (
+             <div aria-hidden className="fixed inset-0 z-[70] bg-black/80 text-white flex items-center justify-center text-center p-6">
+               <div>
+                 <div className="text-lg font-semibold">{t('annuaire.protected.title')}</div>
+                 <div className="text-sm opacity-80 mt-1">{t('annuaire.protected.subtitle')}</div>
+               </div>
+             </div>
+           )}
 
           {loading ? (
             // ...existing skeleton grid...
