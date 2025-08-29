@@ -14,11 +14,14 @@ import {
   Shield,
   Zap
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ServicesPage() {
+  const { t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Mes Services · Développement Web";
-  }, []);
+    document.title = t('services.title');
+  }, [t]);
 
   const openWhatsApp = (serviceTitle: string) => {
     const message = `Bonjour, je souhaite un devis pour: ${serviceTitle} ?`;
@@ -100,32 +103,32 @@ export default function ServicesPage() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              ⚡ Services web professionnels
+              ⚡ {t('services.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Mes services de développement
+              {t('services.hero.title')}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Des solutions complètes pour votre présence digitale. Du design à la réalisation, je vous accompagne dans tous vos projets web.
+              {t('services.hero.subtitle')}
             </p>
             
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-blue">03+</div>
-                <div className="text-sm text-muted-foreground">Projets</div>
+                <div className="text-sm text-muted-foreground">{t('services.stats.projects')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-green">100%</div>
-                <div className="text-sm text-muted-foreground">Satisfaction</div>
+                <div className="text-sm text-muted-foreground">{t('services.stats.satisfaction')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-sky">24/7</div>
-                <div className="text-sm text-muted-foreground">Support</div>
+                <div className="text-sm text-muted-foreground">{t('services.stats.support')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-red">15j</div>
-                <div className="text-sm text-muted-foreground">Livraison</div>
+                <div className="text-sm text-muted-foreground">{t('services.stats.delivery')}</div>
               </div>
             </div>
           </div>
@@ -137,10 +140,10 @@ export default function ServicesPage() {
         <section aria-labelledby="services-heading" className="py-12">
           <div className="text-center mb-12">
             <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">
-              Mes services
+              {t('services.section.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Des solutions adaptées à vos besoins, de la conception à la mise en ligne de vos projets digitaux.
+              {t('services.section.subtitle')}
             </p>
           </div>
 
@@ -198,7 +201,7 @@ export default function ServicesPage() {
                         onClick={() => openWhatsApp(service.title)}
                         className={`w-full bg-gradient-to-r from-${service.color} to-${service.color}/80 hover:from-${service.color}/90 hover:to-${service.color}/70 text-white shadow-lg hover:shadow-xl transition-all duration-300`}
                       >
-                        Demander un devis →
+                        {t('services.cta.quote')}
                       </Button>
                     </div>
 
@@ -206,15 +209,15 @@ export default function ServicesPage() {
                     <div className="flex items-center justify-center gap-4 pt-2 text-xs text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Shield className="w-3 h-3" />
-                        <span>Garanti</span>
+                        <span>{t('services.trust.guaranteed')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        <span>Livraison rapide</span>
+                        <span>{t('services.trust.fast_delivery')}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         <Zap className="w-3 h-3" />
-                        <span>Support inclus</span>
+                        <span>{t('services.trust.support_included')}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -226,35 +229,35 @@ export default function ServicesPage() {
 
         {/* Process Section */}
         <section className="py-12 text-center">
-          <h3 className="text-2xl font-bold mb-8">Comment ça marche ?</h3>
+          <h3 className="text-2xl font-bold mb-8">{t('services.process.title')}</h3>
           <div className="grid md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-accent-blue font-bold">1</span>
               </div>
-              <h4 className="font-semibold">Contact</h4>
-              <p className="text-sm text-muted-foreground">Demandez un devis</p>
+              <h4 className="font-semibold">{t('services.process.step1.title')}</h4>
+              <p className="text-sm text-muted-foreground">{t('services.process.step1.desc')}</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-green/10 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-accent-green font-bold">2</span>
               </div>
-              <h4 className="font-semibold">Devis</h4>
-              <p className="text-sm text-muted-foreground">Proposition du devis</p>
+              <h4 className="font-semibold">{t('services.process.step2.title')}</h4>
+              <p className="text-sm text-muted-foreground">{t('services.process.step2.desc')}</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-sky/10 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-accent-sky font-bold">3</span>
               </div>
-              <h4 className="font-semibold">Développement</h4>
-              <p className="text-sm text-muted-foreground">Réalisation du projet</p>
+              <h4 className="font-semibold">{t('services.process.step3.title')}</h4>
+              <p className="text-sm text-muted-foreground">{t('services.process.step3.desc')}</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-red/10 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-accent-red font-bold">4</span>
               </div>
-              <h4 className="font-semibold">Livraison</h4>
-              <p className="text-sm text-muted-foreground">Livraison & formation</p>
+              <h4 className="font-semibold">{t('services.process.step4.title')}</h4>
+              <p className="text-sm text-muted-foreground">{t('services.process.step4.desc')}</p>
             </div>
           </div>
         </section>

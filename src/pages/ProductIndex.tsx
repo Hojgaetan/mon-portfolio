@@ -6,13 +6,17 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { getAccessPrice } from "@/lib/access";
 import { CheckCircle, Star, Users, Clock, Shield } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ProductIndex() {
+  const { t } = useLanguage();
+
   useEffect(() => {
-    document.title = "Produits · Offres";
-  }, []);
+    document.title = t('products.title');
+  }, [t]);
 
   const price = getAccessPrice();
+  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -25,32 +29,32 @@ export default function ProductIndex() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              🚀 Solutions de prospection B2B
+              🚀 {t('products.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Accélérez votre prospection au Sénégal
+              {t('products.hero.title')}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Des outils simples et efficaces pour identifier et contacter les entreprises qui ont besoin de vos services web.
+              {t('products.hero.subtitle')}
             </p>
             
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-blue">500+</div>
-                <div className="text-sm text-muted-foreground">Entreprises</div>
+                <div className="text-sm text-muted-foreground">{t('products.stats.companies')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-green">95%</div>
-                <div className="text-sm text-muted-foreground">Qualité</div>
+                <div className="text-sm text-muted-foreground">{t('products.stats.quality')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-sky">24/7</div>
-                <div className="text-sm text-muted-foreground">Accès</div>
+                <div className="text-sm text-muted-foreground">{t('products.stats.access')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-red">1h</div>
-                <div className="text-sm text-muted-foreground">Activation</div>
+                <div className="text-sm text-muted-foreground">{t('products.stats.activation')}</div>
               </div>
             </div>
           </div>
@@ -62,10 +66,10 @@ export default function ProductIndex() {
         <section aria-labelledby="catalog-heading" className="py-12">
           <div className="text-center mb-12">
             <h2 id="catalog-heading" className="text-3xl md:text-4xl font-bold mb-4">
-              Notre catalogue
+              {t('products.catalog.title')}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Découvrez nos solutions conçues spécifiquement pour les développeurs et agences web au Sénégal.
+              {t('products.catalog.subtitle')}
             </p>
           </div>
 
@@ -76,7 +80,7 @@ export default function ProductIndex() {
               <CardHeader className="relative">
                 <div className="flex items-start justify-between mb-4">
                   <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20">
-                    🎯 Le plus populaire
+                    🎯 {t('products.card.popular')}
                   </Badge>
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (
@@ -86,34 +90,33 @@ export default function ProductIndex() {
                 </div>
                 
                 <CardTitle id="annuaire-title" className="text-2xl md:text-3xl font-bold mb-2">
-                  Annuaire d'entreprises sans site web
+                  {t('product.annuaire.title')}
                 </CardTitle>
-                <p className="text-accent-blue font-medium">Sénégal • 2025</p>
+                <p className="text-accent-blue font-medium">{t('common.country.sn')} • {currentYear}</p>
               </CardHeader>
               
               <CardContent className="space-y-6 relative">
                 <p className="text-lg text-muted-foreground leading-relaxed">
-                  La base de données la plus complète d'entreprises sénégalaises sans présence web. 
-                  Parfait pour identifier vos prospects idéaux et développer votre portefeuille client.
+                  {t('product.annuaire.subtitle')}
                 </p>
 
                 {/* Features */}
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-accent-blue/5">
                     <CheckCircle className="w-5 h-5 text-accent-blue" />
-                    <span className="font-medium">Coordonnées complètes</span>
+                    <span className="font-medium">{t('products.card.features.coords')}</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-accent-green/5">
                     <Users className="w-5 h-5 text-accent-green" />
-                    <span className="font-medium">Recherche avancée</span>
+                    <span className="font-medium">{t('products.card.features.search')}</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-accent-yellow/5">
                     <Clock className="w-5 h-5 text-accent-yellow" />
-                    <span className="font-medium">Mises à jour régulières</span>
+                    <span className="font-medium">{t('products.card.features.updates')}</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-accent-red/5">
                     <Shield className="w-5 h-5 text-accent-red" />
-                    <span className="font-medium">Données vérifiées</span>
+                    <span className="font-medium">{t('products.card.features.verified')}</span>
                   </div>
                 </div>
 
@@ -121,7 +124,7 @@ export default function ProductIndex() {
                 <div className="bg-gradient-to-r from-accent-blue/10 via-accent-blue/5 to-transparent p-6 rounded-xl border border-accent-blue/20">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">Tarif promotionnel</p>
+                      <p className="text-sm text-muted-foreground">{t('products.pricing.promo')}</p>
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl md:text-4xl font-bold text-accent-blue">
                           {price.toLocaleString("fr-FR")} F CFA
@@ -134,12 +137,12 @@ export default function ProductIndex() {
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    🔥 Promotion flash 24h • ⚡ Accès immédiat pendant 1 heure • Activation en quelques minutes
+                    🔥 {t('products.pricing.flash')} • ⚡ {t('product.annuaire.sidebar.access_title')} • {t('product.annuaire.sidebar.secure_fast')}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3">
                     <Link to="/produit/annuaire" className="flex-1">
-                      <Button size="lg" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300" aria-label="Voir le produit annuaire">
-                        Découvrir le produit →
+                      <Button size="lg" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300" aria-label={t('products.cta.view_product')}>
+                        {t('products.cta.view_product')}
                       </Button>
                     </Link>
                   </div>
@@ -149,11 +152,11 @@ export default function ProductIndex() {
                 <div className="flex items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4" />
-                    <span>Paiement sécurisé</span>
+                    <span>{t('common.secure_payment')}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    <span>Support 24/7</span>
+                    <span>{t('common.support_24_7')}</span>
                   </div>
                 </div>
               </CardContent>
@@ -163,13 +166,13 @@ export default function ProductIndex() {
 
         {/* Social proof */}
         <section className="py-12 text-center">
-          <h3 className="text-xl font-semibold mb-6">Rejoint par des professionnels</h3>
+          <h3 className="text-xl font-semibold mb-6">{t('products.social.title')}</h3>
           <div className="flex items-center justify-center gap-8 opacity-60">
-            <div className="text-sm">Développeurs freelance</div>
+            <div className="text-sm">{t('products.social.dev')}</div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="text-sm">Agences web</div>
+            <div className="text-sm">{t('products.social.agencies')}</div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="text-sm">Consultants IT</div>
+            <div className="text-sm">{t('products.social.consultants')}</div>
           </div>
         </section>
       </div>

@@ -8,6 +8,7 @@ import { ArticleComments } from "@/components/ArticleComments";
 import { RecentArticlesSidebar } from "@/components/RecentArticlesSidebar";
 import { ArrowLeft, Eye, Calendar, Clock } from "lucide-react";
 import { getClientIP } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Category { id: string; name: string; slug: string; color: string; }
 interface BlogPost {
@@ -31,6 +32,7 @@ export default function ArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [views, setViews] = useState(0);
+  const { language, t } = useLanguage();
 
   const getUserIP = async () => {
     const ip = await getClientIP();
@@ -75,20 +77,20 @@ export default function ArticlePage() {
           .single();
 
         if (error) {
-          setError("Article introuvable");
+          setError(t('blog.article.not_found'));
         } else if (data) {
           setPost(data as unknown as BlogPost);
           await trackView(data.id);
           await fetchViews(data.id);
         }
       } catch {
-        setError("Article introuvable");
+        setError(t('blog.article.not_found'));
       } finally {
         setLoading(false);
       }
     };
     fetchPost();
-  }, [slug, trackView]);
+  }, [slug, trackView, t]);
 
   const fetchViews = async (articleId: string) => {
     try {
@@ -107,6 +109,8 @@ export default function ArticlePage() {
     const wordCount = content.replace(/<[^>]*>/g, "").split(/\s+/).length;
     return Math.ceil(wordCount / wordsPerMinute);
   };
+
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
 
   if (loading) {
     return (
@@ -130,10 +134,10 @@ export default function ArticlePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{error || "Article introuvable"}</h1>
+          <h1 className="text-2xl font-bold mb-4">{error || t('blog.article.not_found')}</h1>
           <Button onClick={() => navigate("/blog")} variant="outline">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour au blog
+            {t('blog.article.back')}
           </Button>
         </div>
       </div>
@@ -152,7 +156,7 @@ export default function ArticlePage() {
             className="mb-6 hover:bg-background/80 backdrop-blur-sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour au blog
+            {t('blog.article.back')}
           </Button>
           
           {/* Article Meta Info */}
@@ -173,7 +177,7 @@ export default function ArticlePage() {
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
                 <Calendar className="w-4 h-4" />
-                {new Date(post.created_at).toLocaleDateString("fr-FR", {
+                {new Date(post.created_at).toLocaleDateString(locale, {
                   day: "numeric",
                   month: "long",
                   year: "numeric",
@@ -181,11 +185,11 @@ export default function ArticlePage() {
               </span>
               <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
                 <Clock className="w-4 h-4" />
-                {getReadingTime(post.content)} min
+                {getReadingTime(post.content)} {t('blog.article.min')}
               </span>
               <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-3 py-1 rounded-full">
                 <Eye className="w-4 h-4" />
-                {views} vues
+                {views} {t('blog.article.views')}
               </span>
             </div>
           </div>

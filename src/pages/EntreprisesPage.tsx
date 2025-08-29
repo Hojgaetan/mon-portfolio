@@ -143,11 +143,11 @@ export default function EntreprisesPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        toast.info("Veuillez vous connecter.");
+        toast.info(t('auth.require_login'));
         return;
       }
       if (!buyerPhone) {
-        toast.info("Entrez votre numéro de téléphone.");
+        toast.info(t('purchase.enter_phone'));
         return;
       }
       setPurchasing(true);
@@ -155,13 +155,12 @@ export default function EntreprisesPage() {
       setPendingExtId(res.externalTransactionId);
       if (res.deepLinkUrl) {
         setPendingDeepLink(res.deepLinkUrl);
-        // Ne pas ouvrir automatiquement d'autres passerelles ici
       } else if (res.authLinkUrl) {
         setPendingDeepLink(res.authLinkUrl);
       } else {
         setPendingDeepLink(null);
       }
-      toast("Paiement initié. Terminez-le dans l'application opérateur.");
+      toast(t('purchase.initiated'));
 
       const pass = await pollAccessActivation({ externalTransactionId: res.externalTransactionId, timeoutMs: 180000, intervalMs: 3000 });
       if (pass) {
@@ -169,17 +168,17 @@ export default function EntreprisesPage() {
         setExpiresAt(pass.expires_at);
         setPurchaseOpen(false);
         await fetchEntreprises();
-        toast.success("Accès activé pour 1 heure.");
+        toast.success(t('purchase.activated'));
       } else {
-        toast.error("Paiement non confirmé à temps. Réessayez.");
+        toast.error(t('purchase.not_confirmed'));
       }
     } catch (e: unknown) {
       console.error(e);
       const msg = e instanceof Error ? e.message : String(e);
       if (msg && msg.includes("Failed to send a request to the Edge Function")) {
-        toast.error("Paiement indisponible: fonction Edge non joignable. Déployez 'intech-operation' et vérifiez les secrets.");
+        toast.error(t('purchase.edge_unreachable'));
       } else {
-        toast.error(msg || "Impossible d'initier le paiement.");
+        toast.error(t('purchase.init_failed'));
       }
     } finally {
       setPurchasing(false);
@@ -289,12 +288,12 @@ export default function EntreprisesPage() {
   const handleExportPdf = useCallback(async () => {
     try {
       if (!isAdmin) {
-        toast.info("Export PDF réservé aux administrateurs.");
+        toast.info(t('annuaire.export.pdf_admin_only'));
         return;
       }
       const exportRows = isAdmin ? sorted : pickRandomUpTo(sorted, 50);
       if (exportRows.length === 0) {
-        toast.info("Aucune donnée à exporter.");
+        toast.info(t('annuaire.export.no_data'));
         return;
       }
       const doc = new jsPDF({ unit: "pt", format: "a4" });
@@ -407,12 +406,12 @@ export default function EntreprisesPage() {
 
       const fileName = `annuaire_${now.toISOString().slice(0,10)}${isAdmin ? '' : '_echantillon50'}.pdf`;
       doc.save(fileName);
-      toast.success(isAdmin ? "Export PDF généré." : "Export PDF (50 max) généré.");
+      toast.success(t('annuaire.export.pdf_ok'));
     } catch (e) {
       console.error(e);
-      toast.error("Échec de l'export PDF.");
+      toast.error(t('annuaire.export.excel_fail'));
     }
-  }, [isAdmin, sorted, userEmail, viewCounts, pickRandomUpTo]);
+  }, [isAdmin, sorted, userEmail, viewCounts, pickRandomUpTo, t]);
 
   // Export Excel (admin: tout, client: 1 gratuit limité à 50; 2e fois payant -> pop-up)
   const handleExportExcel = useCallback(async () => {
@@ -427,7 +426,7 @@ export default function EntreprisesPage() {
 
       const exportRows = isAdmin ? sorted : pickRandomUpTo(sorted, 50);
       if (exportRows.length === 0) {
-        toast.info("Aucune donnée à exporter.");
+        toast.info(t('annuaire.export.no_data'));
         return;
       }
       const header = [
@@ -470,15 +469,15 @@ export default function EntreprisesPage() {
 
       if (!isAdmin) {
         await markFreeExportUsed();
-        toast.success("Votre export gratuit a été utilisé.");
+        toast.success(t('annuaire.export.free_used'));
       } else {
-        toast.success("Export Excel généré.");
+        toast.success(t('annuaire.export.excel_ok'));
       }
     } catch (e) {
       console.error(e);
-      toast.error("Échec de l'export Excel.");
+      toast.error(t('annuaire.export.excel_fail'));
     }
-  }, [isAdmin, sorted, viewCounts, pickRandomUpTo, hasUsedFreeExport, markFreeExportUsed]);
+  }, [isAdmin, sorted, viewCounts, pickRandomUpTo, hasUsedFreeExport, markFreeExportUsed, t]);
 
   useEffect(() => {
     const init = async () => {
@@ -540,9 +539,9 @@ export default function EntreprisesPage() {
       setExpiresAt(null);
       setCountdown(null);
       setRevoking(false);
-      toast.error("Accès révoqué: tentative de capture détectée.");
+      toast.error(t('annuaire.access_revoked'));
     }
-  }, [isAdmin, revoking]);
+  }, [isAdmin, revoking, t]);
 
   // Voile quand l'onglet est caché (Page Visibility API)
   useEffect(() => {
@@ -657,7 +656,7 @@ export default function EntreprisesPage() {
           setHasAccess(false);
           setEntreprises([]);
           setExpiresAt(null);
-          toast.info("Votre pass a expiré. Renouvelez pour continuer.");
+          toast.info(t('annuaire.pass_expired'));
         } else {
           setExpiresAt(pass.expires_at);
         }
@@ -669,7 +668,7 @@ export default function EntreprisesPage() {
     }, delay);
 
     return () => clearTimeout(id);
-  }, [expiresAt, isAdmin]);
+  }, [expiresAt, isAdmin, t]);
 
   // Compte à rebours visuel mm:ss (non-admin seulement)
   useEffect(() => {
@@ -694,8 +693,8 @@ export default function EntreprisesPage() {
   }, [expiresAt, isAdmin]);
 
   useEffect(() => {
-    document.title = "Annuaire des entreprises";
-  }, []);
+    document.title = t('annuaire.title');
+  }, [t]);
 
   // Rediriger vers le paiement manuel si /annuaire?buy=1 et pas d'accès
   useEffect(() => {
@@ -891,11 +890,11 @@ export default function EntreprisesPage() {
               {/* Bouton Excel visible pour tout utilisateur ayant accès; PDF réservé aux admins */}
               <>
                 <Button onClick={handleExportExcel} className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white">
-                  <FileDown className="w-4 h-4" /> {isAdmin ? 'Exporter Excel' : 'Exporter Excel (50)'}
+                  <FileDown className="w-4 h-4" /> {isAdmin ? t('annuaire.export.btn_excel_admin') : t('annuaire.export.btn_excel_client')}
                 </Button>
                 {isAdmin && (
                   <Button onClick={handleExportPdf} className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white">
-                    <FileDown className="w-4 h-4" /> Exporter PDF
+                    <FileDown className="w-4 h-4" /> {t('annuaire.export.btn_pdf')}
                   </Button>
                 )}
               </>
@@ -1041,17 +1040,17 @@ export default function EntreprisesPage() {
           <Dialog open={exportPayDialogOpen} onOpenChange={setExportPayDialogOpen}>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>Export complet (payant)</DialogTitle>
+                <DialogTitle>{t('annuaire.export.pay_dialog.title')}</DialogTitle>
                 <DialogDescription>
-                  La seconde exportation est payante: 5000 F CFA pour recevoir l'intégralité de la liste en Excel. Payez comme la première fois, envoyez la capture via WhatsApp et nous vous remettrons le fichier complet par WhatsApp.
+                  {t('annuaire.export.pay_dialog.desc')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3 text-sm">
-                <p>Montant: <strong>5000 F CFA</strong></p>
+                <p>{t('common.amount')} <strong>5000 F CFA</strong></p>
                 <div className="flex flex-wrap gap-2 justify-end pt-2">
-                  <Button variant="outline" onClick={() => setExportPayDialogOpen(false)}>Fermer</Button>
-                  <Button variant="outline" onClick={openWhatsAppForPaidExport}>Contacter WhatsApp</Button>
-                  <Button onClick={() => { setExportPayDialogOpen(false); navigate('/paiement-manuel?export=1'); }}>Procéder au paiement</Button>
+                  <Button variant="outline" onClick={() => setExportPayDialogOpen(false)}>{t('common.close')}</Button>
+                  <Button variant="outline" onClick={openWhatsAppForPaidExport}>{t('common.contact_whatsapp')}</Button>
+                  <Button onClick={() => { setExportPayDialogOpen(false); navigate('/paiement-manuel?export=1'); }}>{t('common.proceed_payment')}</Button>
                 </div>
               </div>
             </DialogContent>

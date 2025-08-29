@@ -16,6 +16,7 @@ import {
   Eye,
   Calendar
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Project {
   id: string;
@@ -36,11 +37,12 @@ const ProjectsPage = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
-    document.title = "Projets · Portfolio & Réalisations";
+    document.title = t('projects.title');
     fetchProjects();
-  }, []);
+  }, [t]);
 
   const fetchProjects = async () => {
     try {
@@ -64,11 +66,12 @@ const ProjectsPage = () => {
     : projects;
 
   const featuredProjects = filteredProjects.slice(0, 6);
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
 
   const getProjectResources = (project: Project) => {
     const resources: { type: string; url: string; icon: any; label: string }[] = [];
-    if (project.project_url) resources.push({ type: 'live', url: project.project_url, icon: Globe, label: 'Site live' });
-    if (project.github_url) resources.push({ type: 'github', url: project.github_url, icon: Github, label: 'Code source' });
+    if (project.project_url) resources.push({ type: 'live', url: project.project_url, icon: Globe, label: t('projects.resource.live') });
+    if (project.github_url) resources.push({ type: 'github', url: project.github_url, icon: Github, label: t('projects.resource.code') });
     return resources;
   };
 
@@ -83,32 +86,32 @@ const ProjectsPage = () => {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              🚀 Portfolio & Réalisations
+              🚀 {t('projects.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Mes Projets
+              {t('projects.title')}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Découvrez mes réalisations en développement web, mes expérimentations et les projets sur lesquels j'ai travaillé.
+              {t('projects.hero.subtitle')}
             </p>
             
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-blue">{projects.length}+</div>
-                <div className="text-sm text-muted-foreground">Projets</div>
+                <div className="text-sm text-muted-foreground">{t('projects.stats.projects')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-green">{categories.length}</div>
-                <div className="text-sm text-muted-foreground">Catégories</div>
+                <div className="text-sm text-muted-foreground">{t('projects.stats.categories')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-sky">React</div>
-                <div className="text-sm text-muted-foreground">Stack</div>
+                <div className="text-sm text-muted-foreground">{t('projects.stats.stack')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-red">Open</div>
-                <div className="text-sm text-muted-foreground">Source</div>
+                <div className="text-sm text-muted-foreground">{t('projects.stats.source')}</div>
               </div>
             </div>
           </div>
@@ -124,7 +127,7 @@ const ProjectsPage = () => {
               onClick={() => setSelectedCategory(null)}
               className="h-8"
             >
-              Tous les projets
+              {t('projects.categories.all')}
             </Button>
             {categories.map((category) => (
               <Button
@@ -146,22 +149,22 @@ const ProjectsPage = () => {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Chargement des projets...</p>
+              <p className="text-muted-foreground">{t('projects.loading')}</p>
             </div>
           ) : featuredProjects.length === 0 ? (
             <div className="text-center py-12">
               <Code className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Aucun projet trouvé</h3>
-              <p className="text-muted-foreground">Les projets seront bientôt disponibles.</p>
+              <h3 className="text-lg font-semibold mb-2">{t('projects.empty.title')}</h3>
+              <p className="text-muted-foreground">{t('projects.empty.subtitle')}</p>
             </div>
           ) : (
             <>
               <div className="text-center mb-12">
                 <h2 id="projects-heading" className="text-3xl md:text-4xl font-bold mb-4">
-                  {selectedCategory ? `Projets: ${selectedCategory}` : 'Mes réalisations'}
+                  {selectedCategory ? `${t('projects.section.category_prefix')} ${selectedCategory}` : t('projects.section.my_work')}
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Une sélection de mes projets les plus représentatifs, du design à la mise en production.
+                  {t('projects.hero.subtitle')}
                 </p>
               </div>
 
@@ -200,11 +203,11 @@ const ProjectsPage = () => {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>{new Date(project.created_at).toLocaleDateString('fr-FR')}</span>
+                          <span>{new Date(project.created_at).toLocaleDateString(locale)}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Palette className="w-3 h-3" />
-                          <span>Design</span>
+                          <span>{t('projects.stack.design')}</span>
                         </div>
                       </div>
                     </CardHeader>
@@ -254,18 +257,18 @@ const ProjectsPage = () => {
                         {project.project_url ? (
                           <a href={project.project_url} target="_blank" rel="noopener noreferrer">
                             <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                              Voir le projet →
+                              {t('projects.cta.view')}
                             </Button>
                           </a>
                         ) : project.slug ? (
                           <Link to={`/projets/${project.slug}`}>
                             <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                              Voir le projet →
+                              {t('projects.cta.view')}
                             </Button>
                           </Link>
                         ) : (
                           <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300" disabled>
-                            Bientôt disponible
+                            {t('projects.cta.soon')}
                           </Button>
                         )}
                       </div>
@@ -274,15 +277,15 @@ const ProjectsPage = () => {
                       <div className="flex items-center justify-center gap-4 pt-2 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
-                          <span>Portfolio</span>
+                          <span>{t('projects.interactions.portfolio')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          <span>Récent</span>
+                          <span>{t('projects.interactions.recent')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Zap className="w-3 h-3" />
-                          <span>Innovant</span>
+                          <span>{t('projects.interactions.innovative')}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -295,34 +298,34 @@ const ProjectsPage = () => {
 
         {/* Tech Stack Section */}
         <section className="py-12 text-center">
-          <h3 className="text-2xl font-bold mb-8">Technologies utilisées</h3>
+          <h3 className="text-2xl font-bold mb-8">{t('projects.stack.title')}</h3>
           <div className="grid md:grid-cols-4 gap-6 max-w-3xl mx-auto">
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto">
                 <Code className="w-6 h-6 text-accent-blue" />
               </div>
-              <h4 className="font-semibold">Frontend</h4>
+              <h4 className="font-semibold">{t('projects.stack.frontend')}</h4>
               <p className="text-sm text-muted-foreground">React, TypeScript, Tailwind</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-green/10 rounded-full flex items-center justify-center mx-auto">
                 <Globe className="w-6 h-6 text-accent-green" />
               </div>
-              <h4 className="font-semibold">Backend</h4>
+              <h4 className="font-semibold">{t('projects.stack.backend')}</h4>
               <p className="text-sm text-muted-foreground">Supabase, Node.js, API</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-sky/10 rounded-full flex items-center justify-center mx-auto">
                 <Palette className="w-6 h-6 text-accent-sky" />
               </div>
-              <h4 className="font-semibold">Design</h4>
+              <h4 className="font-semibold">{t('projects.stack.design')}</h4>
               <p className="text-sm text-muted-foreground">Figma, UI/UX, Responsive</p>
             </div>
             <div className="space-y-3">
               <div className="w-12 h-12 bg-accent-red/10 rounded-full flex items-center justify-center mx-auto">
                 <Github className="w-6 h-6 text-accent-red" />
               </div>
-              <h4 className="font-semibold">DevOps</h4>
+              <h4 className="font-semibold">{t('projects.stack.devops')}</h4>
               <p className="text-sm text-muted-foreground">Git, CI/CD, Deployment</p>
             </div>
           </div>

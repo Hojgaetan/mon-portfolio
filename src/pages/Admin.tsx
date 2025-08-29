@@ -15,6 +15,7 @@ import { UsersManager } from "@/components/admin/UsersManager";
 import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AccessManager } from "@/components/admin/AccessManager";
 import { CommentsManager } from "@/components/admin/CommentsManager";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -25,6 +26,7 @@ export default function Admin() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Set up auth state listener
@@ -81,34 +83,34 @@ export default function Admin() {
   useEffect(() => {
     if (!loading && !checkingAdmin && user && isAdmin === false) {
       toast({
-        title: "Accès refusé",
-        description: "Cette page est réservée aux administrateurs.",
+        title: t('admin.access_denied.title'),
+        description: t('admin.access_denied.desc'),
         variant: "destructive",
       });
       navigate("/");
     }
-  }, [loading, checkingAdmin, isAdmin, user, navigate, toast]);
+  }, [loading, checkingAdmin, isAdmin, user, navigate, toast, t]);
 
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) {
         toast({
-          title: "Erreur de déconnexion",
+          title: t('admin.toast.signout_error'),
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Déconnexion réussie",
-          description: "Vous avez été déconnecté.",
+          title: t('admin.toast.signout_success'),
+          description: t('admin.toast.signout_success_desc'),
         });
         navigate("/auth");
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        title: t('admin.toast.generic_error'),
+        description: t('admin.toast.generic_error_desc'),
         variant: "destructive",
       });
     }
@@ -148,7 +150,7 @@ export default function Admin() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Chargement...</p>
+          <p className="text-muted-foreground">{t('admin.loading')}</p>
         </div>
       </div>
     );

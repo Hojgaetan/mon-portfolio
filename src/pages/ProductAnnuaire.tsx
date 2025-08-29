@@ -10,12 +10,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ProductAnnuaire() {
   useEffect(() => {
-    document.title = "Annuaire d'entreprises · Produit";
+    // placeholder, remplacé plus bas quand t est disponible
   }, []);
 
   const price = getAccessPrice();
   const lastUpdate = new Date();
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
+
+  useEffect(() => {
+    document.title = `${t('product.annuaire.title')} · ${t('products.title')}`;
+  }, [t]);
 
   return (
     <>
@@ -27,7 +32,7 @@ export default function ProductAnnuaire() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              📒 {t('product.annuaire.badge')}
+               {t('product.annuaire.badge')}
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {t('product.annuaire.title')}
@@ -38,7 +43,7 @@ export default function ProductAnnuaire() {
 
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6 text-sm">
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-blue/10 text-accent-blue border border-accent-blue/20">
-                <Calendar className="w-4 h-4" /> {t('product.annuaire.updated')} {lastUpdate.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                <Calendar className="w-4 h-4" /> {t('product.annuaire.updated')} {lastUpdate.toLocaleDateString(locale, { month: 'short', year: 'numeric' })}
               </span>
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-green/10 text-accent-green border border-accent-green/20">
                 <Users className="w-4 h-4" /> {t('product.annuaire.count')}
@@ -68,10 +73,10 @@ export default function ProductAnnuaire() {
                   <li className="flex items-start gap-3"><CheckCircle className="w-5 h-5 text-accent-green mt-0.5" /><span>{t('product.annuaire.feature.updates')}</span></li>
                 </ul>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  <Badge className="bg-accent-sky/10 text-accent-sky border-accent-sky/20"><Tag className="w-3 h-3 mr-1" /> Commerce</Badge>
-                  <Badge className="bg-accent-red/10 text-accent-red border-accent-red/20"><Tag className="w-3 h-3 mr-1" /> Services</Badge>
-                  <Badge className="bg-accent-blue/10 text-accent-blue border-accent-blue/20"><Tag className="w-3 h-3 mr-1" /> Santé</Badge>
-                  <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20"><Tag className="w-3 h-3 mr-1" /> Local</Badge>
+                  <Badge className="bg-accent-sky/10 text-accent-sky border-accent-sky/20"><Tag className="w-3 h-3 mr-1" /> {t('product.annuaire.tag.commerce')}</Badge>
+                  <Badge className="bg-accent-red/10 text-accent-red border-accent-red/20"><Tag className="w-3 h-3 mr-1" /> {t('product.annuaire.tag.services')}</Badge>
+                  <Badge className="bg-accent-blue/10 text-accent-blue border-accent-blue/20"><Tag className="w-3 h-3 mr-1" /> {t('product.annuaire.tag.health')}</Badge>
+                  <Badge className="bg-accent-green/10 text-accent-green border-accent-green/20"><Tag className="w-3 h-3 mr-1" /> {t('product.annuaire.tag.local')}</Badge>
                 </div>
               </CardContent>
             </Card>
@@ -101,12 +106,12 @@ export default function ProductAnnuaire() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm text-muted-foreground">
-                  🔥 <strong>Promotion flash 24h !</strong> Accès sécurisé pendant 1 heure au tableau complet. Activation en quelques minutes après paiement.
+                  {t('product.annuaire.promo_banner')}
                 </div>
                 <div className="bg-accent-blue/5 p-4 rounded-lg border border-accent-blue/10">
                   <div className="text-sm text-muted-foreground">{t('product.annuaire.sidebar.todays_price')}</div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-accent-blue">{price.toLocaleString('fr-FR')} F CFA</span>
+                    <span className="text-3xl font-bold text-accent-blue">{price.toLocaleString(locale)} F CFA</span>
                     <span className="text-muted-foreground line-through">5 000 F</span>
                   </div>
                 </div>
@@ -128,7 +133,7 @@ export default function ProductAnnuaire() {
                 <CardTitle className="text-base">{t('product.annuaire.sidebar.info')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {t('product.annuaire.sidebar.last_update')}: {lastUpdate.toLocaleDateString('fr-FR')}</div>
+                <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /> {t('product.annuaire.sidebar.last_update')}: {lastUpdate.toLocaleDateString(locale)}</div>
                 <div className="flex items-center gap-2"><Download className="w-4 h-4" /> {t('product.annuaire.sidebar.export_on_request')}</div>
                 <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {t('product.annuaire.sidebar.sn_priority')}</div>
               </CardContent>

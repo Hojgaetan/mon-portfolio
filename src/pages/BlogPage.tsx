@@ -14,6 +14,7 @@ import {
   Clock,
   Zap
 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface BlogPost {
   id: string;
@@ -42,11 +43,12 @@ const BlogPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
-    document.title = "Blog · Articles & Ressources";
+    document.title = t('blog.title');
     fetchData();
-  }, []);
+  }, [t]);
 
   const fetchData = async () => {
     try {
@@ -88,6 +90,7 @@ const BlogPage = () => {
     : posts;
 
   const featuredPosts = filteredPosts.slice(0, 6);
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
 
   return (
     <>
@@ -100,32 +103,32 @@ const BlogPage = () => {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              📚 Ressources & Actualités
+              📚 {t('blog.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Blog & Articles
+              {t('blog.hero.title')}
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-              Découvrez mes articles, tutoriels et réflexions sur the développement web, les technologies modernes et l'entrepreneuriat digital.
+              {t('blog.hero.subtitle')}
             </p>
             
             {/* Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 max-w-2xl mx-auto">
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-blue">{posts.length}+</div>
-                <div className="text-sm text-muted-foreground">Articles</div>
+                <div className="text-sm text-muted-foreground">{t('blog.stats.articles')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-green">{categories.length}</div>
-                <div className="text-sm text-muted-foreground">Catégories</div>
+                <div className="text-sm text-muted-foreground">{t('blog.stats.categories')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-sky">5min</div>
-                <div className="text-sm text-muted-foreground">Lecture</div>
+                <div className="text-sm text-muted-foreground">{t('blog.stats.reading')}</div>
               </div>
               <div className="text-center p-4">
                 <div className="text-2xl font-bold text-accent-red">2x</div>
-                <div className="text-sm text-muted-foreground">par semaine</div>
+                <div className="text-sm text-muted-foreground">{t('blog.stats.per_week')}</div>
               </div>
             </div>
           </div>
@@ -141,7 +144,7 @@ const BlogPage = () => {
               onClick={() => setSelectedCategory(null)}
               className="h-8"
             >
-              Tous les articles
+              {t('blog.categories.all')}
             </Button>
             {categories.map((category) => (
               <Button
@@ -163,22 +166,22 @@ const BlogPage = () => {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin w-8 h-8 border-2 border-accent-blue border-t-transparent rounded-full mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Chargement des articles...</p>
+              <p className="text-muted-foreground">{t('blog.loading')}</p>
             </div>
           ) : featuredPosts.length === 0 ? (
             <div className="text-center py-12">
               <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Aucun article trouvé</h3>
-              <p className="text-muted-foreground">Les articles seront bientôt disponibles.</p>
+              <h3 className="text-lg font-semibold mb-2">{t('blog.empty.title')}</h3>
+              <p className="text-muted-foreground">{t('blog.empty.subtitle')}</p>
             </div>
           ) : (
             <>
               <div className="text-center mb-12">
                 <h2 id="articles-heading" className="text-3xl md:text-4xl font-bold mb-4">
-                  {selectedCategory ? `Articles: ${categories.find(c => c.id === selectedCategory)?.name}` : 'Derniers articles'}
+                  {selectedCategory ? `Articles: ${categories.find(c => c.id === selectedCategory)?.name}` : t('blog.section.latest')}
                 </h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Explorez mes réflexions et découvertes dans le monde du développement web et des technologies.
+                  {t('blog.news.subtitle')}
                 </p>
               </div>
 
@@ -219,7 +222,7 @@ const BlogPage = () => {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
-                          <span>{new Date(post.created_at).toLocaleDateString('fr-FR')}</span>
+                          <span>{new Date(post.created_at).toLocaleDateString(locale)}</span>
                         </div>
                         {post.reading_time && (
                           <div className="flex items-center gap-1">
@@ -239,7 +242,7 @@ const BlogPage = () => {
                       <div className="bg-gradient-to-r from-accent-blue/10 via-accent-blue/5 to-transparent p-4 rounded-xl border border-accent-blue/20">
                         <Link to={`/article/${post.slug}`}>
                           <Button size="sm" className="w-full bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg hover:shadow-xl transition-all duration-300">
-                            Lire l'article →
+                            {t('blog.cta.read_article')}
                           </Button>
                         </Link>
                       </div>
@@ -248,15 +251,15 @@ const BlogPage = () => {
                       <div className="flex items-center justify-center gap-4 pt-2 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
-                          <span>Nouveau</span>
+                          <span>{t('blog.interactions.new')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <MessageCircle className="w-3 h-3" />
-                          <span>Commentaires</span>
+                          <span>{t('blog.interactions.comments')}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Zap className="w-3 h-3" />
-                          <span>Tendance</span>
+                          <span>{t('blog.interactions.trending')}</span>
                         </div>
                       </div>
                     </CardContent>
@@ -269,16 +272,16 @@ const BlogPage = () => {
 
         {/* Newsletter Section */}
         <section className="py-12 text-center">
-          <h3 className="text-2xl font-bold mb-4">Restez informé</h3>
+          <h3 className="text-2xl font-bold mb-4">{t('blog.news.title')}</h3>
           <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Recevez les derniers articles et tutoriels directement dans votre boîte mail.
+            {t('blog.news.subtitle')}
           </p>
           <div className="flex items-center justify-center gap-6 opacity-60">
-            <div className="text-sm">Tutoriels exclusifs</div>
+            <div className="text-sm">{t('blog.news.badge.tutos')}</div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="text-sm">Conseils pratiques</div>
+            <div className="text-sm">{t('blog.news.badge.tips')}</div>
             <div className="w-px h-4 bg-border"></div>
-            <div className="text-sm">Actualités tech</div>
+            <div className="text-sm">{t('blog.news.badge.news')}</div>
           </div>
         </section>
       </div>

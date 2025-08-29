@@ -20,7 +20,7 @@ export default function ManualPurchase() {
   const isExportFull = new URLSearchParams(location.search).get('export') === '1';
 
   useEffect(() => {
-    document.title = `${isExportFull ? 'Export complet (5000 F)' : t('manual.title')} · Annuaire`;
+    document.title = `${isExportFull ? t('manual.export.title') : t('manual.title')} · ${t('annuaire.title')}`;
 
     // Exiger l'authentification
     (async () => {
@@ -46,8 +46,8 @@ export default function ManualPurchase() {
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent(
       isExportFull
-        ? `📦 Bonjour ! Je souhaite acheter l'export complet de l'annuaire (5000 F CFA).\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci de m'envoyer le fichier Excel complet via WhatsApp.`
-        : `🚀 Bonjour ! Je souhaite acheter l'accès à l'annuaire des entreprises.\n\n📧 Mon email : ${user?.email}\n\n💳 J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci d'activer mon accès ! ⚡`
+        ? ` Bonjour ! Je souhaite acheter l'export complet de l'annuaire (5000 F CFA).\n\n Mon email : ${user?.email}\n\n J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci de m'envoyer le fichier Excel complet via WhatsApp.`
+        : ` Bonjour ! Je souhaite acheter l'accès à l'annuaire des entreprises.\n\n Mon email : ${user?.email}\n\n J'ai effectué le paiement et je vais vous envoyer la capture d'écran.\n\nMerci d'activer mon accès ! ⚡`
     );
     const url = `https://wa.me/221708184010?text=${message}`;
     window.open(url, "_blank", "noopener,noreferrer");
@@ -74,7 +74,7 @@ export default function ManualPurchase() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
         
         <div className="container mx-auto max-w-4xl p-6 relative">
-          <nav aria-label="Fil d'Ariane" className="mb-8 text-sm text-muted-foreground">
+          <nav aria-label={t('aria.breadcrumb')} className="mb-8 text-sm text-muted-foreground">
             <ol className="flex flex-wrap gap-2" role="list">
               <li><Link to="/" className="hover:underline transition-colors">{t('manual.breadcrumb.home')}</Link></li>
               <li aria-hidden>›</li>
@@ -91,10 +91,10 @@ export default function ManualPurchase() {
               💳 {t('common.secure_payment')}
             </Badge>
             <h1 id="page-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              {isExportFull ? 'Paiement — Export complet' : t('manual.title')}
+              {isExportFull ? t('manual.export.title') : t('manual.title')}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              {isExportFull ? "Payez 5000 F CFA. Ensuite, envoyez la capture du paiement via WhatsApp pour recevoir l'intégralité de la liste en Excel." : t('manual.subtitle')}
+              {isExportFull ? t('manual.export.subtitle') : t('manual.subtitle')}
             </p>
           </header>
         </div>
@@ -103,7 +103,7 @@ export default function ManualPurchase() {
       <main role="main" className="container mx-auto max-w-4xl p-6">
         {isExportFull && (
           <div className="mb-6 p-4 rounded-lg border bg-yellow-50 text-yellow-900 border-yellow-200">
-            <strong>Mode export complet</strong> — Montant: 5000 F CFA. Après paiement, envoyez la capture via WhatsApp; vous recevrez le fichier Excel complet par WhatsApp.
+            <strong>{t('manual.export.title')}</strong> — {t('manual.export.banner')}
           </div>
         )}
         {/* Payment Methods */}
@@ -140,7 +140,7 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{isExportFull ? 'Envoyez 5000 F CFA au numéro ci-dessous.' : t('manual.sent_amount')}</span>
+                  <span>{isExportFull ? t('manual.export.sent_amount') : t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
@@ -148,7 +148,7 @@ export default function ManualPurchase() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{isExportFull ? 'Contactez-nous sur WhatsApp pour recevoir le fichier.' : t('manual.contact_whatsapp')}</span>
+                  <span>{isExportFull ? t('manual.export.whatsapp_hint') : t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -186,7 +186,7 @@ export default function ManualPurchase() {
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{isExportFull ? 'Envoyez 5000 F CFA au numéro ci-dessous.' : t('manual.sent_amount')}</span>
+                  <span>{isExportFull ? t('manual.export.sent_amount') : t('manual.sent_amount')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
@@ -194,7 +194,7 @@ export default function ManualPurchase() {
                 </div>
                 <div className="flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 text-accent-green" />
-                  <span>{isExportFull ? 'Contactez-nous sur WhatsApp pour recevoir le fichier.' : t('manual.contact_whatsapp')}</span>
+                  <span>{isExportFull ? t('manual.export.whatsapp_hint') : t('manual.contact_whatsapp')}</span>
                 </div>
               </div>
             </CardContent>
@@ -205,10 +205,10 @@ export default function ManualPurchase() {
         <Card className="max-w-2xl mx-auto shadow-lg border-2 border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold mb-2">
-              {isExportFull ? 'Dernière étape — Export complet' : t('manual.final_step')}
+              {isExportFull ? t('manual.export.final_step') : t('manual.final_step')}
             </CardTitle>
             <p className="text-muted-foreground">
-              {isExportFull ? "Après paiement, envoyez la capture sur WhatsApp pour recevoir l'Excel complet." : t('manual.final_step_desc')}
+              {isExportFull ? t('manual.export.final_step_desc') : t('manual.final_step_desc')}
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -218,14 +218,14 @@ export default function ManualPurchase() {
                 {t('manual.prepared_msg')}
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                {isExportFull ? 'Message WhatsApp pré-rempli pour l’export complet.' : t('manual.prepared_msg_desc')}
+                {isExportFull ? t('manual.export.prepared_msg_desc') : t('manual.prepared_msg_desc')}
               </p>
               
               <Button
                 size="lg"
                 className="w-full bg-green-500 hover:bg-green-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={handleWhatsAppContact}
-                aria-label="Contacter sur WhatsApp pour finaliser l'achat"
+                aria-label={t('aria.whatsapp_finalize')}
               >
                 <MessageCircle className="w-5 h-5 mr-2" aria-hidden="true" />
                 {t('manual.btn.send_whatsapp')}
@@ -235,7 +235,7 @@ export default function ManualPurchase() {
 
             <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
               <Link to="/produit/annuaire" className="flex-1">
-                <Button variant="outline" className="w-full" aria-label="Retour à la page produit annuaire">
+                <Button variant="outline" className="w-full" aria-label={t('aria.back_to_product_annuaire')}>
                   {t('manual.btn.back_to_product')}
                 </Button>
               </Link>
@@ -257,7 +257,7 @@ export default function ManualPurchase() {
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>Activation en 5 min</span>
+                <span>{t('manual.activation_fast')}</span>
               </div>
             </div>
           </CardContent>

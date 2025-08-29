@@ -10,6 +10,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Consolidated translations (FR/EN)
 const translations = {
   fr: {
     // Navigation
@@ -63,6 +64,8 @@ const translations = {
     'projects.recent.subtitle': 'Un aperçu des 3 derniers projets',
     'projects.none': 'Aucun projet disponible.',
     'projects.view_all': 'Voir tous les projets',
+    'projects.resource.live': 'Site live',
+    'projects.resource.code': 'Code source',
 
     // Blog
     'blog.recent.title': 'Articles récents',
@@ -137,6 +140,9 @@ const translations = {
     'common.new': 'Nouveau',
     'common.copied_title': 'Numéro copié !',
     'common.copied_desc': 'Le numéro a été copié dans votre presse-papiers.',
+    'common.support_24_7': 'Support 24/7',
+    // Ajouts communs
+    'common.country.sn': 'Sénégal',
 
     // Annuaire
     'annuaire.title': 'Annuaire des entreprises',
@@ -161,6 +167,7 @@ const translations = {
     // Toolbar & tri
     'annuaire.search.placeholder': 'Rechercher (nom, catégorie, téléphone...)',
     'annuaire.filter.category': 'Catégorie',
+    'annuaire.filter.all_categories': 'Toutes les catégories',
     'annuaire.sort.by': 'Trier par',
     'annuaire.sort.recent': 'Plus récents',
     'annuaire.sort.name': 'Nom (A→Z)',
@@ -235,6 +242,8 @@ const translations = {
     'product.annuaire.sidebar.last_update': 'Dernière mise à jour',
     'product.annuaire.sidebar.export_on_request': 'Export sur demande',
     'product.annuaire.sidebar.sn_priority': 'Sénégal (prioritaire)',
+    // Bannière promo latérale
+    'product.annuaire.promo_banner': "Paiement sécurisé et activation immédiate après confirmation.",
 
     // Paiement manuel
     'manual.title': 'Finaliser votre achat',
@@ -258,6 +267,182 @@ const translations = {
     'manual.prepared_msg_desc': "Votre email sera automatiquement inclus dans le message pour une activation plus rapide.",
     'manual.btn.send_whatsapp': 'Envoyer la capture sur WhatsApp',
     'manual.btn.back_to_product': '← Retour au produit',
+    // Ajout: activation rapide (trust indicator)
+    'manual.activation_fast': 'Activation rapide',
+
+    // Annuaire (exports)
+    'annuaire.export.btn_excel_admin': 'Exporter Excel',
+    'annuaire.export.btn_excel_client': 'Exporter Excel (50)',
+    'annuaire.export.btn_pdf': 'Exporter PDF',
+    'annuaire.export.no_data': 'Aucune donnée à exporter.',
+    'annuaire.export.free_used': 'Votre export gratuit a été utilisé.',
+    'annuaire.export.excel_ok': 'Export Excel généré.',
+    'annuaire.export.excel_fail': "Échec de l'export Excel.",
+    'annuaire.export.pdf_admin_only': 'Export PDF réservé aux administrateurs.',
+    'annuaire.export.pdf_ok': 'Export PDF généré.',
+    'annuaire.export.pay_dialog.title': 'Export complet (payant)',
+    'annuaire.export.pay_dialog.desc': "La seconde exportation est payante: 5000 F CFA pour recevoir l'intégralité de la liste en Excel. Payez comme la première fois, envoyez la capture via WhatsApp et nous vous remettrons le fichier complet par WhatsApp.",
+
+    // Communs
+    'common.amount': 'Montant:',
+    'common.close': 'Fermer',
+    'common.contact_whatsapp': 'Contacter WhatsApp',
+    'common.proceed_payment': 'Procéder au paiement',
+
+    // Paiement manuel — mode export complet
+    'manual.export.title': 'Paiement — Export complet',
+    'manual.export.subtitle': "Payez 5000 F CFA. Ensuite, envoyez la capture du paiement via WhatsApp pour recevoir l'intégralité de la liste en Excel.",
+    'manual.export.banner': "Mode export complet — Montant: 5000 F CFA. Après paiement, envoyez la capture via WhatsApp; vous recevrez le fichier Excel complet par WhatsApp.",
+    'manual.export.sent_amount': 'Envoyez 5000 F CFA',
+    'manual.export.whatsapp_hint': 'Contactez-nous sur WhatsApp pour recevoir le fichier.',
+    'manual.export.final_step': 'Dernière étape — Export complet',
+    'manual.export.final_step_desc': "Après paiement, envoyez la capture sur WhatsApp pour recevoir l'Excel complet.",
+    'manual.export.prepared_msg_desc': 'Message WhatsApp pré-rempli pour l’export complet.',
+
+    // Pagination
+    'pagination.prev': 'Précédent',
+    'pagination.next': 'Suivant',
+
+    // Auth & achat toasts
+    'auth.require_login': 'Veuillez vous connecter.',
+    'purchase.enter_phone': 'Entrez votre numéro de téléphone.',
+    'purchase.initiated': "Paiement initié. Terminez-le dans l'application opérateur.",
+    'purchase.activated': 'Accès activé pour 1 heure.',
+    'purchase.not_confirmed': 'Paiement non confirmé à temps. Réessayez.',
+    'purchase.edge_unreachable': "Paiement indisponible: fonction Edge non joignable. Déployez 'intech-operation' et vérifiez les secrets.",
+    'purchase.init_failed': "Impossible d'initier le paiement.",
+
+    // Annuaire divers
+    'annuaire.access_revoked': 'Accès révoqué: tentative de capture détectée.',
+    'annuaire.pass_expired': 'Votre pass a expiré. Renouvelez pour continuer.',
+    'annuaire.details.category': 'Catégorie',
+
+    // Not Found
+    'notfound.title': '404',
+    'notfound.subtitle': 'Oups ! Page introuvable',
+    'notfound.home': 'Retour à l’accueil',
+
+    // Blog page (hero, states, actions)
+    'blog.hero.badge': 'Ressources & Actualités',
+    'blog.hero.title': 'Blog & Articles',
+    'blog.hero.subtitle': "Découvrez mes articles, tutoriels et réflexions sur le développement web, les technologies modernes et l'entrepreneuriat digital.",
+    'blog.stats.articles': 'Articles',
+    'blog.stats.categories': 'Catégories',
+    'blog.stats.reading': 'Lecture',
+    'blog.stats.per_week': 'par semaine',
+    'blog.categories.all': 'Tous les articles',
+    'blog.loading': 'Chargement des articles...',
+    'blog.empty.title': 'Aucun article trouvé',
+    'blog.empty.subtitle': 'Les articles seront bientôt disponibles.',
+    'blog.section.latest': 'Derniers articles',
+    'blog.cta.read_article': "Lire l'article →",
+    'blog.interactions.new': 'Nouveau',
+    'blog.interactions.comments': 'Commentaires',
+    'blog.interactions.trending': 'Tendance',
+    'blog.news.title': 'Restez informé',
+    'blog.news.subtitle': 'Recevez les derniers articles et tutoriels directement dans votre boîte mail.',
+    'blog.news.badge.tutos': 'Tutoriels exclusifs',
+    'blog.news.badge.tips': 'Conseils pratiques',
+    'blog.news.badge.news': 'Actualités tech',
+    'blog.section.category_prefix': 'Articles:',
+
+    // Article page
+    'blog.article.not_found': 'Article introuvable',
+    'blog.article.back': 'Retour au blog',
+    'blog.article.views': 'vues',
+    'blog.article.min': 'min',
+
+    // Projects page (hero, states, labels)
+    'projects.hero.badge': 'Portfolio & Réalisations',
+    'projects.hero.subtitle': "Découvrez mes réalisations en développement web, mes expérimentations et les projets sur lesquels j'ai travaillé.",
+    'projects.stats.projects': 'Projets',
+    'projects.stats.categories': 'Catégories',
+    'projects.stats.stack': 'Stack',
+    'projects.stats.source': 'Source',
+    'projects.categories.all': 'Tous les projets',
+    'projects.empty.title': 'Aucun projet trouvé',
+    'projects.empty.subtitle': 'Les projets seront bientôt disponibles.',
+    'projects.section.my_work': 'Mes réalisations',
+    'projects.section.category_prefix': 'Projets:',
+    'projects.cta.view': 'Voir le projet →',
+    'projects.cta.soon': 'Bientôt disponible',
+    'projects.interactions.portfolio': 'Portfolio',
+    'projects.interactions.recent': 'Récent',
+    'projects.interactions.innovative': 'Innovant',
+    'projects.stack.title': 'Technologies utilisées',
+    'projects.stack.frontend': 'Frontend',
+    'projects.stack.backend': 'Backend',
+    'projects.stack.design': 'Design',
+    'projects.stack.devops': 'DevOps',
+
+    // Services page
+    'services.hero.badge': 'Services web professionnels',
+    'services.hero.title': 'Mes services de développement',
+    'services.hero.subtitle': 'Des solutions complètes pour votre présence digitale. Du design à la réalisation, je vous accompagne dans tous vos projets web.',
+    'services.stats.projects': 'Projets',
+    'services.stats.satisfaction': 'Satisfaction',
+    'services.stats.support': 'Support',
+    'services.stats.delivery': 'Livraison',
+    'services.section.title': 'Mes services',
+    'services.section.subtitle': 'Des solutions adaptées à vos besoins, de la conception à la mise en ligne de vos projets digitaux.',
+    'services.cta.quote': 'Demander un devis →',
+    'services.trust.guaranteed': 'Garanti',
+    'services.trust.fast_delivery': 'Livraison rapide',
+    'services.trust.support_included': 'Support inclus',
+    'services.process.title': 'Comment ça marche ?',
+    'services.process.step1.title': 'Contact',
+    'services.process.step1.desc': 'Demandez un devis',
+    'services.process.step2.title': 'Devis',
+    'services.process.step2.desc': 'Proposition du devis',
+    'services.process.step3.title': 'Développement',
+    'services.process.step3.desc': 'Réalisation du projet',
+    'services.process.step4.title': 'Livraison',
+    'services.process.step4.desc': 'Livraison & formation',
+
+    // Products index
+    'products.hero.badge': 'Solutions de prospection B2B',
+    'products.hero.title': 'Accélérez votre prospection au Sénégal',
+    'products.hero.subtitle': 'Des outils simples et efficaces pour identifier et contacter les entreprises qui ont besoin de vos services web.',
+    'products.stats.companies': 'Entreprises',
+    'products.stats.quality': 'Qualité',
+    'products.stats.access': 'Accès',
+    'products.stats.activation': 'Activation',
+    'products.catalog.title': 'Notre catalogue',
+    'products.catalog.subtitle': 'Découvrez nos solutions conçues spécifiquement pour les développeurs et agences web au Sénégal.',
+    'products.card.popular': 'Le plus populaire',
+    'products.card.features.coords': 'Coordonnées complètes',
+    'products.card.features.search': 'Recherche avancée',
+    'products.card.features.updates': 'Mises à jour régulières',
+    'products.card.features.verified': 'Données vérifiées',
+    'products.pricing.promo': 'Tarif promotionnel',
+    'products.pricing.flash': 'Promotion flash 24h',
+    'products.cta.view_product': 'Découvrir le produit →',
+    'products.social.title': 'Rejoint par des professionnels',
+    'products.social.dev': 'Développeurs freelance',
+    'products.social.agencies': 'Agences web',
+    'products.social.consultants': 'Consultants IT',
+    // Ajout: titre page produits
+    'products.title': 'Produits',
+
+    // Ajouts titres pages
+    'blog.title': 'Blog',
+    'projects.title': 'Projets',
+    'services.title': 'Services',
+
+    // Ajout tags produit annuaire
+    'product.annuaire.tag.commerce': 'Commerce',
+    'product.annuaire.tag.services': 'Services',
+    'product.annuaire.tag.health': 'Santé',
+    'product.annuaire.tag.local': 'Local',
+
+    // ARIA / accessibilité
+    'aria.breadcrumb': "Fil d'Ariane",
+    'aria.whatsapp_finalize': "Contacter sur WhatsApp pour finaliser l'achat",
+    'aria.back_to_product_annuaire': 'Retour à la page produit annuaire',
+    'aria.pagination': 'Pagination',
+    'aria.pagination.prev': 'Aller à la page précédente',
+    'aria.pagination.next': 'Aller à la page suivante',
+    'aria.more_pages': 'Plus de pages',
   },
   en: {
     // Navigation
@@ -311,6 +496,8 @@ const translations = {
     'projects.recent.subtitle': 'A look at the last 3 projects',
     'projects.none': 'No projects available.',
     'projects.view_all': 'See all projects',
+    'projects.resource.live': 'Live site',
+    'projects.resource.code': 'Source code',
 
     // Blog
     'blog.recent.title': 'Recent articles',
@@ -385,6 +572,9 @@ const translations = {
     'common.new': 'New',
     'common.copied_title': 'Number copied!',
     'common.copied_desc': 'The number was copied to your clipboard.',
+    'common.support_24_7': 'Support 24/7',
+    // Add: country label
+    'common.country.sn': 'Senegal',
 
     // Directory
     'annuaire.title': 'Business directory',
@@ -409,6 +599,7 @@ const translations = {
     // Toolbar & sorting
     'annuaire.search.placeholder': 'Search (name, category, phone...)',
     'annuaire.filter.category': 'Category',
+    'annuaire.filter.all_categories': 'All categories',
     'annuaire.sort.by': 'Sort by',
     'annuaire.sort.recent': 'Most recent',
     'annuaire.sort.name': 'Name (A→Z)',
@@ -450,7 +641,7 @@ const translations = {
     'annuaire.protected.title': 'Protected content',
     'annuaire.protected.subtitle': 'The tab is inactive. Content is hidden to limit capture.',
 
-    // Product Annuaire
+    // Produit Annuaire
     'product.annuaire.badge': 'B2B prospects database',
     'product.annuaire.title': 'Directory of businesses without a website',
     'product.annuaire.subtitle': 'Quickly identify Senegalese businesses without a web presence and start the conversation with a clear offer.',
@@ -483,6 +674,8 @@ const translations = {
     'product.annuaire.sidebar.last_update': 'Last update',
     'product.annuaire.sidebar.export_on_request': 'Export on request',
     'product.annuaire.sidebar.sn_priority': 'Senegal (priority)',
+    // Promo banner
+    'product.annuaire.promo_banner': 'Secure payment and instant activation after confirmation.',
 
     // Manual payment
     'manual.title': 'Complete your purchase',
@@ -506,6 +699,182 @@ const translations = {
     'manual.prepared_msg_desc': 'Your email will be included for faster activation.',
     'manual.btn.send_whatsapp': 'Send screenshot on WhatsApp',
     'manual.btn.back_to_product': '← Back to product',
+    // Add: fast activation
+    'manual.activation_fast': 'Fast activation',
+
+    // Directory (exports)
+    'annuaire.export.btn_excel_admin': 'Export Excel',
+    'annuaire.export.btn_excel_client': 'Export Excel (50)',
+    'annuaire.export.btn_pdf': 'Export PDF',
+    'annuaire.export.no_data': 'No data to export.',
+    'annuaire.export.free_used': 'Your free export has been used.',
+    'annuaire.export.excel_ok': 'Excel export generated.',
+    'annuaire.export.excel_fail': 'Excel export failed.',
+    'annuaire.export.pdf_admin_only': 'PDF export is reserved for administrators.',
+    'annuaire.export.pdf_ok': 'PDF export generated.',
+    'annuaire.export.pay_dialog.title': 'Full export (paid)',
+    'annuaire.export.pay_dialog.desc': 'The second export is paid: 5000 F CFA to receive the full Excel list. Pay as the first time, send the screenshot via WhatsApp and we will send you the full file via WhatsApp.',
+
+    // Common
+    'common.amount': 'Amount:',
+    'common.close': 'Close',
+    'common.contact_whatsapp': 'Contact WhatsApp',
+    'common.proceed_payment': 'Proceed to payment',
+
+    // Manual payment — full export mode
+    'manual.export.title': 'Payment — Full export',
+    'manual.export.subtitle': 'Pay 5000 F CFA. Then send the payment screenshot via WhatsApp to receive the full Excel list.',
+    'manual.export.banner': 'Full export mode — Amount: 5000 F CFA. After payment, send the screenshot via WhatsApp; you will receive the full Excel file via WhatsApp.',
+    'manual.export.sent_amount': 'Send 5000 F CFA',
+    'manual.export.whatsapp_hint': 'Contact us on WhatsApp to receive the file.',
+    'manual.export.final_step': 'Final step — Full export',
+    'manual.export.final_step_desc': 'After payment, send the screenshot on WhatsApp to receive the full Excel.',
+    'manual.export.prepared_msg_desc': 'Pre-filled WhatsApp message for full export.',
+
+    // Pagination
+    'pagination.prev': 'Previous',
+    'pagination.next': 'Next',
+
+    // Auth & purchase toasts
+    'auth.require_login': 'Please log in.',
+    'purchase.enter_phone': 'Enter your phone number.',
+    'purchase.initiated': 'Payment initiated. Complete it in the operator app.',
+    'purchase.activated': 'Access activated for 1 hour.',
+    'purchase.not_confirmed': 'Payment not confirmed in time. Try again.',
+    'purchase.edge_unreachable': 'Payment unavailable: Edge Function unreachable. Deploy intech-operation and check secrets.',
+    'purchase.init_failed': 'Unable to initiate payment.',
+
+    // Directory misc
+    'annuaire.access_revoked': 'Access revoked: capture attempt detected.',
+    'annuaire.pass_expired': 'Your pass has expired. Renew to continue.',
+    'annuaire.details.category': 'Category',
+
+    // Not Found
+    'notfound.title': '404',
+    'notfound.subtitle': 'Oups ! Page introuvable',
+    'notfound.home': 'Retour à l’accueil',
+
+    // Blog page (hero, states, actions)
+    'blog.hero.badge': 'Ressources & Actualités',
+    'blog.hero.title': 'Blog & Articles',
+    'blog.hero.subtitle': "Découvrez mes articles, tutoriels et réflexions sur le développement web, les technologies modernes et l'entrepreneuriat digital.",
+    'blog.stats.articles': 'Articles',
+    'blog.stats.categories': 'Catégories',
+    'blog.stats.reading': 'Lecture',
+    'blog.stats.per_week': 'par semaine',
+    'blog.categories.all': 'Tous les articles',
+    'blog.loading': 'Chargement des articles...',
+    'blog.empty.title': 'Aucun article trouvé',
+    'blog.empty.subtitle': 'Les articles seront bientôt disponibles.',
+    'blog.section.latest': 'Derniers articles',
+    'blog.cta.read_article': "Lire l'article →",
+    'blog.interactions.new': 'Nouveau',
+    'blog.interactions.comments': 'Commentaires',
+    'blog.interactions.trending': 'Tendance',
+    'blog.news.title': 'Restez informé',
+    'blog.news.subtitle': 'Recevez les derniers articles et tutoriels directement dans votre boîte mail.',
+    'blog.news.badge.tutos': 'Tutoriels exclusifs',
+    'blog.news.badge.tips': 'Conseils pratiques',
+    'blog.news.badge.news': 'Actualités tech',
+    'blog.section.category_prefix': 'Articles:',
+
+    // Article page
+    'blog.article.not_found': 'Article introuvable',
+    'blog.article.back': 'Retour au blog',
+    'blog.article.views': 'vues',
+    'blog.article.min': 'min',
+
+    // Projects page (hero, states, labels)
+    'projects.hero.badge': 'Portfolio & Réalisations',
+    'projects.hero.subtitle': "Découvrez mes réalisations en développement web, mes expérimentations et les projets sur lesquels j'ai travaillé.",
+    'projects.stats.projects': 'Projets',
+    'projects.stats.categories': 'Catégories',
+    'projects.stats.stack': 'Stack',
+    'projects.stats.source': 'Source',
+    'projects.categories.all': 'Tous les projets',
+    'projects.empty.title': 'Aucun projet trouvé',
+    'projects.empty.subtitle': 'Les projets seront bientôt disponibles.',
+    'projects.section.my_work': 'Mes réalisations',
+    'projects.section.category_prefix': 'Projets:',
+    'projects.cta.view': 'Voir le projet →',
+    'projects.cta.soon': 'Bientôt disponible',
+    'projects.interactions.portfolio': 'Portfolio',
+    'projects.interactions.recent': 'Récent',
+    'projects.interactions.innovative': 'Innovant',
+    'projects.stack.title': 'Technologies utilisées',
+    'projects.stack.frontend': 'Frontend',
+    'projects.stack.backend': 'Backend',
+    'projects.stack.design': 'Design',
+    'projects.stack.devops': 'DevOps',
+
+    // Services page
+    'services.hero.badge': 'Services web professionnels',
+    'services.hero.title': 'Mes services de développement',
+    'services.hero.subtitle': 'Des solutions complètes pour votre présence digitale. Du design à la réalisation, je vous accompagne dans tous vos projets web.',
+    'services.stats.projects': 'Projets',
+    'services.stats.satisfaction': 'Satisfaction',
+    'services.stats.support': 'Support',
+    'services.stats.delivery': 'Livraison',
+    'services.section.title': 'Mes services',
+    'services.section.subtitle': 'Des solutions adaptées à vos besoins, de la conception à la mise en ligne de vos projets digitaux.',
+    'services.cta.quote': 'Demander un devis →',
+    'services.trust.guaranteed': 'Garanti',
+    'services.trust.fast_delivery': 'Livraison rapide',
+    'services.trust.support_included': 'Support inclus',
+    'services.process.title': 'Comment ça marche ?',
+    'services.process.step1.title': 'Contact',
+    'services.process.step1.desc': 'Demandez un devis',
+    'services.process.step2.title': 'Devis',
+    'services.process.step2.desc': 'Proposition du devis',
+    'services.process.step3.title': 'Développement',
+    'services.process.step3.desc': 'Réalisation du projet',
+    'services.process.step4.title': 'Livraison',
+    'services.process.step4.desc': 'Livraison & formation',
+
+    // Products index
+    'products.hero.badge': 'Solutions de prospection B2B',
+    'products.hero.title': 'Accélérez votre prospection au Sénégal',
+    'products.hero.subtitle': 'Des outils simples et efficaces pour identifier et contacter les entreprises qui ont besoin de vos services web.',
+    'products.stats.companies': 'Entreprises',
+    'products.stats.quality': 'Qualité',
+    'products.stats.access': 'Accès',
+    'products.stats.activation': 'Activation',
+    'products.catalog.title': 'Notre catalogue',
+    'products.catalog.subtitle': 'Découvrez nos solutions conçues spécifiquement pour les développeurs et agences web au Sénégal.',
+    'products.card.popular': 'Le plus populaire',
+    'products.card.features.coords': 'Coordonnées complètes',
+    'products.card.features.search': 'Recherche avancée',
+    'products.card.features.updates': 'Mises à jour régulières',
+    'products.card.features.verified': 'Données vérifiées',
+    'products.pricing.promo': 'Tarif promotionnel',
+    'products.pricing.flash': 'Promotion flash 24h',
+    'products.cta.view_product': 'Découvrir le produit →',
+    'products.social.title': 'Rejoint par des professionnels',
+    'products.social.dev': 'Développeurs freelance',
+    'products.social.agencies': 'Agences web',
+    'products.social.consultants': 'Consultants IT',
+    // Ajout: titre page produits
+    'products.title': 'Produits',
+
+    // Ajouts titres pages
+    'blog.title': 'Blog',
+    'projects.title': 'Projets',
+    'services.title': 'Services',
+
+    // Ajout tags produit annuaire
+    'product.annuaire.tag.commerce': 'Commerce',
+    'product.annuaire.tag.services': 'Services',
+    'product.annuaire.tag.health': 'Santé',
+    'product.annuaire.tag.local': 'Local',
+
+    // ARIA / accessibilité
+    'aria.breadcrumb': "Fil d'Ariane",
+    'aria.whatsapp_finalize': "Contacter sur WhatsApp pour finaliser l'achat",
+    'aria.back_to_product_annuaire': 'Retour à la page produit annuaire',
+    'aria.pagination': 'Pagination',
+    'aria.pagination.prev': 'Aller à la page précédente',
+    'aria.pagination.next': 'Aller à la page suivante',
+    'aria.more_pages': 'Plus de pages',
   }
 } as const;
 
@@ -513,8 +882,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>('fr');
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && ['fr', 'en'].includes(savedLanguage)) {
+    const savedLanguage = localStorage.getItem('language') as Language | null;
+    if (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'en')) {
       setLanguage(savedLanguage);
     }
   }, []);
@@ -525,7 +894,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations[typeof language]] || key;
+    const dict: any = translations;
+    return (dict[language] && dict[language][key]) || key;
   };
 
   return (
@@ -537,8 +907,8 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useLanguage must be used within a LanguageProvider');
-    }
+  }
   return context;
 };

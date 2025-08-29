@@ -11,6 +11,7 @@ import logoLight from "@/assets/logo fond beige.svg";
 import logoDark from "@/assets/logo fond nuit.svg";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getActiveAccessPass } from "@/lib/access";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -25,6 +26,7 @@ export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     // Set up auth state listener
@@ -101,20 +103,20 @@ export default function Auth() {
 
       if (error) {
         toast({
-          title: "Erreur de connexion",
+          title: t('auth.toast.login_error'),
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Connexion réussie",
-          description: "Vous êtes maintenant connecté.",
+          title: t('auth.toast.login_success'),
+          description: t('auth.toast.login_success_desc'),
         });
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        title: t('auth.toast.generic_error'),
+        description: t('auth.toast.generic_error_desc'),
         variant: "destructive",
       });
     } finally {
@@ -146,21 +148,21 @@ export default function Auth() {
 
       if (error) {
         toast({
-          title: "Erreur d'inscription",
+          title: t('auth.toast.signup_error'),
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Inscription réussie",
-          description: "Vérifiez votre email pour confirmer votre compte.",
+          title: t('auth.toast.signup_success'),
+          description: t('auth.toast.signup_success_desc'),
         });
         setIsSignUp(false); // Return to login form
       }
     } catch (error) {
       toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        title: t('auth.toast.generic_error'),
+        description: t('auth.toast.generic_error_desc'),
         variant: "destructive",
       });
     } finally {
@@ -179,11 +181,11 @@ export default function Auth() {
           <img src={logoDark} alt="Logo" className="h-20 hidden dark:block" />
         </div>
         <CardHeader className="text-center">
-          <CardTitle>{isSignUp ? "Créer un compte" : "Connexion"}</CardTitle>
+          <CardTitle>{isSignUp ? t('auth.title.signup') : t('auth.title.login')}</CardTitle>
           <CardDescription>
             {isSignUp 
-              ? "Créez votre compte pour accéder à l'annuaire des entreprises"
-              : "Connectez-vous pour accéder à votre compte"
+              ? t('auth.subtitle.signup')
+              : t('auth.subtitle.login')
             }
           </CardDescription>
         </CardHeader>
@@ -191,25 +193,25 @@ export default function Auth() {
           {!isSignUp ? (
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
+                  placeholder={t('auth.placeholder.email')}
                   required
                   className="focus:ring-accent-blue focus:border-accent-blue"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <Input
                   id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={t('auth.placeholder.password')}
                   required
                   className="focus:ring-accent-blue focus:border-accent-blue"
                 />
@@ -220,7 +222,7 @@ export default function Auth() {
                   className="w-full bg-accent-blue hover:bg-accent-blue/90 text-white"
                   disabled={loading}
                 >
-                  {loading ? "Connexion..." : "Se connecter"}
+                  {loading ? t('auth.signing_in') : t('auth.sign_in')}
                 </Button>
                 <Button
                   type="button"
@@ -229,7 +231,7 @@ export default function Auth() {
                   onClick={() => setIsSignUp(true)}
                   disabled={loading}
                 >
-                  Créer un compte
+                  {t('auth.sign_up')}
                 </Button>
               </div>
             </form>
@@ -237,69 +239,69 @@ export default function Auth() {
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prénom</Label>
+                  <Label htmlFor="firstName">{t('auth.first_name')}</Label>
                   <Input
                     id="firstName"
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Votre prénom"
+                    placeholder={t('auth.first_name')}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nom</Label>
+                  <Label htmlFor="lastName">{t('auth.last_name')}</Label>
                   <Input
                     id="lastName"
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Votre nom"
+                    placeholder={t('auth.last_name')}
                     required
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="city">Ville</Label>
+                <Label htmlFor="city">{t('auth.city')}</Label>
                 <Input
                   id="city"
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  placeholder="Votre ville"
+                  placeholder={t('auth.city')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="profession">Profession</Label>
+                <Label htmlFor="profession">{t('auth.profession')}</Label>
                 <Input
                   id="profession"
                   type="text"
                   value={profession}
                   onChange={(e) => setProfession(e.target.value)}
-                  placeholder="Votre profession"
+                  placeholder={t('auth.profession')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signupEmail">Email</Label>
+                <Label htmlFor="signupEmail">{t('auth.email')}</Label>
                 <Input
                   id="signupEmail"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
+                  placeholder={t('auth.placeholder.email')}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signupPassword">Mot de passe</Label>
+                <Label htmlFor="signupPassword">{t('auth.password')}</Label>
                 <Input
                   id="signupPassword"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder={t('auth.placeholder.password')}
                   required
                   minLength={6}
                 />
@@ -310,7 +312,7 @@ export default function Auth() {
                   className="w-full bg-accent-green hover:bg-accent-green/90 text-white"
                   disabled={loading}
                 >
-                  {loading ? "Inscription..." : "Créer mon compte"}
+                  {loading ? t('auth.signing_up') : t('auth.sign_up')}
                 </Button>
                 <Button
                   type="button"
@@ -319,7 +321,7 @@ export default function Auth() {
                   onClick={() => setIsSignUp(false)}
                   disabled={loading}
                 >
-                  Retour à la connexion
+                  {t('auth.back_to_login')}
                 </Button>
               </div>
             </form>
@@ -330,7 +332,7 @@ export default function Auth() {
               onClick={() => navigate("/")}
               className="text-sm"
             >
-              Retour au site
+              {t('auth.back_to_site')}
             </Button>
           </div>
         </CardContent>
