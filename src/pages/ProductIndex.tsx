@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { getAccessPrice } from "@/lib/access";
-import { CheckCircle, Star, Users, Clock, Shield } from "lucide-react";
+import { CheckCircle, Star, Users, Clock, Shield, FolderKanban } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ProductIndex() {
@@ -29,7 +29,7 @@ export default function ProductIndex() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              🚀 {t('products.hero.badge')}
+              <FolderKanban className="w-4 h-4 mr-1" /> {t('products.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {t('products.hero.title')}

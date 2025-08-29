@@ -12,7 +12,8 @@ import {
   Star, 
   Clock,
   Shield,
-  Zap
+  Zap,
+  Briefcase
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -103,7 +104,7 @@ export default function ServicesPage() {
         <div className="container mx-auto max-w-5xl p-6 relative">
           <div className="text-center py-12">
             <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">
-              ⚡ {t('services.hero.badge')}
+              <Briefcase className="w-4 h-4 mr-1" /> {t('services.hero.badge')}
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {t('services.hero.title')}

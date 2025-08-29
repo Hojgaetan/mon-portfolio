@@ -88,7 +88,7 @@ export default function ManualPurchase() {
 
           <header className="text-center py-8" aria-labelledby="page-title">
             <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">
-              💳 {t('common.secure_payment')}
+              <Shield className="w-4 h-4 mr-1" /> {t('common.secure_payment')}
             </Badge>
             <h1 id="page-title" className="text-3xl md:text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
               {isExportFull ? t('manual.export.title') : t('manual.title')}

@@ -16,7 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { startAccessPurchase, pollAccessActivation, type OperatorCode } from "@/lib/access";
 // Nouveaux imports UI
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, FileDown } from "lucide-react";
+import { Search, Filter, ArrowUpDown, Eye, Calendar as CalendarIcon, ChevronLeft, ChevronRight, AlertCircle, FileDown, FolderKanban } from "lucide-react";
 // Ajout PDF
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -820,7 +820,7 @@ export default function EntreprisesPage() {
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%223%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
           <div className="relative px-4 sm:px-6 py-8 max-w-6xl mx-auto">
             <div className="flex flex-col gap-2">
-              <Badge className="w-fit bg-accent-sky/10 text-accent-sky border-accent-sky/20">📚 {t('annuaire.hero.badge')}</Badge>
+              <Badge className="w-fit bg-accent-sky/10 text-accent-sky border-accent-sky/20"><FolderKanban className="w-4 h-4 mr-1" /> {t('annuaire.hero.badge')}</Badge>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('annuaire.hero.title')}</h1>
               <p className="text-sm sm:text-base text-muted-foreground">{t('annuaire.hero.subtitle')}</p>
             </div>
