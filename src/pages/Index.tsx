@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, GraduationCap, MapPin, BookOpen as BookOpenIcon } from "lucide-react";
+import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, GraduationCap, MapPin, BookOpen as BookOpenIcon, Award, Target, TrendingUp } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
@@ -370,6 +370,124 @@ const Index = () => {
                         <span className="text-sm font-medium">{t(courseKey)}</span>
                       </div>
                     ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Section Certifications - pour les recruteurs */}
+        <section id="certifications" className="py-16 border-t scroll-mt-16">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">{t('certifications.badge')}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('certifications.title')}</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('certifications.subtitle')}</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Certifications en cours */}
+              <Card className="relative overflow-hidden border-2 hover:border-accent-green/30 bg-gradient-to-br from-card to-accent-green/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-green/5 to-transparent opacity-50" />
+                <CardHeader className="relative">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Award className="h-6 w-6 text-accent-green" />
+                    <CardTitle className="text-xl">{t('certifications.current')}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="relative">
+                  <div className="space-y-6">
+                    {/* AWS Cloud Practitioner */}
+                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.aws.title')}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.aws.provider')}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                        <span className="text-sm font-medium">{t('certifications.aws.progress')}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t('certifications.aws.expected')}</p>
+                    </div>
+
+                    {/* Google Cloud Digital Leader */}
+                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.google.title')}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.google.provider')}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span className="text-sm font-medium">{t('certifications.google.progress')}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t('certifications.google.expected')}</p>
+                    </div>
+
+                    {/* Meta Front-End Developer */}
+                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.meta.title')}</h4>
+                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.meta.provider')}</p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span className="text-sm font-medium">{t('certifications.meta.progress')}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">{t('certifications.meta.expected')}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Compétences visées */}
+              <Card className="relative overflow-hidden border-2 hover:border-accent-red/30 bg-gradient-to-br from-card to-accent-red/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-red/5 to-transparent opacity-50" />
+                <CardHeader className="relative">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Target className="h-6 w-6 text-accent-red" />
+                    <CardTitle className="text-xl">{t('certifications.skills')}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="relative">
+                  <div className="grid grid-cols-1 gap-4">
+                    {[
+                      {
+                        key: 'certifications.skills.cloud',
+                        icon: '☁️',
+                        color: 'bg-blue-500/20 text-blue-600'
+                      },
+                      {
+                        key: 'certifications.skills.frontend',
+                        icon: '💻',
+                        color: 'bg-green-500/20 text-green-600'
+                      },
+                      {
+                        key: 'certifications.skills.react',
+                        icon: '⚛️',
+                        color: 'bg-cyan-500/20 text-cyan-600'
+                      },
+                      {
+                        key: 'certifications.skills.deployment',
+                        icon: '🚀',
+                        color: 'bg-purple-500/20 text-purple-600'
+                      }
+                    ].map((skill, index) => (
+                      <div key={skill.key} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                        <div className={`w-10 h-10 rounded-full ${skill.color} flex items-center justify-center text-lg`}>
+                          {skill.icon}
+                        </div>
+                        <div>
+                          <span className="text-sm font-medium">{t(skill.key)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Indicateur de progression */}
+                  <div className="mt-6 p-4 bg-background/40 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-4 w-4 text-accent-red" />
+                      <span className="text-sm font-medium">Progression globale</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div className="bg-gradient-to-r from-accent-red to-accent-red/80 h-2 rounded-full" style={{width: '35%'}}></div>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">3 certifications en cours</p>
                   </div>
                 </CardContent>
               </Card>
