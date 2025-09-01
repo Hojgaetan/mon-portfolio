@@ -48,10 +48,13 @@ export const Footer = () => {
 						</div>
 					</div>
 
-					{/* Signature */}
-					<div className="flex items-center space-x-2 pt-4 border-t border-[#262833] md:border-t-0 md:border-l md:pl-6 md:pt-0">
+					{/* Signature + version */}
+					<div className="flex items-center gap-3 pt-4 border-t border-[#262833] md:border-t-0 md:border-l md:pl-6 md:pt-0">
 						<User className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
 						<span className="text-sm">@Hojgaetan</span>
+						<span className="text-xs text-foreground/70" aria-label="version">
+							v{__APP_VERSION__}
+						</span>
 					</div>
 				</div>
 			</div>
