@@ -1,6 +1,6 @@
 # Portfolio de Joël Gaëtan Hassam Obah
 ![forks](https://img.shields.io/github/forks/Hojgaetan/mon-portfolio)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Hojgaetan/mon-portfolio)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Hojgaetan/mon-portfolio)
 ![GitHub contributors](https://img.shields.io/github/contributors/Hojgaetan/mon-portfolio)
 ![MIT License Badge](https://img.shields.io/badge/license-MIT-green)
 
