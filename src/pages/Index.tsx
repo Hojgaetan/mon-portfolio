@@ -33,6 +33,42 @@ interface BlogPostPreview {
   created_at?: string;
 }
 
+// Données dynamiques Cursus / Certifications
+interface CursusData {
+  program: string;
+  institution: string;
+  year_label: string;
+  status_label: string;
+  specialization_title: string;
+  specialization_desc: string;
+  graduation_title: string;
+  graduation_date: string;
+  courses: string[];
+}
+
+interface CertificationRow {
+  id: string;
+  title: string;
+  provider: string;
+  progress: string | null;
+  expected: string | null;
+  order_index: number;
+}
+
+interface SkillRow {
+  id: string;
+  label: string;
+  icon: string | null;
+  color_class: string | null;
+  order_index: number;
+}
+
+interface HomeMeta {
+  badge: string | null;
+  title: string | null;
+  subtitle: string | null;
+}
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("hello");
   const location = useLocation();
@@ -49,6 +85,13 @@ const Index = () => {
   // Etats pour stats dynamiques
   const [projectsCount, setProjectsCount] = useState<number | null>(null);
   const [publishedPostsCount, setPublishedPostsCount] = useState<number | null>(null);
+
+  // Etats pour Cursus / Certifications dynamiques
+  const [cursus, setCursus] = useState<CursusData | null>(null);
+  const [certs, setCerts] = useState<CertificationRow[]>([]);
+  const [skills, setSkills] = useState<SkillRow[]>([]);
+  const [metaCursus, setMetaCursus] = useState<HomeMeta | null>(null);
+  const [metaCert, setMetaCert] = useState<HomeMeta | null>(null);
 
   // Scroll vers section quand on change d’onglet depuis la navigation
   useEffect(() => {
@@ -181,6 +224,99 @@ const Index = () => {
     return `${minutes} min`;
   };
 
+  // Charger Cursus + Certifications dynamiques selon la langue
+  useEffect(() => {
+    const loadDynamicSections = async () => {
+      try {
+        // Cursus
+        const { data: cursusData } = await supabase
+          .from('education_cursus')
+          .select('*')
+          .eq('locale', language)
+          .eq('is_active', true)
+          .maybeSingle();
+        if (cursusData) {
+          setCursus({
+            program: cursusData.program,
+            institution: cursusData.institution,
+            year_label: cursusData.year_label,
+            status_label: cursusData.status_label,
+            specialization_title: cursusData.specialization_title,
+            specialization_desc: cursusData.specialization_desc,
+            graduation_title: cursusData.graduation_title,
+            graduation_date: cursusData.graduation_date,
+            courses: Array.isArray(cursusData.courses) ? cursusData.courses : [],
+          });
+        } else {
+          setCursus(null);
+        }
+
+        // Certifications & Skills
+        const [{ data: certsData }, { data: skillsData }, { data: metaCursusData }, { data: metaCertData }] = await Promise.all([
+          supabase
+            .from('certifications')
+            .select('*')
+            .eq('locale', language)
+            .eq('is_active', true)
+            .order('order_index', { ascending: true }),
+          supabase
+            .from('certification_skills')
+            .select('*')
+            .eq('locale', language)
+            .eq('is_active', true)
+            .order('order_index', { ascending: true }),
+          supabase
+            .from('home_sections_meta')
+            .select('*')
+            .eq('section_key', 'cursus')
+            .eq('locale', language)
+            .eq('is_active', true)
+            .maybeSingle(),
+          supabase
+            .from('home_sections_meta')
+            .select('*')
+            .eq('section_key', 'certifications')
+            .eq('locale', language)
+            .eq('is_active', true)
+            .maybeSingle(),
+        ]);
+        setCerts((certsData || []).map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          provider: c.provider,
+          progress: c.progress ?? null,
+          expected: c.expected ?? null,
+          order_index: c.order_index ?? 0,
+        })));
+        setSkills((skillsData || []).map((s: any) => ({
+          id: s.id,
+          label: s.label,
+          icon: s.icon ?? null,
+          color_class: s.color_class ?? null,
+          order_index: s.order_index ?? 0,
+        })));
+        setMetaCursus(metaCursusData ? {
+          badge: metaCursusData.badge ?? null,
+          title: metaCursusData.title ?? null,
+          subtitle: metaCursusData.subtitle ?? null,
+        } : null);
+        setMetaCert(metaCertData ? {
+          badge: metaCertData.badge ?? null,
+          title: metaCertData.title ?? null,
+          subtitle: metaCertData.subtitle ?? null,
+        } : null);
+      } catch (e) {
+        console.warn('Sections dynamiques (cursus/certifs/meta) non chargées:', e);
+        setCursus(null);
+        setCerts([]);
+        setSkills([]);
+        setMetaCursus(null);
+        setMetaCert(null);
+      }
+    };
+    loadDynamicSections();
+  }, [language]);
+
   return (
     <div className="min-h-screen h-auto bg-background flex flex-col">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -296,9 +432,9 @@ const Index = () => {
         <section id="cursus" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">{t('cursus.badge')}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('cursus.title')}</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('cursus.subtitle')}</p>
+              <Badge className="mb-4 bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">{metaCursus?.badge || t('cursus.badge')}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{metaCursus?.title || t('cursus.title')}</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{metaCursus?.subtitle || t('cursus.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -312,20 +448,20 @@ const Index = () => {
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <h3 className="font-semibold text-lg text-foreground">{t('cursus.program')}</h3>
+                      <h3 className="font-semibold text-lg text-foreground">{cursus?.program || t('cursus.program')}</h3>
                       <div className="flex items-center gap-2 text-muted-foreground mt-1">
                         <MapPin className="h-4 w-4" />
-                        <span>{t('cursus.institution')}</span>
+                        <span>{cursus?.institution || t('cursus.institution')}</span>
                       </div>
                     </div>
                     <div className="flex gap-4">
                       <div className="text-center p-3 bg-background/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">{t('cursus.year')}</div>
-                        <div className="font-semibold">L3</div>
+                        <div className="font-semibold">{cursus?.year_label || 'L3'}</div>
                       </div>
                       <div className="text-center p-3 bg-background/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">{t('cursus.status')}</div>
-                        <div className="font-semibold text-green-600">{t('cursus.status')}</div>
+                        <div className="font-semibold text-green-600">{cursus?.status_label || t('cursus.status')}</div>
                       </div>
                     </div>
                   </div>
@@ -334,11 +470,11 @@ const Index = () => {
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">{t('cursus.specialization')}</h4>
-                      <p className="text-muted-foreground">{t('cursus.spec_details')}</p>
+                      <p className="text-muted-foreground">{cursus?.specialization_desc || t('cursus.spec_details')}</p>
                     </div>
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">{t('cursus.graduation')}</h4>
-                      <p className="text-muted-foreground">{t('cursus.graduation_date')}</p>
+                      <p className="text-muted-foreground">{cursus?.graduation_date || t('cursus.graduation_date')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -355,21 +491,32 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="relative">
                   <div className="grid grid-cols-1 gap-3">
-                    {[
-                      'cursus.courses.algorithms',
-                      'cursus.courses.databases', 
-                      'cursus.courses.web',
-                      'cursus.courses.mobile',
-                      'cursus.courses.ai',
-                      'cursus.courses.project'
-                    ].map((courseKey, index) => (
-                      <div key={courseKey} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                        <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
-                          {index + 1}
+                    {cursus && cursus.courses && cursus.courses.length > 0 ? (
+                      cursus.courses.map((label, index) => (
+                        <div key={`${label}-${index}`} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                          <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </div>
+                          <span className="text-sm font-medium">{label}</span>
                         </div>
-                        <span className="text-sm font-medium">{t(courseKey)}</span>
-                      </div>
-                    ))}
+                      ))
+                    ) : (
+                      [
+                        'cursus.courses.algorithms',
+                        'cursus.courses.databases',
+                        'cursus.courses.web',
+                        'cursus.courses.mobile',
+                        'cursus.courses.ai',
+                        'cursus.courses.project'
+                      ].map((courseKey, index) => (
+                        <div key={courseKey} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                          <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </div>
+                          <span className="text-sm font-medium">{t(courseKey)}</span>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -381,9 +528,9 @@ const Index = () => {
         <section id="certifications" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">{t('certifications.badge')}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('certifications.title')}</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('certifications.subtitle')}</p>
+              <Badge className="mb-4 bg-accent-green/10 text-accent-green border-accent-green/20">{metaCert?.badge || t('certifications.badge')}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{metaCert?.title || t('certifications.title')}</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{metaCert?.subtitle || t('certifications.subtitle')}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -398,38 +545,52 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="relative">
                   <div className="space-y-6">
-                    {/* AWS Cloud Practitioner */}
-                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.aws.title')}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.aws.provider')}</p>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                        <span className="text-sm font-medium">{t('certifications.aws.progress')}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{t('certifications.aws.expected')}</p>
-                    </div>
-
-                    {/* Google Cloud Digital Leader */}
-                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.google.title')}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.google.provider')}</p>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="text-sm font-medium">{t('certifications.google.progress')}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{t('certifications.google.expected')}</p>
-                    </div>
-
-                    {/* Meta Front-End Developer */}
-                    <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                      <h4 className="font-semibold text-foreground mb-1">{t('certifications.meta.title')}</h4>
-                      <p className="text-sm text-muted-foreground mb-2">{t('certifications.meta.provider')}</p>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span className="text-sm font-medium">{t('certifications.meta.progress')}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{t('certifications.meta.expected')}</p>
-                    </div>
+                    {certs.length > 0 ? (
+                      certs.map((c, idx) => (
+                        <div key={c.id} className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                          <h4 className="font-semibold text-foreground mb-1">{c.title}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">{c.provider}</p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className={`w-2 h-2 rounded-full ${['bg-yellow-500','bg-blue-500','bg-green-500','bg-purple-500'][idx % 4]}`}></div>
+                            <span className="text-sm font-medium">{c.progress || ''}</span>
+                          </div>
+                          {c.expected && (
+                            <p className="text-xs text-muted-foreground">{c.expected}</p>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        {/* Fallback statique (traductions) */}
+                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.aws.title')}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.aws.provider')}</p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                            <span className="text-sm font-medium">{t('certifications.aws.progress')}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{t('certifications.aws.expected')}</p>
+                        </div>
+                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.google.title')}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.google.provider')}</p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                            <span className="text-sm font-medium">{t('certifications.google.progress')}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{t('certifications.google.expected')}</p>
+                        </div>
+                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
+                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.meta.title')}</h4>
+                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.meta.provider')}</p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                            <span className="text-sm font-medium">{t('certifications.meta.progress')}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">{t('certifications.meta.expected')}</p>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -445,40 +606,53 @@ const Index = () => {
                 </CardHeader>
                 <CardContent className="relative">
                   <div className="grid grid-cols-1 gap-4">
-                    {[
-                      {
-                        key: 'certifications.skills.cloud',
-                        icon: '☁️',
-                        color: 'bg-blue-500/20 text-blue-600'
-                      },
-                      {
-                        key: 'certifications.skills.frontend',
-                        icon: '💻',
-                        color: 'bg-green-500/20 text-green-600'
-                      },
-                      {
-                        key: 'certifications.skills.react',
-                        icon: '⚛️',
-                        color: 'bg-cyan-500/20 text-cyan-600'
-                      },
-                      {
-                        key: 'certifications.skills.deployment',
-                        icon: '🚀',
-                        color: 'bg-purple-500/20 text-purple-600'
-                      }
-                    ].map((skill, index) => (
-                      <div key={skill.key} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                        <div className={`w-10 h-10 rounded-full ${skill.color} flex items-center justify-center text-lg`}>
-                          {skill.icon}
+                    {skills.length > 0 ? (
+                      skills.map((s) => (
+                        <div key={s.id} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                          <div className={`w-10 h-10 rounded-full ${s.color_class || 'bg-blue-500/20 text-blue-600'} flex items-center justify-center text-lg`}>
+                            {s.icon || '•'}
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{s.label}</span>
+                          </div>
                         </div>
-                        <div>
-                          <span className="text-sm font-medium">{t(skill.key)}</span>
+                      ))
+                    ) : (
+                      [
+                        {
+                          key: 'certifications.skills.cloud',
+                          icon: '☁️',
+                          color: 'bg-blue-500/20 text-blue-600'
+                        },
+                        {
+                          key: 'certifications.skills.frontend',
+                          icon: '💻',
+                          color: 'bg-green-500/20 text-green-600'
+                        },
+                        {
+                          key: 'certifications.skills.react',
+                          icon: '⚛️',
+                          color: 'bg-cyan-500/20 text-cyan-600'
+                        },
+                        {
+                          key: 'certifications.skills.deployment',
+                          icon: '🚀',
+                          color: 'bg-purple-500/20 text-purple-600'
+                        }
+                      ].map((skill, index) => (
+                        <div key={skill.key} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                          <div className={`w-10 h-10 rounded-full ${skill.color} flex items-center justify-center text-lg`}>
+                            {skill.icon}
+                          </div>
+                          <div>
+                            <span className="text-sm font-medium">{t(skill.key)}</span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                   
-                  {/* Indicateur de progression */}
+                  {/* Indicateur de progression (statique conservé) */}
                   <div className="mt-6 p-4 bg-background/40 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <TrendingUp className="h-4 w-4 text-accent-red" />

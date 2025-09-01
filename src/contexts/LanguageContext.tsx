@@ -105,6 +105,15 @@ const translations = {
     'admin.settings': 'Paramètres',
     'admin.view_site': 'Voir le site',
     'admin.logout': 'Déconnexion',
+    // Ajout: états/toasts admin
+    'admin.loading': 'Chargement…',
+    'admin.access_denied.title': 'Accès refusé',
+    'admin.access_denied.desc': "Vous n'avez pas les droits administrateur.",
+    'admin.toast.signout_error': 'Erreur de déconnexion',
+    'admin.toast.signout_success': 'Déconnexion réussie',
+    'admin.toast.signout_success_desc': 'Vous avez été déconnecté.',
+    'admin.toast.generic_error': 'Erreur',
+    'admin.toast.generic_error_desc': 'Une erreur est survenue.',
 
     // Auth
     'auth.login': 'Se connecter',
@@ -583,6 +592,15 @@ const translations = {
     'admin.settings': 'Settings',
     'admin.view_site': 'View site',
     'admin.logout': 'Logout',
+    // Added: admin states/toasts
+    'admin.loading': 'Loading…',
+    'admin.access_denied.title': 'Access denied',
+    'admin.access_denied.desc': 'You do not have administrator rights.',
+    'admin.toast.signout_error': 'Logout error',
+    'admin.toast.signout_success': 'Logged out',
+    'admin.toast.signout_success_desc': 'You have been logged out.',
+    'admin.toast.generic_error': 'Error',
+    'admin.toast.generic_error_desc': 'An error occurred.',
 
     // Auth
     'auth.login': 'Log in',
@@ -606,13 +624,13 @@ const translations = {
     'cursus.subtitle': 'My academic path and current studies',
     'cursus.current_studies': 'Current program',
     'cursus.program': 'Bachelor\'s in Computer Science',
-    'cursus.institution': 'Virtual University of Senegal (UVS)',
+    'cursus.institution': 'Institute Superieur of Management (ISM)',
     'cursus.year': '3rd year (L3)',
     'cursus.status': 'In progress',
     'cursus.specialization': 'Specialization',
     'cursus.spec_details': 'Web development and mobile applications',
     'cursus.graduation': 'Expected graduation',
-    'cursus.graduation_date': 'June 2025',
+    'cursus.graduation_date': 'June 2026',
     'cursus.key_courses': 'Key courses',
     'cursus.courses.algorithms': 'Algorithms and data structures',
     'cursus.courses.databases': 'Databases',
@@ -630,6 +648,7 @@ const translations = {
     'certifications.aws.provider': 'Amazon Web Services',
     'certifications.aws.progress': 'In preparation',
     'certifications.aws.expected': 'Expected certification: March 2025',
+
     'certifications.google.title': 'Google Cloud Digital Leader',
     'certifications.google.provider': 'Google Cloud',
     'certifications.google.progress': 'In progress',
@@ -638,6 +657,7 @@ const translations = {
     'certifications.meta.provider': 'Meta (Facebook)',
     'certifications.meta.progress': 'Module 3/9',
     'certifications.meta.expected': 'Expected certification: May 2025',
+
     'certifications.skills': 'Target skills',
     'certifications.skills.cloud': 'Cloud services and infrastructure',
     'certifications.skills.frontend': 'Modern front-end development',

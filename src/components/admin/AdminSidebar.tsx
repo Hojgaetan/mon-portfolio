@@ -17,6 +17,8 @@ import {
   ChevronRight,
   Key,
   MessageCircle,
+  GraduationCap,
+  Award,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
@@ -39,6 +41,9 @@ const menuItems = [
   { id: "comments", label: "Commentaires", icon: MessageCircle },
   { id: "categories", label: "Catégories", icon: Tag },
   { id: "entreprises", label: "Entreprises", icon: Building2 },
+  { id: "cursus", label: "Cursus", icon: GraduationCap },
+  { id: "certifications", label: "Certifications", icon: Award },
+  { id: "home_sections", label: "Accueil (Sections)", icon: Home },
   { id: "access", label: "Gestion des accès", icon: Key },
   { id: "users", label: "Utilisateurs", icon: Users },
   { id: "settings", label: "Paramètres", icon: Settings },

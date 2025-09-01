@@ -16,6 +16,9 @@ import { AdminSettings } from "@/components/admin/AdminSettings";
 import { AccessManager } from "@/components/admin/AccessManager";
 import { CommentsManager } from "@/components/admin/CommentsManager";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { CursusManager } from "@/components/admin/CursusManager";
+import { CertificationsManager } from "@/components/admin/CertificationsManager";
+import { HomeSectionsManager } from "@/components/admin/HomeSectionsManager";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -134,6 +137,12 @@ export default function Admin() {
         return <CategorieManager />;
       case "entreprises":
         return <EntrepriseManager />;
+      case "cursus":
+        return <CursusManager />;
+      case "certifications":
+        return <CertificationsManager />;
+      case "home_sections":
+        return <HomeSectionsManager />;
       case "access":
         return <AccessManager />;
       case "users":
