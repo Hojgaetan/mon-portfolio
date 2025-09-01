@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase } from "lucide-react";
+import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, GraduationCap, MapPin, BookOpen as BookOpenIcon } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
@@ -288,6 +288,91 @@ const Index = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section Cursus - pour les recruteurs */}
+        <section id="cursus" className="py-16 border-t scroll-mt-16">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">{t('cursus.badge')}</Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('cursus.title')}</h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('cursus.subtitle')}</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Informations principales */}
+              <Card className="relative overflow-hidden border-2 hover:border-accent-yellow/30 bg-gradient-to-br from-card to-accent-yellow/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-yellow/5 to-transparent opacity-50" />
+                <CardHeader className="relative">
+                  <div className="flex items-center gap-3 mb-2">
+                    <GraduationCap className="h-6 w-6 text-accent-yellow" />
+                    <CardTitle className="text-xl">{t('cursus.current_studies')}</CardTitle>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <h3 className="font-semibold text-lg text-foreground">{t('cursus.program')}</h3>
+                      <div className="flex items-center gap-2 text-muted-foreground mt-1">
+                        <MapPin className="h-4 w-4" />
+                        <span>{t('cursus.institution')}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="text-center p-3 bg-background/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">{t('cursus.year')}</div>
+                        <div className="font-semibold">L3</div>
+                      </div>
+                      <div className="text-center p-3 bg-background/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">{t('cursus.status')}</div>
+                        <div className="font-semibold text-green-600">{t('cursus.status')}</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="relative">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">{t('cursus.specialization')}</h4>
+                      <p className="text-muted-foreground">{t('cursus.spec_details')}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">{t('cursus.graduation')}</h4>
+                      <p className="text-muted-foreground">{t('cursus.graduation_date')}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Matières clés */}
+              <Card className="relative overflow-hidden border-2 hover:border-accent-sky/30 bg-gradient-to-br from-card to-accent-sky/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-50" />
+                <CardHeader className="relative">
+                  <div className="flex items-center gap-3 mb-2">
+                    <BookOpenIcon className="h-6 w-6 text-accent-sky" />
+                    <CardTitle className="text-xl">{t('cursus.key_courses')}</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="relative">
+                  <div className="grid grid-cols-1 gap-3">
+                    {[
+                      'cursus.courses.algorithms',
+                      'cursus.courses.databases', 
+                      'cursus.courses.web',
+                      'cursus.courses.mobile',
+                      'cursus.courses.ai',
+                      'cursus.courses.project'
+                    ].map((courseKey, index) => (
+                      <div key={courseKey} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
+                          {index + 1}
+                        </div>
+                        <span className="text-sm font-medium">{t(courseKey)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
