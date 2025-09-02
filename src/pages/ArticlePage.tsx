@@ -36,23 +36,37 @@ export default function ArticlePage() {
 
   const getUserIP = async () => {
     const ip = await getClientIP();
-    return ip || "unknown";
+    return ip; // peut être null
   };
 
   const trackView = useCallback(async (articleId: string) => {
     try {
+      // throttle local: éviter de compter plusieurs vues dans une courte fenêtre
+      const key = `article_view_${articleId}`;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        try {
+          const { ts } = JSON.parse(raw) as { ts: number };
+          if (Date.now() - ts < 5 * 60 * 1000) return; // 5 min
+        } catch { /* ignore */ }
+      }
+
       const userIP = await getUserIP();
       const userAgent = navigator.userAgent;
-      await supabase
+      const { error: insertError } = await supabase
         .from("article_views")
-        .upsert(
-          {
-            article_id: articleId,
-            ip_address: userIP,
-            user_agent: userAgent,
-          },
-          { onConflict: "article_id,ip_address" }
-        );
+        .insert({
+          article_id: articleId,
+          ip_address: userIP ?? null,
+          user_agent: userAgent,
+        });
+
+      if (insertError) {
+        console.error("Insert article_view error:", insertError.message);
+        return;
+      }
+
+      try { localStorage.setItem(key, JSON.stringify({ ts: Date.now() })); } catch { /* ignore */ }
     } catch (e) {
       console.error("Erreur lors de l'enregistrement de la vue:", e);
     }
@@ -94,11 +108,15 @@ export default function ArticlePage() {
 
   const fetchViews = async (articleId: string) => {
     try {
-      const { data } = await supabase
+      const { count, error } = await supabase
         .from("article_views")
-        .select("id")
+        .select("id", { count: "exact", head: true })
         .eq("article_id", articleId);
-      setViews(data?.length || 0);
+      if (error) {
+        console.error("Count article_views error:", error.message);
+        return;
+      }
+      setViews(count || 0);
     } catch (e) {
       console.error("Erreur lors du chargement des vues:", e);
     }
