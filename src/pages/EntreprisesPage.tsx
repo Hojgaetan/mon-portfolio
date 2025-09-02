@@ -328,7 +328,7 @@ export default function EntreprisesPage() {
 
       // Préparer données
       const rows = exportRows.map((e) => [
-        e.nom || "—",
+        e.nom ? e.nom.toLocaleUpperCase('fr-FR') : "—",
         e.categorie?.nom || "—",
         e.telephone || "—",
         e.adresse || "—",
@@ -440,7 +440,7 @@ export default function EntreprisesPage() {
         "Vues uniques",
       ];
       const body = exportRows.map((e) => [
-        e.nom || "—",
+        e.nom ? e.nom.toLocaleUpperCase('fr-FR') : "—",
         e.categorie?.nom || "—",
         e.telephone || "—",
         e.adresse || "—",
@@ -957,7 +957,7 @@ export default function EntreprisesPage() {
                       </div>
                       <div className="min-w-0">
                         <CardTitle className="text-base sm:text-lg truncate text-foreground">
-                          {isAdmin ? e.nom : t('annuaire.card.hidden_name')}
+                          {isAdmin ? ((e.nom || '').toLocaleUpperCase('fr-FR')) : t('annuaire.card.hidden_name')}
                         </CardTitle>
                       </div>
                     </CardHeader>
@@ -998,7 +998,7 @@ export default function EntreprisesPage() {
           <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
             <DialogContent className="max-w-2xl w-[95vw] max-h-[85vh] overflow-auto">
               <DialogHeader>
-                <DialogTitle>{selected?.nom}</DialogTitle>
+                <DialogTitle>{selected?.nom ? selected.nom.toLocaleUpperCase('fr-FR') : ''}</DialogTitle>
                 {selected?.categorie?.nom && (
                   <DialogDescription>Catégorie: {selected.categorie.nom}</DialogDescription>
                 )}
