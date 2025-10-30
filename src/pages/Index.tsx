@@ -8,9 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, GraduationCap, MapPin, BookOpen as BookOpenIcon, Award, Target, TrendingUp } from "lucide-react";
+import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, Award, Target, GraduationCap, MapPin } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
-import { Calendar, Tag, BookOpen } from "lucide-react";
+import { Calendar, Tag, BookOpen, BookOpen as BookOpenIcon } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
 
 interface ProjectPreview {
@@ -68,6 +68,25 @@ interface HomeMeta {
   title: string | null;
   subtitle: string | null;
 }
+
+// Types locaux pour contraindre les résultats Supabase utilisés ci-dessous
+// (évite l'usage de any tout en ne typant que les champs consommés)
+type CertificationRecordFromDB = {
+  id: string;
+  title: string;
+  provider: string;
+  progress?: string | null;
+  expected?: string | null;
+  order_index?: number | null;
+};
+
+type SkillRecordFromDB = {
+  id: string;
+  label: string;
+  icon?: string | null;
+  color_class?: string | null;
+  order_index?: number | null;
+};
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("hello");
@@ -280,7 +299,7 @@ const Index = () => {
             .eq('is_active', true)
             .maybeSingle(),
         ]);
-        setCerts((certsData || []).map((c: any) => ({
+        setCerts(((certsData || []) as CertificationRecordFromDB[]).map((c) => ({
           id: c.id,
           title: c.title,
           provider: c.provider,
@@ -288,7 +307,7 @@ const Index = () => {
           expected: c.expected ?? null,
           order_index: c.order_index ?? 0,
         })));
-        setSkills((skillsData || []).map((s: any) => ({
+        setSkills(((skillsData || []) as SkillRecordFromDB[]).map((s) => ({
           id: s.id,
           label: s.label,
           icon: s.icon ?? null,
@@ -438,7 +457,7 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Informations principales */}
+              {/* Informations principales (formation actuelle) */}
               <Card className="relative overflow-hidden border-2 hover:border-accent-yellow/30 bg-gradient-to-br from-card to-accent-yellow/5 transition-all duration-300">
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-yellow/5 to-transparent opacity-50" />
                 <CardHeader className="relative">
@@ -448,20 +467,20 @@ const Index = () => {
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <h3 className="font-semibold text-lg text-foreground">{cursus?.program || t('cursus.program')}</h3>
+                      <h3 className="font-semibold text-lg text-foreground">{cursus?.program || '—'}</h3>
                       <div className="flex items-center gap-2 text-muted-foreground mt-1">
                         <MapPin className="h-4 w-4" />
-                        <span>{cursus?.institution || t('cursus.institution')}</span>
+                        <span>{cursus?.institution || '—'}</span>
                       </div>
                     </div>
                     <div className="flex gap-4">
                       <div className="text-center p-3 bg-background/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">{t('cursus.year')}</div>
-                        <div className="font-semibold">{cursus?.year_label || 'L3'}</div>
+                        <div className="font-semibold">{cursus?.year_label || '—'}</div>
                       </div>
                       <div className="text-center p-3 bg-background/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">{t('cursus.status')}</div>
-                        <div className="font-semibold text-green-600">{cursus?.status_label || t('cursus.status')}</div>
+                        <div className="font-semibold text-green-600">{cursus?.status_label || '—'}</div>
                       </div>
                     </div>
                   </div>
@@ -470,17 +489,17 @@ const Index = () => {
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">{t('cursus.specialization')}</h4>
-                      <p className="text-muted-foreground">{cursus?.specialization_desc || t('cursus.spec_details')}</p>
+                      <p className="text-muted-foreground">{cursus?.specialization_desc || '—'}</p>
                     </div>
                     <div>
                       <h4 className="font-semibold text-foreground mb-2">{t('cursus.graduation')}</h4>
-                      <p className="text-muted-foreground">{cursus?.graduation_date || t('cursus.graduation_date')}</p>
+                      <p className="text-muted-foreground">{cursus?.graduation_date || '—'}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Matières clés */}
+              {/* Matières clés uniquement (données formation actuelle retirées) */}
               <Card className="relative overflow-hidden border-2 hover:border-accent-sky/30 bg-gradient-to-br from-card to-accent-sky/5 transition-all duration-300">
                 <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-50" />
                 <CardHeader className="relative">
@@ -501,21 +520,7 @@ const Index = () => {
                         </div>
                       ))
                     ) : (
-                      [
-                        'cursus.courses.algorithms',
-                        'cursus.courses.databases',
-                        'cursus.courses.web',
-                        'cursus.courses.mobile',
-                        'cursus.courses.ai',
-                        'cursus.courses.project'
-                      ].map((courseKey, index) => (
-                        <div key={courseKey} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                          <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <span className="text-sm font-medium">{t(courseKey)}</span>
-                        </div>
-                      ))
+                      <div className="text-sm text-muted-foreground">Aucune matière disponible pour le moment.</div>
                     )}
                   </div>
                 </CardContent>
@@ -560,36 +565,7 @@ const Index = () => {
                         </div>
                       ))
                     ) : (
-                      <>
-                        {/* Fallback statique (traductions) */}
-                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.aws.title')}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.aws.provider')}</p>
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
-                            <span className="text-sm font-medium">{t('certifications.aws.progress')}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{t('certifications.aws.expected')}</p>
-                        </div>
-                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.google.title')}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.google.provider')}</p>
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                            <span className="text-sm font-medium">{t('certifications.google.progress')}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{t('certifications.google.expected')}</p>
-                        </div>
-                        <div className="p-4 bg-background/30 rounded-lg border border-accent-green/10">
-                          <h4 className="font-semibold text-foreground mb-1">{t('certifications.meta.title')}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{t('certifications.meta.provider')}</p>
-                          <div className="flex items-center gap-2 mb-2">
-                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <span className="text-sm font-medium">{t('certifications.meta.progress')}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground">{t('certifications.meta.expected')}</p>
-                        </div>
-                      </>
+                      <div className="text-sm text-muted-foreground">Aucune certification en cours pour le moment.</div>
                     )}
                   </div>
                 </CardContent>
@@ -618,50 +594,8 @@ const Index = () => {
                         </div>
                       ))
                     ) : (
-                      [
-                        {
-                          key: 'certifications.skills.cloud',
-                          icon: '☁️',
-                          color: 'bg-blue-500/20 text-blue-600'
-                        },
-                        {
-                          key: 'certifications.skills.frontend',
-                          icon: '💻',
-                          color: 'bg-green-500/20 text-green-600'
-                        },
-                        {
-                          key: 'certifications.skills.react',
-                          icon: '⚛️',
-                          color: 'bg-cyan-500/20 text-cyan-600'
-                        },
-                        {
-                          key: 'certifications.skills.deployment',
-                          icon: '🚀',
-                          color: 'bg-purple-500/20 text-purple-600'
-                        }
-                      ].map((skill, index) => (
-                        <div key={skill.key} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                          <div className={`w-10 h-10 rounded-full ${skill.color} flex items-center justify-center text-lg`}>
-                            {skill.icon}
-                          </div>
-                          <div>
-                            <span className="text-sm font-medium">{t(skill.key)}</span>
-                          </div>
-                        </div>
-                      ))
+                      <div className="text-sm text-muted-foreground">Aucune compétence ciblée pour le moment.</div>
                     )}
-                  </div>
-                  
-                  {/* Indicateur de progression (statique conservé) */}
-                  <div className="mt-6 p-4 bg-background/40 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-accent-red" />
-                      <span className="text-sm font-medium">Progression globale</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div className="bg-gradient-to-r from-accent-red to-accent-red/80 h-2 rounded-full" style={{width: '35%'}}></div>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">3 certifications en cours</p>
                   </div>
                 </CardContent>
               </Card>
