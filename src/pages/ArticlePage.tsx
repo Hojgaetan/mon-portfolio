@@ -7,7 +7,7 @@ import { ArticleInteractions } from "@/components/ArticleInteractions";
 import { ArticleComments } from "@/components/ArticleComments";
 import { RecentArticlesSidebar } from "@/components/RecentArticlesSidebar";
 import { ArrowLeft, Eye, Calendar, Clock } from "lucide-react";
-import { getClientIP } from "@/lib/utils";
+import { getClientIP, sanitizeHTML } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Category { id: string; name: string; slug: string; color: string; }
@@ -261,11 +261,11 @@ export default function ArticlePage() {
                              hover:prose-a:text-accent-blue/80 hover:prose-a:underline
                              prose-blockquote:border-l-accent-blue prose-blockquote:bg-muted/30 
                              prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
-                             prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                             prose-ul:my-4 prose-ol:my-4 prose-li:my-2
-                             prose-img:rounded-xl prose-img:shadow-lg"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
-                />
+                              prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+                              prose-ul:my-4 prose-ol:my-4 prose-li:my-2
+                              prose-img:rounded-xl prose-img:shadow-lg"
+                   dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.content) }}
+                 />
               </div>
             </article>
 

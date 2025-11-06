@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, Github, Globe, Tag } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sanitizeHTML } from "@/lib/utils";
 
 interface Project {
   id: string;
@@ -169,11 +170,11 @@ export default function ProjectPage() {
                              hover:prose-a:text-accent-blue/80 hover:prose-a:underline
                              prose-blockquote:border-l-accent-blue prose-blockquote:bg-muted/30
                              prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:italic
-                             prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                             prose-ul:my-4 prose-ol:my-4 prose-li:my-2
-                             prose-img:rounded-xl prose-img:shadow-lg"
-                  dangerouslySetInnerHTML={{ __html: project.content || "" }}
-                />
+                              prose-code:bg-muted prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+                              prose-ul:my-4 prose-ol:my-4 prose-li:my-2
+                              prose-img:rounded-xl prose-img:shadow-lg"
+                   dangerouslySetInnerHTML={{ __html: sanitizeHTML(project.content || "") }}
+                 />
               </div>
             </article>
           </div>

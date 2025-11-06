@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { supabase } from "@/integrations/supabase/client";
+import DOMPurify from "dompurify";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,4 +41,13 @@ export async function getClientIP(options?: { cacheTtlMs?: number }): Promise<st
   // 3) Dernier recours
   try { localStorage.setItem(key, JSON.stringify({ ip: null, ts: Date.now() })); } catch (e) { void e; }
   return null;
+}
+
+// HTML Sanitization: Prevent XSS attacks
+export function sanitizeHTML(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'span', 'div'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class'],
+    ALLOW_DATA_ATTR: false
+  });
 }

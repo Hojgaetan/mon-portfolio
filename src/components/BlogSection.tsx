@@ -9,6 +9,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { sanitizeHTML } from "@/lib/utils";
 
 // Types pour les tables blog (remplaçant les types Supabase manquants)
 interface BlogPost {
@@ -186,7 +187,7 @@ export const BlogSection: React.FC = () => {
         {post.image_url && (
             <img src={post.image_url} alt={post.title} className="rounded-lg object-cover w-full h-auto aspect-video mb-6 shadow-lg" />
         )}
-        <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeHTML(post.content) }} />
         <Button onClick={() => navigate(`/article/${post.slug}`)} className="mt-6">
             Lire l'article complet
         </Button>

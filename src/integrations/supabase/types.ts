@@ -116,7 +116,7 @@ export type Database = {
           content: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           updated_at: string | null
         }
         Insert: {
@@ -128,7 +128,7 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           updated_at?: string | null
         }
         Update: {
@@ -140,7 +140,7 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           updated_at?: string | null
         }
         Relationships: [
@@ -197,7 +197,7 @@ export type Database = {
           client_id: string | null
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           platform: string
         }
         Insert: {
@@ -205,7 +205,7 @@ export type Database = {
           client_id?: string | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           platform: string
         }
         Update: {
@@ -213,7 +213,7 @@ export type Database = {
           client_id?: string | null
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           platform?: string
         }
         Relationships: [
@@ -356,6 +356,81 @@ export type Database = {
         }
         Relationships: []
       }
+      certification_skills: {
+        Row: {
+          color_class: string | null
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          label: string
+          locale: string
+          order_index: number
+          updated_at: string
+        }
+        Insert: {
+          color_class?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label: string
+          locale: string
+          order_index?: number
+          updated_at?: string
+        }
+        Update: {
+          color_class?: string | null
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          label?: string
+          locale?: string
+          order_index?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      certifications: {
+        Row: {
+          created_at: string
+          expected: string | null
+          id: string
+          is_active: boolean
+          locale: string
+          order_index: number
+          progress: string | null
+          provider: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expected?: string | null
+          id?: string
+          is_active?: boolean
+          locale: string
+          order_index?: number
+          progress?: string | null
+          provider: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expected?: string | null
+          id?: string
+          is_active?: boolean
+          locale?: string
+          order_index?: number
+          progress?: string | null
+          provider?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       comment_reactions: {
         Row: {
           active: boolean
@@ -363,7 +438,7 @@ export type Database = {
           comment_id: string
           created_at: string | null
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           reaction_type: string
           updated_at: string | null
         }
@@ -373,7 +448,7 @@ export type Database = {
           comment_id: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           reaction_type?: string
           updated_at?: string | null
         }
@@ -383,7 +458,7 @@ export type Database = {
           comment_id?: string
           created_at?: string | null
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           reaction_type?: string
           updated_at?: string | null
         }
@@ -394,7 +469,7 @@ export type Database = {
           created_at: string | null
           email: string
           id: string
-          ip_address: unknown | null
+          ip_address: unknown
           message: string
           name: string
           read: boolean | null
@@ -406,7 +481,7 @@ export type Database = {
           created_at?: string | null
           email: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           message: string
           name: string
           read?: boolean | null
@@ -418,13 +493,64 @@ export type Database = {
           created_at?: string | null
           email?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: unknown
           message?: string
           name?: string
           read?: boolean | null
           replied?: boolean | null
           updated_at?: string | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      education_cursus: {
+        Row: {
+          courses: Json
+          created_at: string
+          graduation_date: string
+          graduation_title: string
+          id: string
+          institution: string
+          is_active: boolean
+          locale: string
+          program: string
+          specialization_desc: string
+          specialization_title: string
+          status_label: string
+          updated_at: string
+          year_label: string
+        }
+        Insert: {
+          courses?: Json
+          created_at?: string
+          graduation_date: string
+          graduation_title: string
+          id?: string
+          institution: string
+          is_active?: boolean
+          locale: string
+          program: string
+          specialization_desc: string
+          specialization_title: string
+          status_label: string
+          updated_at?: string
+          year_label: string
+        }
+        Update: {
+          courses?: Json
+          created_at?: string
+          graduation_date?: string
+          graduation_title?: string
+          id?: string
+          institution?: string
+          is_active?: boolean
+          locale?: string
+          program?: string
+          specialization_desc?: string
+          specialization_title?: string
+          status_label?: string
+          updated_at?: string
+          year_label?: string
         }
         Relationships: []
       }
@@ -501,6 +627,63 @@ export type Database = {
           },
         ]
       }
+      export_usage: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      home_sections_meta: {
+        Row: {
+          badge: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          locale: string
+          section_key: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          locale: string
+          section_key: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          locale?: string
+          section_key?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           city: string | null
@@ -544,6 +727,7 @@ export type Database = {
         Row: {
           analysis_url: string | null
           category: string | null
+          content: string | null
           created_at: string | null
           description: string | null
           design_url: string | null
@@ -562,6 +746,7 @@ export type Database = {
         Insert: {
           analysis_url?: string | null
           category?: string | null
+          content?: string | null
           created_at?: string | null
           description?: string | null
           design_url?: string | null
@@ -580,6 +765,7 @@ export type Database = {
         Update: {
           analysis_url?: string | null
           category?: string | null
+          content?: string | null
           created_at?: string | null
           description?: string | null
           design_url?: string | null
@@ -602,7 +788,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
