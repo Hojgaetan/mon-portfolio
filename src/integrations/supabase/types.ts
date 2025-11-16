@@ -788,6 +788,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      anonymize_ip: { Args: { ip: unknown }; Returns: unknown }
+      cleanup_old_comments: { Args: never; Returns: number }
       is_admin: { Args: { user_id: string }; Returns: boolean }
     }
     Enums: {
