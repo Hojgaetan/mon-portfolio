@@ -13,8 +13,8 @@ export const HeroSection = () => {
 
   // Animation de frappe pour le greeting
   const typewriterWords = language === 'fr' 
-    ? ["developpement_web", "data_science", "intelligence-artificielle", "machine-learning", "automatisation"]
-    : ["web_development", "data_science", "artificial-intelligence", "machine-learning", "automation"];
+    ? ["gestion_de_stock", "python", "logiciels_sur_mesure", "PME", "inventaire", "ERP"]
+    : ["inventory_management", "python", "custom_software", "SME", "stock_control", "ERP"];
     
   const typewriterText = useTypewriter({
     words: typewriterWords,
@@ -56,7 +56,7 @@ export const HeroSection = () => {
               <div className="flex items-center space-x-2">
                 <span className="text-code-keyword font-mono">&gt;</span>
                 <p className="text-xl md:text-2xl text-muted-foreground font-sans">
-                    {language === 'fr' ? 'etudiant_en_informatique' : 'computer_science_student'}
+                    {language === 'fr' ? 'developpeur_python_freelance' : 'freelance_python_developer'}
                     <br />
                 </p>
               </div>
@@ -70,7 +70,7 @@ export const HeroSection = () => {
                 <span className="text-code-keyword">var</span>
                 <span className="text-foreground">bio</span>
                 <span className="text-foreground">=</span>
-                <span className="text-code-string">"{language === 'fr' ? 'Passionne par les nouvelles technologies, le web, l\'i.a, la data, le machine learning et l\'automatisation' : 'Passionate about new technologies, web, A.I, data, machine learning and automation'}"</span>
+                <span className="text-code-string">"{language === 'fr' ? 'Specialise en developpement de logiciels de gestion de stock sur mesure en Python pour les PME' : 'Specialized in custom Python inventory management software development for SMEs'}"</span>
                 <span className="text-foreground">;</span>
               </div>
 
