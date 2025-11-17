@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { ContactSection } from "@/components/ContactSection";
@@ -18,7 +18,6 @@ import softwareDashboard from "@/assets/software-dashboard.jpg";
 import pythonInventory from "@/assets/python-inventory.jpg";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
 
 interface ProjectPreview {
   id: string;
@@ -430,63 +429,108 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Liens rapides */}
+        {/* Liens rapides - Services de gestion de stock */}
         <section id="quick-links" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('home.discover.title')}</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{t('home.discover.subtitle')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Solutions de Gestion de Stock' : 'Inventory Management Solutions'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr' 
+                  ? 'Des logiciels Python sur mesure pour optimiser la gestion de votre inventaire'
+                  : 'Custom Python software to optimize your inventory management'}
+              </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/20 bg-gradient-to-br from-card to-accent-blue/5 cursor-pointer" onClick={() => navigate('/produit')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/produit')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <FolderKanban className="h-5 w-5 text-accent-blue" />
-                  <CardTitle className="text-base">{t('quick.products.title')}</CardTitle>
+                  <Target className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">
+                    {language === 'fr' ? 'Suivi en Temps Réel' : 'Real-Time Tracking'}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{t('quick.products.desc')}</CardContent>
+                <CardContent className="text-sm text-muted-foreground">
+                  {language === 'fr' 
+                    ? 'Suivez votre inventaire en temps réel avec des tableaux de bord intuitifs'
+                    : 'Track your inventory in real-time with intuitive dashboards'}
+                </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-red/20 bg-gradient-to-br from-card to-accent-red/5 cursor-pointer" onClick={() => navigate('/services')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-red/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/services')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Briefcase className="h-5 w-5 text-accent-red" />
-                  <CardTitle className="text-base">{t('quick.services.title')}</CardTitle>
+                  <Shield className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">
+                    {language === 'fr' ? 'Alertes Automatiques' : 'Automated Alerts'}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{t('quick.services.desc')}</CardContent>
+                <CardContent className="text-sm text-muted-foreground">
+                  {language === 'fr' 
+                    ? 'Recevez des alertes automatiques pour les stocks bas et les réapprovisionnements'
+                    : 'Receive automatic alerts for low stock and restocking needs'}
+                </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-sky/20 bg-gradient-to-br from-card to-accent-sky/5 cursor-pointer" onClick={() => navigate('/projets')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/projets')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Folder className="h-5 w-5 text-accent-sky" />
-                  <CardTitle className="text-base">{t('quick.projects.title')}</CardTitle>
+                  <FolderKanban className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">
+                    {language === 'fr' ? 'Rapports & Analytics' : 'Reports & Analytics'}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{t('quick.projects.desc')}</CardContent>
+                <CardContent className="text-sm text-muted-foreground">
+                  {language === 'fr' 
+                    ? 'Générez des rapports détaillés et analysez vos données d\'inventaire'
+                    : 'Generate detailed reports and analyze your inventory data'}
+                </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-green/20 bg-gradient-to-br from-card to-accent-green/5 cursor-pointer" onClick={() => navigate('/blog')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-green/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/blog')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Newspaper className="h-5 w-5 text-accent-green" />
-                  <CardTitle className="text-base">{t('quick.blog.title')}</CardTitle>
+                  <Briefcase className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-base">
+                    {language === 'fr' ? 'Intégrations ERP' : 'ERP Integrations'}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">{t('quick.blog.desc')}</CardContent>
+                <CardContent className="text-sm text-muted-foreground">
+                  {language === 'fr' 
+                    ? 'Connectez votre système aux ERP et outils existants de votre entreprise'
+                    : 'Connect your system to existing ERPs and business tools'}
+                </CardContent>
               </Card>
             </div>
           </div>
         </section>
 
-        {/* À propos bref */}
+        {/* À propos - Freelance Python */}
         <section id="about" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2">
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">À propos</h2>
-                <p className="text-lg text-muted-foreground line-clamp-3">
-                  {t('about.bio')}
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  {language === 'fr' ? 'Développeur Python Spécialisé' : 'Specialized Python Developer'}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-4">
+                  {language === 'fr'
+                    ? 'Je conçois et développe des logiciels de gestion de stock sur mesure en Python pour les PME. Mon expertise me permet de créer des solutions adaptées aux besoins spécifiques de chaque entreprise, avec un focus sur la performance, la simplicité d\'utilisation et l\'évolutivité.'
+                    : 'I design and develop custom inventory management software in Python for SMEs. My expertise allows me to create solutions tailored to each company\'s specific needs, focusing on performance, ease of use, and scalability.'}
                 </p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant="secondary" className="text-sm">Python</Badge>
+                  <Badge variant="secondary" className="text-sm">
+                    {language === 'fr' ? 'Gestion de Stock' : 'Inventory Management'}
+                  </Badge>
+                  <Badge variant="secondary" className="text-sm">Django / Flask</Badge>
+                  <Badge variant="secondary" className="text-sm">PostgreSQL</Badge>
+                  <Badge variant="secondary" className="text-sm">
+                    {language === 'fr' ? 'Solutions PME' : 'SME Solutions'}
+                  </Badge>
+                </div>
               </div>
               <div className="flex md:justify-end">
-                <Button className="bg-gradient-to-r from-accent-blue to-accent-blue/80 hover:from-accent-blue/90 hover:to-accent-blue/70 text-white shadow-lg transition-all" onClick={() => navigate('/a-propos')}>
-                  {t('about.read_more')}
+                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg transition-all" onClick={() => navigate('/a-propos')}>
+                  {language === 'fr' ? 'En savoir plus' : 'Learn more'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -494,85 +538,117 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section Cursus - pour les recruteurs */}
+        {/* Section Cursus - Compétences Python */}
         <section id="cursus" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-accent-yellow/10 text-accent-yellow border-accent-yellow/20">{metaCursus?.badge || t('cursus.badge')}</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{metaCursus?.title || t('cursus.title')}</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">{metaCursus?.subtitle || t('cursus.subtitle')}</p>
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                {language === 'fr' ? 'Expertise Technique' : 'Technical Expertise'}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Technologies & Compétences' : 'Technologies & Skills'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Stack technologique moderne pour des solutions performantes et évolutives'
+                  : 'Modern tech stack for high-performance and scalable solutions'}
+              </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Informations principales (formation actuelle) */}
-              <Card className="relative overflow-hidden border-2 hover:border-accent-yellow/30 bg-gradient-to-br from-card to-accent-yellow/5 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-yellow/5 to-transparent opacity-50" />
+              {/* Technologies Python */}
+              <Card className="relative overflow-hidden border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
                 <CardHeader className="relative">
-                  <div className="flex items-center gap-3 mb-2">
-                    <GraduationCap className="h-6 w-6 text-accent-yellow" />
-                    <CardTitle className="text-xl">{t('cursus.current_studies')}</CardTitle>
-                  </div>
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="font-semibold text-lg text-foreground">{cursus?.program || '—'}</h3>
-                      <div className="flex items-center gap-2 text-muted-foreground mt-1">
-                        <MapPin className="h-4 w-4" />
-                        <span>{cursus?.institution || '—'}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-4">
-                      <div className="text-center p-3 bg-background/50 rounded-lg">
-                        <div className="text-sm text-muted-foreground">{t('cursus.year')}</div>
-                        <div className="font-semibold">{cursus?.year_label || '—'}</div>
-                      </div>
-                      <div className="text-center p-3 bg-background/50 rounded-lg">
-                        <div className="text-sm text-muted-foreground">{t('cursus.status')}</div>
-                        <div className="font-semibold text-green-600">{cursus?.status_label || '—'}</div>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <Award className="h-5 w-5" />
+                    <CardTitle className="text-xl">
+                      {language === 'fr' ? 'Backend & Logique Métier' : 'Backend & Business Logic'}
+                    </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="relative">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">{t('cursus.specialization')}</h4>
-                      <p className="text-muted-foreground">{cursus?.specialization_desc || '—'}</p>
+                <CardContent className="relative space-y-4">
+                  <div>
+                    <p className="font-semibold mb-2 text-foreground">Python & Frameworks</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline">Python 3.x</Badge>
+                      <Badge variant="outline">Django</Badge>
+                      <Badge variant="outline">Flask</Badge>
+                      <Badge variant="outline">FastAPI</Badge>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-foreground mb-2">{t('cursus.graduation')}</h4>
-                      <p className="text-muted-foreground">{cursus?.graduation_date || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-2 text-foreground">
+                      {language === 'fr' ? 'Bibliothèques de Gestion' : 'Management Libraries'}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline">Pandas</Badge>
+                      <Badge variant="outline">SQLAlchemy</Badge>
+                      <Badge variant="outline">Celery</Badge>
+                      <Badge variant="outline">Redis</Badge>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Matières clés uniquement (données formation actuelle retirées) */}
-              <Card className="relative overflow-hidden border-2 hover:border-accent-sky/30 bg-gradient-to-br from-card to-accent-sky/5 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/5 to-transparent opacity-50" />
+              {/* Bases de données & Infrastructure */}
+              <Card className="relative overflow-hidden border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
                 <CardHeader className="relative">
-                  <div className="flex items-center gap-3 mb-2">
-                    <BookOpenIcon className="h-6 w-6 text-accent-sky" />
-                    <CardTitle className="text-xl">{t('cursus.key_courses')}</CardTitle>
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <Target className="h-5 w-5" />
+                    <CardTitle className="text-xl">
+                      {language === 'fr' ? 'Données & Infrastructure' : 'Data & Infrastructure'}
+                    </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="relative">
-                  <div className="grid grid-cols-1 gap-3">
-                    {cursus && cursus.courses && cursus.courses.length > 0 ? (
-                      cursus.courses.map((label, index) => (
-                        <div key={`${label}-${index}`} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                          <div className="w-8 h-8 rounded-full bg-accent-sky/20 text-accent-sky flex items-center justify-center text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <span className="text-sm font-medium">{label}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-sm text-muted-foreground">Aucune matière disponible pour le moment.</div>
-                    )}
+                <CardContent className="relative space-y-4">
+                  <div>
+                    <p className="font-semibold mb-2 text-foreground">
+                      {language === 'fr' ? 'Bases de Données' : 'Databases'}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline">PostgreSQL</Badge>
+                      <Badge variant="outline">MySQL</Badge>
+                      <Badge variant="outline">SQLite</Badge>
+                      <Badge variant="outline">MongoDB</Badge>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="font-semibold mb-2 text-foreground">
+                      {language === 'fr' ? 'Déploiement & DevOps' : 'Deployment & DevOps'}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="outline">Docker</Badge>
+                      <Badge variant="outline">Linux</Badge>
+                      <Badge variant="outline">Git</Badge>
+                      <Badge variant="outline">CI/CD</Badge>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
+
+            {cursus && (
+              <Card className="mt-8 border-2 bg-gradient-to-br from-card to-muted/5">
+                <CardHeader>
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <GraduationCap className="h-5 w-5" />
+                    <CardTitle className="text-xl">{cursus.program}</CardTitle>
+                  </div>
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <MapPin className="h-4 w-4" /> {cursus.institution}
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">{cursus.specialization_desc}</p>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Badge variant="secondary">{cursus.status_label}</Badge>
+                    <span className="text-muted-foreground">{cursus.year_label}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </section>
 
@@ -650,12 +726,18 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Projets récents */}
+        {/* Projets récents - Solutions développées */}
         <section id="projects" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('projects.recent.title')}</h2>
-              <p className="text-lg text-muted-foreground">{t('projects.recent.subtitle')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Projets & Réalisations' : 'Projects & Achievements'}
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                {language === 'fr'
+                  ? 'Découvrez mes solutions de gestion de stock développées pour des PME'
+                  : 'Discover my inventory management solutions developed for SMEs'}
+              </p>
             </div>
 
             {loadingProjects ? (
@@ -720,12 +802,18 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Articles récents */}
+        {/* Articles & Ressources */}
         <section id="blog" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">{t('blog.recent.title')}</h2>
-              <p className="text-lg text-muted-foreground">{t('blog.recent.subtitle')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Articles & Ressources' : 'Articles & Resources'}
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                {language === 'fr'
+                  ? 'Conseils et bonnes pratiques en gestion de stock et développement Python'
+                  : 'Tips and best practices for inventory management and Python development'}
+              </p>
             </div>
 
             {loadingPosts ? (
@@ -791,15 +879,31 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Indicateurs de confiance */}
-        <section className="py-12 text-center">
-          <h3 className="text-xl font-semibold mb-6">{t('common.trust_title')}</h3>
-          <div className="flex items-center justify-center gap-8 opacity-80">
-            <div className="flex items-center gap-2 text-sm"><Shield className="w-4 h-4" /><span>{t('common.secure_payment')}</span></div>
-            <div className="w-px h-4 bg-border"></div>
-            <div className="flex items-center gap-2 text-sm"><Clock className="w-4 h-4" /><span>{t('common.access_24_7')}</span></div>
-            <div className="w-px h-4 bg-border"></div>
-            <div className="flex items-center gap-2 text-sm"><Star className="w-4 h-4" /><span>{t('common.quality')}</span></div>
+        {/* Indicateurs de confiance - B2B */}
+        <section className="py-12 text-center border-t">
+          <h3 className="text-xl font-semibold mb-6">
+            {language === 'fr' ? 'Pourquoi me choisir ?' : 'Why Choose Me?'}
+          </h3>
+          <div className="flex items-center justify-center gap-8 opacity-80 flex-wrap">
+            <div className="flex items-center gap-2 text-sm">
+              <Shield className="w-4 h-4 text-primary" />
+              <span>{language === 'fr' ? 'Solutions Sécurisées' : 'Secure Solutions'}</span>
+            </div>
+            <div className="w-px h-4 bg-border hidden md:block"></div>
+            <div className="flex items-center gap-2 text-sm">
+              <Target className="w-4 h-4 text-primary" />
+              <span>{language === 'fr' ? 'Sur Mesure' : 'Tailor-Made'}</span>
+            </div>
+            <div className="w-px h-4 bg-border hidden md:block"></div>
+            <div className="flex items-center gap-2 text-sm">
+              <Clock className="w-4 h-4 text-primary" />
+              <span>{language === 'fr' ? 'Support Réactif' : 'Responsive Support'}</span>
+            </div>
+            <div className="w-px h-4 bg-border hidden md:block"></div>
+            <div className="flex items-center gap-2 text-sm">
+              <Star className="w-4 h-4 text-primary" />
+              <span>{language === 'fr' ? 'Code de Qualité' : 'Quality Code'}</span>
+            </div>
           </div>
         </section>
 
