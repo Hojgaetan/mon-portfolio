@@ -12,6 +12,13 @@ import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Brief
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen, BookOpen as BookOpenIcon } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
+import warehouse1 from "@/assets/warehouse-1.jpg";
+import warehouse2 from "@/assets/warehouse-2.jpg";
+import softwareDashboard from "@/assets/software-dashboard.jpg";
+import pythonInventory from "@/assets/python-inventory.jpg";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 
 interface ProjectPreview {
   id: string;
@@ -93,6 +100,12 @@ const Index = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { language, t } = useLanguage();
+  
+  const carouselPlugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: false })
+  );
+  
+  const carouselImages = [warehouse1, softwareDashboard, warehouse2, pythonInventory];
 
   // States pour aperçus
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -340,43 +353,77 @@ const Index = () => {
     <div className="min-h-screen h-auto bg-background flex flex-col">
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1">
-        {/* Hero */}
-        <section id="hero" className="scroll-mt-16 relative overflow-hidden bg-gradient-to-br from-background via-background to-accent-blue/5">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000%22%20fill-opacity%3D%220.02%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30" />
-          <div className="container mx-auto max-w-5xl p-6 relative">
+        {/* Hero avec carousel */}
+        <section id="hero" className="scroll-mt-16 relative overflow-hidden min-h-[600px] md:min-h-[700px]">
+          {/* Carousel d'images en arrière-plan */}
+          <div className="absolute inset-0 z-0">
+            <Carousel
+              plugins={[carouselPlugin.current]}
+              className="w-full h-full"
+              opts={{
+                loop: true,
+              }}
+            >
+              <CarouselContent className="h-full">
+                {carouselImages.map((image, index) => (
+                  <CarouselItem key={index} className="h-full">
+                    <div
+                      className="w-full h-full bg-cover bg-center"
+                      style={{ backgroundImage: `url(${image})` }}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </div>
+          
+          {/* Overlay sombre pour améliorer la lisibilité */}
+          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm z-10" />
+          
+          {/* Contenu */}
+          <div className="container mx-auto max-w-5xl p-6 relative z-20">
             <div className="text-center py-14">
               <div className="mb-6 flex justify-center">
                 <img
                   src={profilePhoto}
                   alt="Photo de profil"
-                  className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-2 ring-border shadow-lg"
+                  className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-primary/20 shadow-2xl"
                 />
               </div>
-              <Badge className="mb-4 bg-accent-blue/10 text-accent-blue border-accent-blue/20">{t('home.greeting')}</Badge>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 shadow-lg">
+                {language === 'fr' ? 'Développeur Python Freelance' : 'Freelance Python Developer'}
+              </Badge>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Joel Gaetan HASSAM OBAH
               </h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-                {t('home.subtitle')}
+              <p className="text-lg md:text-xl text-foreground mb-6 max-w-3xl mx-auto leading-relaxed font-semibold">
+                {language === 'fr' 
+                  ? 'Spécialisé en développement de logiciels de gestion de stock sur mesure en Python pour les PME'
+                  : 'Specialized in custom Python inventory management software development for SMEs'}
+              </p>
+              <p className="text-base md:text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Solutions complètes de suivi d\'inventaire, alertes automatiques, reporting en temps réel et intégrations ERP'
+                  : 'Complete inventory tracking solutions, automated alerts, real-time reporting and ERP integrations'}
               </p>
 
               {/* Stats */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
-                <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-blue">{projectsCount !== null ? projectsCount.toLocaleString('fr-FR') : '—'}</div>
-                  <div className="text-sm text-muted-foreground">{t('stats.projects_recent')}</div>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+                  <div className="text-2xl font-bold text-primary">{projectsCount !== null ? projectsCount.toLocaleString('fr-FR') : '—'}</div>
+                  <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Projets réalisés' : 'Projects completed'}</div>
                 </div>
-                <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-green">{publishedPostsCount !== null ? publishedPostsCount.toLocaleString('fr-FR') : '—'}</div>
-                  <div className="text-sm text-muted-foreground">{t('stats.articles_published')}</div>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+                  <div className="text-2xl font-bold text-primary">{publishedPostsCount !== null ? publishedPostsCount.toLocaleString('fr-FR') : '—'}</div>
+                  <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Articles publiés' : 'Published articles'}</div>
                 </div>
-                <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-yellow">24/7</div>
-                  <div className="text-sm text-muted-foreground">{t('stats.access')}</div>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+                  <div className="text-2xl font-bold text-primary">24/7</div>
+                  <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Disponibilité' : 'Availability'}</div>
                 </div>
-                <div className="text-center p-4">
-                  <div className="text-2xl font-bold text-accent-red">{new Date().getFullYear()}</div>
-                  <div className="text-sm text-muted-foreground">{t('stats.current_year')}</div>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+                  <div className="text-2xl font-bold text-primary">Python</div>
+                  <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Technologie' : 'Technology'}</div>
                 </div>
               </div>
             </div>
