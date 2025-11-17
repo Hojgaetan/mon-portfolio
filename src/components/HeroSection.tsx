@@ -1,15 +1,20 @@
-import logoBeige from "@/assets/logo fond beige 1.png";
-import logoNuit from "@/assets/logo fond nuit 1.png";
-import { useContext } from "react";
-import { ThemeProviderContext } from "./theme-provider";
+import warehouse1 from "@/assets/warehouse-1.jpg";
+import warehouse2 from "@/assets/warehouse-2.jpg";
+import softwareDashboard from "@/assets/software-dashboard.jpg";
+import pythonInventory from "@/assets/python-inventory.jpg";
 import { useTypewriter } from "@/hooks/use-typewriter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import { useRef } from "react";
 
 export const HeroSection = () => {
-  const { theme } = useContext(ThemeProviderContext);
   const { language } = useLanguage();
-  const isDark = (theme === "dark") || (theme === "system" && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const backgroundImageLogo = isDark ? logoNuit : logoBeige;
+  const plugin = useRef(
+    Autoplay({ delay: 4000, stopOnInteraction: false })
+  );
+
+  const carouselImages = [warehouse1, softwareDashboard, warehouse2, pythonInventory];
 
   // Animation de frappe pour le greeting
   const typewriterWords = language === 'fr' 
@@ -26,12 +31,28 @@ export const HeroSection = () => {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* Background with blur effect */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImageLogo})` }}
-      />
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      {/* Background carousel */}
+      <div className="absolute inset-0">
+        <Carousel
+          plugins={[plugin.current]}
+          className="w-full h-full"
+          opts={{
+            loop: true,
+          }}
+        >
+          <CarouselContent className="h-screen">
+            {carouselImages.map((image, index) => (
+              <CarouselItem key={index} className="h-screen">
+                <div
+                  className="w-full h-full bg-cover bg-center"
+                  style={{ backgroundImage: `url(${image})` }}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      </div>
+      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
 
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 font-sans">
@@ -63,7 +84,7 @@ export const HeroSection = () => {
             </div>
 
             {/* Contact Info as Code */}
-            <div className="bg-card/60 backdrop-blur-sm rounded-lg p-6 border border-accent-blue/20 font-sans text-sm space-y-2 max-w-2xl">
+            <div className="bg-card/80 backdrop-blur-md rounded-lg p-6 border border-primary/20 shadow-xl font-sans text-sm space-y-2 max-w-2xl">
               <div className="text-code-comment">// bio</div>
 
               <div className="flex items-center space-x-2">
