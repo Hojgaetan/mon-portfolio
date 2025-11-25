@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, Award, Target, GraduationCap, MapPin } from "lucide-react";
+import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, Award, Target, GraduationCap, MapPin, CheckCircle, Users, TrendingUp, Zap, MessageSquare, PhoneCall, Mail, HelpCircle, ChevronDown } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen, BookOpen as BookOpenIcon } from "lucide-react";
 import profilePhoto from "../assets/photo-p.JPG";
@@ -503,6 +503,102 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Section Processus de travail */}
+        <section id="process" className="py-16 border-t scroll-mt-16 bg-muted/30">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                {language === 'fr' ? 'Notre Méthode' : 'Our Method'}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Comment ça marche ?' : 'How It Works?'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Un processus simple et transparent pour transformer vos besoins en solution efficace'
+                  : 'A simple and transparent process to turn your needs into an effective solution'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="relative">
+                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <MessageSquare className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">
+                      {language === 'fr' ? '1. Analyse des besoins' : '1. Needs Analysis'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {language === 'fr'
+                      ? 'Échange détaillé pour comprendre vos processus et identifier vos besoins spécifiques'
+                      : 'Detailed discussion to understand your processes and identify your specific needs'}
+                  </CardContent>
+                </Card>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+              </div>
+
+              <div className="relative">
+                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <Target className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">
+                      {language === 'fr' ? '2. Conception' : '2. Design'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {language === 'fr'
+                      ? 'Élaboration d\'une solution sur mesure adaptée à votre entreprise et vos flux'
+                      : 'Development of a tailor-made solution adapted to your company and workflows'}
+                  </CardContent>
+                </Card>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+              </div>
+
+              <div className="relative">
+                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">
+                      {language === 'fr' ? '3. Développement' : '3. Development'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {language === 'fr'
+                      ? 'Développement en Python avec tests réguliers et ajustements selon vos retours'
+                      : 'Python development with regular testing and adjustments based on your feedback'}
+                  </CardContent>
+                </Card>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+              </div>
+
+              <div>
+                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <CheckCircle className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">
+                      {language === 'fr' ? '4. Déploiement' : '4. Deployment'}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    {language === 'fr'
+                      ? 'Mise en production, formation de vos équipes et support continu'
+                      : 'Production deployment, team training, and ongoing support'}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* À propos - Freelance Python */}
         <section id="about" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
@@ -534,6 +630,123 @@ const Index = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section Avantages */}
+        <section id="benefits" className="py-16 border-t scroll-mt-16 bg-muted/30">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                {language === 'fr' ? 'Avantages' : 'Benefits'}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Pourquoi choisir mes services ?' : 'Why Choose My Services?'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Des solutions qui apportent une réelle valeur ajoutée à votre entreprise'
+                  : 'Solutions that bring real added value to your business'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
+                    <TrendingUp className="h-6 w-6 text-green-600" />
+                  </div>
+                  <CardTitle className="text-xl">
+                    {language === 'fr' ? 'Réduction des coûts' : 'Cost Reduction'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    {language === 'fr'
+                      ? 'Optimisez vos niveaux de stock et réduisez les coûts de stockage de 20 à 30%'
+                      : 'Optimize your stock levels and reduce storage costs by 20 to 30%'}
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Moins de surstockage' : 'Less overstocking'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Réduction des ruptures' : 'Reduced stockouts'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Meilleure trésorerie' : 'Better cash flow'}</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
+                    <Zap className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl">
+                    {language === 'fr' ? 'Gain de temps' : 'Time Savings'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    {language === 'fr'
+                      ? 'Automatisez vos processus et libérez jusqu\'à 15h par semaine'
+                      : 'Automate your processes and free up to 15 hours per week'}
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Saisies automatiques' : 'Automatic entries'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Rapports instantanés' : 'Instant reports'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Alertes proactives' : 'Proactive alerts'}</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mb-4">
+                    <Shield className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <CardTitle className="text-xl">
+                    {language === 'fr' ? 'Fiabilité & Sécurité' : 'Reliability & Security'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">
+                    {language === 'fr'
+                      ? 'Code de qualité professionnelle avec sécurité renforcée'
+                      : 'Professional quality code with enhanced security'}
+                  </p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Tests automatisés' : 'Automated tests'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Sauvegardes régulières' : 'Regular backups'}</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
+                      <span>{language === 'fr' ? 'Support dédié' : 'Dedicated support'}</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
@@ -802,6 +1015,111 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Section Témoignages */}
+        <section id="testimonials" className="py-16 border-t scroll-mt-16 bg-muted/30">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                {language === 'fr' ? 'Témoignages' : 'Testimonials'}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Ils me font confiance' : 'They Trust Me'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Découvrez les retours d\'expérience de mes clients'
+                  : 'Discover feedback from my clients'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                      AM
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Aminata M.</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'fr' ? 'Gérante, Commerce de détail' : 'Manager, Retail Business'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground italic">
+                    {language === 'fr'
+                      ? '"Depuis l\'implémentation du système de gestion de stock, nous avons réduit nos ruptures de 40%. Le système d\'alertes automatiques est un vrai gain de temps !"'
+                      : '"Since implementing the inventory management system, we\'ve reduced stockouts by 40%. The automatic alert system is a real time-saver!"'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold text-lg">
+                      BD
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Boubacar D.</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'fr' ? 'Directeur logistique, Distribution' : 'Logistics Director, Distribution'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground italic">
+                    {language === 'fr'
+                      ? '"Une solution sur mesure parfaitement adaptée à nos besoins. Les rapports en temps réel nous permettent de prendre les bonnes décisions rapidement."'
+                      : '"A tailor-made solution perfectly adapted to our needs. Real-time reports allow us to make the right decisions quickly."'}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                      FK
+                    </div>
+                    <div>
+                      <CardTitle className="text-base">Fatou K.</CardTitle>
+                      <p className="text-sm text-muted-foreground">
+                        {language === 'fr' ? 'Responsable achat, Industrie' : 'Purchasing Manager, Industry'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground italic">
+                    {language === 'fr'
+                      ? '"Professionnel, réactif et à l\'écoute. Le support technique est excellent et les mises à jour régulières apportent toujours des améliorations pertinentes."'
+                      : '"Professional, responsive and attentive. Technical support is excellent and regular updates always bring relevant improvements."'}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Articles & Ressources */}
         <section id="blog" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
@@ -876,6 +1194,140 @@ const Index = () => {
                 {t('blog.read_blog')}
               </Button>
             </div>
+          </div>
+        </section>
+
+        {/* Section FAQ */}
+        <section id="faq" className="py-16 border-t scroll-mt-16 bg-muted/30">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="text-center mb-12">
+              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                {language === 'fr' ? 'FAQ' : 'FAQ'}
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                {language === 'fr' ? 'Questions fréquentes' : 'Frequently Asked Questions'}
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {language === 'fr'
+                  ? 'Tout ce que vous devez savoir sur mes services'
+                  : 'Everything you need to know about my services'}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    {language === 'fr' ? 'Quel est le délai de réalisation ?' : 'What is the delivery time?'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                  {language === 'fr'
+                    ? 'Le délai varie selon la complexité du projet, généralement entre 2 et 8 semaines. Un planning détaillé est établi dès la phase de conception.'
+                    : 'The timeline varies depending on project complexity, typically between 2 and 8 weeks. A detailed schedule is established from the design phase.'}
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    {language === 'fr' ? 'Proposez-vous une formation ?' : 'Do you offer training?'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                  {language === 'fr'
+                    ? 'Oui, une formation complète est incluse pour vos équipes afin de garantir une prise en main optimale du système. Des sessions de suivi sont également prévues.'
+                    : 'Yes, comprehensive training is included for your teams to ensure optimal system adoption. Follow-up sessions are also planned.'}
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    {language === 'fr' ? 'Le logiciel peut-il évoluer ?' : 'Can the software evolve?'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                  {language === 'fr'
+                    ? 'Absolument. Les solutions développées sont conçues pour être évolutives. Des mises à jour et nouvelles fonctionnalités peuvent être ajoutées selon vos besoins.'
+                    : 'Absolutely. The developed solutions are designed to be scalable. Updates and new features can be added according to your needs.'}
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    {language === 'fr' ? 'Quel support après la livraison ?' : 'What support after delivery?'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="text-muted-foreground">
+                  {language === 'fr'
+                    ? 'Un support technique est disponible avec différentes formules : assistance par email, visio ou intervention sur site selon vos besoins et le contrat de maintenance.'
+                    : 'Technical support is available with different options: email assistance, video calls, or on-site intervention depending on your needs and maintenance contract.'}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Section CTA forte */}
+        <section id="cta" className="py-16 border-t scroll-mt-16">
+          <div className="max-w-4xl mx-auto px-4">
+            <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50"></div>
+              <CardContent className="relative py-12 text-center">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                  {language === 'fr' ? 'Prêt à optimiser votre gestion de stock ?' : 'Ready to Optimize Your Inventory Management?'}
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+                  {language === 'fr'
+                    ? 'Discutons de votre projet et trouvons ensemble la solution qui correspond à vos besoins'
+                    : 'Let\'s discuss your project and find the solution that fits your needs'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <Button 
+                    size="lg" 
+                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-xl text-lg px-8"
+                    onClick={() => {
+                      const contactSection = document.getElementById('contact');
+                      if (contactSection) {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    <PhoneCall className="mr-2 h-5 w-5" />
+                    {language === 'fr' ? 'Demander un devis' : 'Request a Quote'}
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline" 
+                    className="border-2 border-primary/30 hover:bg-primary/10 text-lg px-8"
+                    onClick={() => navigate('/produit')}
+                  >
+                    <Folder className="mr-2 h-5 w-5" />
+                    {language === 'fr' ? 'Voir nos solutions' : 'View Our Solutions'}
+                  </Button>
+                </div>
+                <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>{language === 'fr' ? 'Devis gratuit' : 'Free Quote'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>{language === 'fr' ? 'Sans engagement' : 'No Commitment'}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <span>{language === 'fr' ? 'Réponse sous 24h' : 'Response within 24h'}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
