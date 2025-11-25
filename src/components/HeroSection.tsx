@@ -34,7 +34,7 @@ export const HeroSection = () => {
       {/* Background carousel */}
       <div className="absolute inset-0">
         <Carousel
-          plugins={[plugin.current]}
+          plugins={[plugin.current as any]}
           className="w-full h-full"
           opts={{
             loop: true,

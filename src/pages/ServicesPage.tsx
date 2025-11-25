@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 import {
-  Palette, 
-  Linkedin, 
-  Globe, 
-  ShoppingCart, 
+  Package, 
+  Warehouse, 
+  TrendingUp, 
   CheckCircle, 
   Star, 
   Clock,
@@ -32,64 +31,49 @@ export default function ServicesPage() {
 
   const services = [
     {
-      id: "maquettes",
-      title: "Conception de maquettes web/mobile",
-      description: "Design moderne et responsive pour vos applications web et mobiles",
-      icon: Palette,
-      price: "À partir de 4000 F CFA / écran",
+      id: "supply-chain",
+      title: "Gestion de la chaîne d'approvisionnement",
+      description: "Solution complète Python pour gérer vos fournisseurs, commandes et livraisons de bout en bout",
+      icon: Package,
+      price: "À partir de 800 000 F CFA",
       features: [
-        "Design responsive",
-        "Prototype interactif",
-        "Guide de style",
-        "Livrables Figma"
+        "Suivi fournisseurs",
+        "Gestion commandes",
+        "Traçabilité livraisons",
+        "Reporting avancé"
       ],
-      badge: "🎨 Design",
+      badge: "📦 Complet",
       color: "accent-blue"
     },
     {
-      id: "linkedin",
-      title: "Création de publicité LinkedIn Pro",
-      description: "Optimisation de profil et stratégie de contenu pour booster votre présence",
-      icon: Linkedin,
-      price: "À 10 000 F CFA",
+      id: "inventory",
+      title: "Gestion de stock",
+      description: "Logiciel Python sur mesure pour suivre vos stocks en temps réel avec alertes automatiques",
+      icon: Warehouse,
+      price: "À partir de 500 000 F CFA",
       features: [
-        "Profil optimisé",
-        "Rédaction bio",
-        "Photos professionnelles",
-        "Stratégie contenu"
+        "Suivi temps réel",
+        "Alertes automatiques",
+        "Multi-entrepôts",
+        "Rapports détaillés"
       ],
-      badge: "💼 Professionnel",
-      color: "accent-sky"
-    },
-    {
-      id: "vitrine",
-      title: "Création de site vitrine",
-      description: "Site web professionnel pour présenter votre activité",
-      icon: Globe,
-      price: "À partir de 75 000 F CFA",
-      features: [
-        "Design personnalisé",
-        "SEO optimisé",
-        "Responsive",
-        "Hébergement inclus"
-      ],
-      badge: "🌐 Populaire",
+      badge: "🔥 Populaire",
       color: "accent-green"
     },
     {
-      id: "ecommerce",
-      title: "Création de sites e-commerce",
-      description: "Boutique en ligne complète pour vendre vos produits",
-      icon: ShoppingCart,
-      price: "À partir de 150 000 F CFA",
+      id: "optimization",
+      title: "Optimisation de la gestion de stock des PME",
+      description: "Analyse et optimisation de vos processus de stock avec algorithmes Python pour réduire les coûts",
+      icon: TrendingUp,
+      price: "À partir de 350 000 F CFA",
       features: [
-        "Paiement sécurisé",
-        "Gestion stock",
-        "Interface admin",
-        "Support client"
+        "Analyse prédictive",
+        "Réduction coûts",
+        "Optimisation niveaux",
+        "Tableaux de bord"
       ],
-      badge: "🚀 Premium",
-      color: "accent-red"
+      badge: "🚀 Performance",
+      color: "accent-sky"
     }
   ];
 
