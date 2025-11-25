@@ -49,6 +49,7 @@ const NAV_GROUPS = [
     icon: FileText,
     items: [
       { id: "blog", label: "Blog", icon: FileText, section: "content:blog" },
+      { id: "blog_categories", label: "Catégories Blog", icon: Tag, section: "content:blog_categories" },
       { id: "projects", label: "Projets", icon: FolderOpen, section: "content:projects" },
       { id: "about", label: "À propos", icon: UserIcon, section: "content:about" },
       { id: "categories", label: "Catégories", icon: Tag, section: "content:categories" },

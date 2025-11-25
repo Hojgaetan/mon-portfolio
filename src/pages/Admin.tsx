@@ -7,6 +7,7 @@ import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { ProjectsManager } from "@/components/admin/ProjectsManager";
 import { BlogManager } from "@/components/admin/BlogManager";
+import { BlogCategoriesManager } from "@/components/admin/BlogCategoriesManager";
 import { AboutManager } from "@/components/admin/AboutManager";
 import { ContactMessagesManager } from "@/components/admin/ContactMessagesManager";
 import { CategorieManager } from "@/components/admin/CategorieManager";
@@ -147,6 +148,8 @@ export default function Admin() {
         return <ProjectsManager />;
       case "content:blog":
         return <BlogManager />;
+      case "content:blog_categories":
+        return <BlogCategoriesManager />;
       case "content:about":
         return <AboutManager />;
       case "interactions:messages":
