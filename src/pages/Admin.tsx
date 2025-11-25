@@ -20,7 +20,7 @@ import { CursusManager } from "@/components/admin/CursusManager";
 import { CertificationsManager } from "@/components/admin/CertificationsManager";
 import { HomeSectionsManager } from "@/components/admin/HomeSectionsManager";
 import { AdminExportUsage } from "@/components/admin/AdminExportUsage";
-import { CommentReactionsStats } from "@/components/admin/CommentReactionsStats"; // réutilisé comme placeholder global
+import { AdminReactionsManager } from "@/components/admin/AdminReactionsManager";
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
@@ -154,14 +154,7 @@ export default function Admin() {
       case "interactions:comments":
         return <CommentsManager />;
       case "interactions:reactions":
-        return (
-          <div className="space-y-6">
-            <h1 className="text-3xl font-bold">Réactions aux commentaires</h1>
-            <p className="text-muted-foreground">Vue agrégée à construire (placeholder). Exemple ci-dessous pour un commentId spécifique.</p>
-            {/* Placeholder démonstration - un ID fictif */}
-            <CommentReactionsStats commentId="00000000-0000-0000-0000-000000000000" />
-          </div>
-        );
+        return <AdminReactionsManager />;
       case "content:categories":
         return <CategorieManager />;
       case "catalog:entreprises":
