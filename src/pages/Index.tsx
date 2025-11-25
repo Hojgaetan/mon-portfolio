@@ -387,26 +387,26 @@ const Index = () => {
           </div>
           
           {/* Overlay sombre pour améliorer la lisibilité */}
-          <div className="absolute inset-0 bg-background/85 backdrop-blur-sm z-10" />
-          
+          <div className="absolute inset-0 bg-background/90 backdrop-blur-md z-10" />
+
           {/* Contenu */}
           <div className="container mx-auto max-w-5xl p-6 relative z-20">
-            <div className="text-center py-14">
-              <div className="mb-6 flex justify-center">
+            <div className="text-center py-14 animate-fade-in-up">
+              <div className="mb-6 flex justify-center animate-scale-in">
                 <img
                   src={profilePhoto}
                   alt="Photo de profil"
-                  className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-primary/20 shadow-2xl"
+                  className="w-24 h-24 md:w-28 md:h-28 rounded-full object-cover ring-4 ring-accent-blue/30 shadow-2xl hover:ring-accent-blue/50 transition-all duration-300"
                 />
               </div>
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 shadow-lg">
+              <Badge className="mb-4 bg-accent-blue/20 text-accent-blue border-accent-blue/30 shadow-lg hover:bg-accent-blue/30 transition-all">
                 {language === 'fr' ? 'Développeur Python Freelance' : 'Freelance Python Developer'}
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Joel Gaetan HASSAM OBAH
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-4 text-foreground">
+                Joel Gaetan <span className="text-accent-blue">HASSAM OBAH</span>
               </h1>
-              <p className="text-lg md:text-xl text-foreground mb-6 max-w-3xl mx-auto leading-relaxed font-semibold">
-                {language === 'fr' 
+              <p className="text-lg md:text-xl text-foreground mb-6 max-w-3xl mx-auto leading-relaxed font-medium">
+                {language === 'fr'
                   ? 'Spécialisé en développement de logiciels de gestion de stock sur mesure en Python pour les PME'
                   : 'Specialized in custom Python inventory management software development for SMEs'}
               </p>
@@ -419,8 +419,8 @@ const Index = () => {
             {/* Stats avec animations */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
               <ScaleIn delay={0.1}>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-                  <div className="text-2xl font-bold text-primary">
+                <div className="text-center p-4 bg-card/70 backdrop-blur-sm rounded-lg border border-accent-blue/20 hover:border-accent-blue/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent-blue/10">
+                  <div className="text-2xl font-bold text-accent-blue">
                     {projectsCount !== null ? (
                       <CountUpAnimation end={projectsCount} duration={2000} suffix="+" />
                     ) : '—'}
@@ -429,8 +429,8 @@ const Index = () => {
                 </div>
               </ScaleIn>
               <ScaleIn delay={0.2}>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-                  <div className="text-2xl font-bold text-primary">
+                <div className="text-center p-4 bg-card/70 backdrop-blur-sm rounded-lg border border-accent-sky/20 hover:border-accent-sky/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent-sky/10">
+                  <div className="text-2xl font-bold text-accent-sky">
                     {publishedPostsCount !== null ? (
                       <CountUpAnimation end={publishedPostsCount} duration={2000} suffix="+" />
                     ) : '—'}
@@ -439,14 +439,14 @@ const Index = () => {
                 </div>
               </ScaleIn>
               <ScaleIn delay={0.3}>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-                  <div className="text-2xl font-bold text-primary">24/7</div>
+                <div className="text-center p-4 bg-card/70 backdrop-blur-sm rounded-lg border border-accent-green/20 hover:border-accent-green/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent-green/10">
+                  <div className="text-2xl font-bold text-accent-green">24/7</div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Disponibilité' : 'Availability'}</div>
                 </div>
               </ScaleIn>
               <ScaleIn delay={0.4}>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-                  <div className="text-2xl font-bold text-primary">Python</div>
+                <div className="text-center p-4 bg-card/70 backdrop-blur-sm rounded-lg border border-accent-yellow/20 hover:border-accent-yellow/50 transition-all duration-300 hover:shadow-lg hover:shadow-accent-yellow/10">
+                  <div className="text-2xl font-bold text-accent-yellow">Python</div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Technologie' : 'Technology'}</div>
                 </div>
               </ScaleIn>
@@ -459,6 +459,7 @@ const Index = () => {
         <section id="quick-links" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
+              <Badge className="mb-4 bg-accent-blue/20 text-accent-blue border-accent-blue/30">{language === 'fr' ? 'Solutions' : 'Solutions'}</Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
                 {language === 'fr' ? 'Solutions de Gestion de Stock' : 'Inventory Management Solutions'}
               </h2>
@@ -469,10 +470,11 @@ const Index = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/produit')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              {/* Carte 1 - Bleu */}
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-blue/50 bg-gradient-to-br from-card to-accent-blue/5 cursor-pointer hover:shadow-accent-blue/20" onClick={() => navigate('/produit')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Target className="h-5 w-5 text-primary" />
+                  <Target className="h-5 w-5 text-accent-blue" />
                   <CardTitle className="text-base">
                     {language === 'fr' ? 'Suivi en Temps Réel' : 'Real-Time Tracking'}
                   </CardTitle>
@@ -483,10 +485,11 @@ const Index = () => {
                     : 'Track your inventory in real-time with intuitive dashboards'}
                 </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/services')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              {/* Carte 2 - Verte */}
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-green/50 bg-gradient-to-br from-card to-accent-green/5 cursor-pointer hover:shadow-accent-green/20" onClick={() => navigate('/services')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-green/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Shield className="h-5 w-5 text-primary" />
+                  <Shield className="h-5 w-5 text-accent-green" />
                   <CardTitle className="text-base">
                     {language === 'fr' ? 'Alertes Automatiques' : 'Automated Alerts'}
                   </CardTitle>
@@ -497,10 +500,11 @@ const Index = () => {
                     : 'Receive automatic alerts for low stock and restocking needs'}
                 </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/projets')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              {/* Carte 3 - Sky */}
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-sky/50 bg-gradient-to-br from-card to-accent-sky/5 cursor-pointer hover:shadow-accent-sky/20" onClick={() => navigate('/projets')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-sky/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <FolderKanban className="h-5 w-5 text-primary" />
+                  <FolderKanban className="h-5 w-5 text-accent-sky" />
                   <CardTitle className="text-base">
                     {language === 'fr' ? 'Rapports & Analytics' : 'Reports & Analytics'}
                   </CardTitle>
@@ -511,10 +515,11 @@ const Index = () => {
                     : 'Generate detailed reports and analyze your inventory data'}
                 </CardContent>
               </Card>
-              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 cursor-pointer" onClick={() => navigate('/blog')}>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+              {/* Carte 4 - Jaune */}
+              <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 hover:border-accent-yellow/50 bg-gradient-to-br from-card to-accent-yellow/5 cursor-pointer hover:shadow-accent-yellow/20" onClick={() => navigate('/blog')}>
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-yellow/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
                 <CardHeader className="relative flex flex-row items-center gap-3">
-                  <Briefcase className="h-5 w-5 text-primary" />
+                  <Briefcase className="h-5 w-5 text-accent-yellow" />
                   <CardTitle className="text-base">
                     {language === 'fr' ? 'Intégrations ERP' : 'ERP Integrations'}
                   </CardTitle>
@@ -533,7 +538,7 @@ const Index = () => {
         <section id="process" className="py-16 border-t scroll-mt-16 bg-muted/30">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+              <Badge className="mb-4 bg-accent-blue/20 text-accent-blue border-accent-blue/30">
                 {language === 'fr' ? 'Notre Méthode' : 'Our Method'}
               </Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -545,17 +550,15 @@ const Index = () => {
                   : 'A simple and transparent process to turn your needs into an effective solution'}
               </p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {/* Étape 1 */}
               <div className="relative">
-                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                <Card className="h-full border-2 hover:border-accent-blue/50 transition-all duration-300 bg-gradient-to-br from-card to-accent-blue/5">
                   <CardHeader>
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <MessageSquare className="h-6 w-6 text-primary" />
+                    <div className="w-12 h-12 rounded-full bg-accent-blue/20 flex items-center justify-center mb-4">
+                      <MessageSquare className="h-6 w-6 text-accent-blue" />
                     </div>
-                    <CardTitle className="text-lg">
-                      {language === 'fr' ? '1. Analyse des besoins' : '1. Needs Analysis'}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{language === 'fr' ? '1. Analyse des besoins' : '1. Needs Analysis'}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
                     {language === 'fr'
@@ -563,18 +566,16 @@ const Index = () => {
                       : 'Detailed discussion to understand your processes and identify your specific needs'}
                   </CardContent>
                 </Card>
-                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-accent-blue/30"></div>
               </div>
-
+              {/* Étape 2 */}
               <div className="relative">
-                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                <Card className="h-full border-2 hover:border-accent-sky/50 transition-all duration-300 bg-gradient-to-br from-card to-accent-sky/5">
                   <CardHeader>
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <Target className="h-6 w-6 text-primary" />
+                    <div className="w-12 h-12 rounded-full bg-accent-sky/20 flex items-center justify-center mb-4">
+                      <Target className="h-6 w-6 text-accent-sky" />
                     </div>
-                    <CardTitle className="text-lg">
-                      {language === 'fr' ? '2. Conception' : '2. Design'}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{language === 'fr' ? '2. Conception' : '2. Design'}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
                     {language === 'fr'
@@ -582,18 +583,16 @@ const Index = () => {
                       : 'Development of a tailor-made solution adapted to your company and workflows'}
                   </CardContent>
                 </Card>
-                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-accent-sky/30"></div>
               </div>
-
+              {/* Étape 3 */}
               <div className="relative">
-                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                <Card className="h-full border-2 hover:border-accent-green/50 transition-all duration-300 bg-gradient-to-br from-card to-accent-green/5">
                   <CardHeader>
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <Zap className="h-6 w-6 text-primary" />
+                    <div className="w-12 h-12 rounded-full bg-accent-green/20 flex items-center justify-center mb-4">
+                      <Zap className="h-6 w-6 text-accent-green" />
                     </div>
-                    <CardTitle className="text-lg">
-                      {language === 'fr' ? '3. Développement' : '3. Development'}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{language === 'fr' ? '3. Développement' : '3. Development'}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
                     {language === 'fr'
@@ -601,18 +600,16 @@ const Index = () => {
                       : 'Python development with regular testing and adjustments based on your feedback'}
                   </CardContent>
                 </Card>
-                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-primary/30"></div>
+                <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-accent-green/30"></div>
               </div>
-
+              {/* Étape 4 */}
               <div>
-                <Card className="h-full border-2 hover:border-primary/30 transition-all duration-300">
+                <Card className="h-full border-2 hover:border-accent-yellow/50 transition-all duration-300 bg-gradient-to-br from-card to-accent-yellow/5">
                   <CardHeader>
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <CheckCircle className="h-6 w-6 text-primary" />
+                    <div className="w-12 h-12 rounded-full bg-accent-yellow/30 flex items-center justify-center mb-4">
+                      <CheckCircle className="h-6 w-6 text-accent-yellow" />
                     </div>
-                    <CardTitle className="text-lg">
-                      {language === 'fr' ? '4. Déploiement' : '4. Deployment'}
-                    </CardTitle>
+                    <CardTitle className="text-lg">{language === 'fr' ? '4. Déploiement' : '4. Deployment'}</CardTitle>
                   </CardHeader>
                   <CardContent className="text-sm text-muted-foreground">
                     {language === 'fr'
@@ -639,19 +636,15 @@ const Index = () => {
                     : 'I design and develop custom inventory management software in Python for SMEs. My expertise allows me to create solutions tailored to each company\'s specific needs, focusing on performance, ease of use, and scalability.'}
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="secondary" className="text-sm">Python</Badge>
-                  <Badge variant="secondary" className="text-sm">
-                    {language === 'fr' ? 'Gestion de Stock' : 'Inventory Management'}
-                  </Badge>
-                  <Badge variant="secondary" className="text-sm">Django / Flask</Badge>
-                  <Badge variant="secondary" className="text-sm">PostgreSQL</Badge>
-                  <Badge variant="secondary" className="text-sm">
-                    {language === 'fr' ? 'Solutions PME' : 'SME Solutions'}
-                  </Badge>
+                  <Badge variant="outline" className="text-accent-blue border-accent-blue/40">Python</Badge>
+                  <Badge variant="outline" className="text-accent-green border-accent-green/40">{language === 'fr' ? 'Gestion de Stock' : 'Inventory Management'}</Badge>
+                  <Badge variant="outline" className="text-accent-sky border-accent-sky/40">Django / Flask</Badge>
+                  <Badge variant="outline" className="text-accent-yellow border-accent-yellow/40">PostgreSQL</Badge>
+                  <Badge variant="outline" className="text-accent-red border-accent-red/40">{language === 'fr' ? 'Solutions PME' : 'SME Solutions'}</Badge>
                 </div>
               </div>
               <div className="flex md:justify-end">
-                <Button className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg transition-all" onClick={() => navigate('/a-propos')}>
+                <Button className="bg-accent-blue hover:bg-accent-blue/90 text-white shadow-lg shadow-accent-blue/20 hover:shadow-accent-blue/30 transition-all" onClick={() => navigate('/a-propos')}>
                   {language === 'fr' ? 'En savoir plus' : 'Learn more'}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -664,7 +657,7 @@ const Index = () => {
         <section id="benefits" className="py-16 border-t scroll-mt-16 bg-muted/30">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+              <Badge className="mb-4 bg-accent-green/20 text-accent-green border-accent-green/30">
                 {language === 'fr' ? 'Avantages' : 'Benefits'}
               </Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -782,7 +775,7 @@ const Index = () => {
           <div className="max-w-6xl mx-auto px-4">
             <AnimatedSection direction="up" delay={0.1}>
               <div className="text-center mb-12">
-                <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                <Badge className="mb-4 bg-accent-sky/20 text-accent-sky border-accent-sky/30">
                   {language === 'fr' ? 'Expertise Technique' : 'Technical Expertise'}
                 </Badge>
                 <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -801,76 +794,37 @@ const Index = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
               {/* Technologies Python */}
-              <Card className="relative overflow-hidden border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
+              <Card className="relative overflow-hidden border-2 hover:border-accent-blue/40 bg-gradient-to-br from-card to-accent-blue/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/10 to-transparent opacity-30" />
                 <CardHeader className="relative">
-                  <div className="flex items-center gap-2 text-primary mb-2">
+                  <div className="flex items-center gap-2 text-accent-blue mb-2">
                     <Award className="h-5 w-5" />
-                    <CardTitle className="text-xl">
-                      {language === 'fr' ? 'Backend & Logique Métier' : 'Backend & Business Logic'}
-                    </CardTitle>
+                    <CardTitle className="text-xl">{language === 'fr' ? 'Backend & Logique Métier' : 'Backend & Business Logic'}</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="relative space-y-4">
                   <div>
                     <p className="font-semibold mb-2 text-foreground">Python & Frameworks</p>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">Python 3.x</Badge>
-                      <Badge variant="outline">Django</Badge>
-                      <Badge variant="outline">Flask</Badge>
-                      <Badge variant="outline">FastAPI</Badge>
+                      <Badge variant="outline" className="border-accent-blue/40 text-accent-blue">Python 3.x</Badge>
+                      <Badge variant="outline" className="border-accent-green/40 text-accent-green">Django</Badge>
+                      <Badge variant="outline" className="border-accent-sky/40 text-accent-sky">Flask</Badge>
+                      <Badge variant="outline" className="border-accent-yellow/40 text-accent-yellow">FastAPI</Badge>
                     </div>
                   </div>
                   <div>
-                    <p className="font-semibold mb-2 text-foreground">
-                      {language === 'fr' ? 'Bibliothèques de Gestion' : 'Management Libraries'}
-                    </p>
+                    <p className="font-semibold mb-2 text-foreground">{language === 'fr' ? 'Bibliothèques de Gestion' : 'Management Libraries'}</p>
                     <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">Pandas</Badge>
-                      <Badge variant="outline">SQLAlchemy</Badge>
-                      <Badge variant="outline">Celery</Badge>
-                      <Badge variant="outline">Redis</Badge>
+                      <Badge variant="outline" className="border-accent-blue/40 text-accent-blue">Pandas</Badge>
+                      <Badge variant="outline" className="border-accent-green/40 text-accent-green">SQLAlchemy</Badge>
+                      <Badge variant="outline" className="border-accent-red/40 text-accent-red">Celery</Badge>
+                      <Badge variant="outline" className="border-accent-sky/40 text-accent-sky">Redis</Badge>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Bases de données & Infrastructure */}
-              <Card className="relative overflow-hidden border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 transition-all duration-300">
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
-                <CardHeader className="relative">
-                  <div className="flex items-center gap-2 text-primary mb-2">
-                    <Target className="h-5 w-5" />
-                    <CardTitle className="text-xl">
-                      {language === 'fr' ? 'Données & Infrastructure' : 'Data & Infrastructure'}
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="relative space-y-4">
-                  <div>
-                    <p className="font-semibold mb-2 text-foreground">
-                      {language === 'fr' ? 'Bases de Données' : 'Databases'}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">PostgreSQL</Badge>
-                      <Badge variant="outline">MySQL</Badge>
-                      <Badge variant="outline">SQLite</Badge>
-                      <Badge variant="outline">MongoDB</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="font-semibold mb-2 text-foreground">
-                      {language === 'fr' ? 'Déploiement & DevOps' : 'Deployment & DevOps'}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">Docker</Badge>
-                      <Badge variant="outline">Linux</Badge>
-                      <Badge variant="outline">Git</Badge>
-                      <Badge variant="outline">CI/CD</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+
             </div>
 
             {cursus && (
@@ -1051,7 +1005,7 @@ const Index = () => {
           <div className="max-w-6xl mx-auto px-4">
             <AnimatedSection direction="up" delay={0.1}>
               <div className="text-center mb-12">
-                <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                <Badge className="mb-4 bg-accent-yellow/30 text-accent-yellow border-accent-yellow/40">
                   {language === 'fr' ? 'Témoignages' : 'Testimonials'}
                 </Badge>
                 <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -1073,6 +1027,9 @@ const Index = () => {
         <section id="blog" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
             <div className="mb-8 text-center">
+              <Badge className="mb-4 bg-accent-green/20 text-accent-green border-accent-green/30">
+                {language === 'fr' ? 'Ressources' : 'Resources'}
+              </Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
                 {language === 'fr' ? 'Articles & Ressources' : 'Articles & Resources'}
               </h2>
@@ -1082,7 +1039,6 @@ const Index = () => {
                   : 'Tips and best practices for inventory management and Python development'}
               </p>
             </div>
-
             {loadingPosts ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[0,1,2].map(i => (
@@ -1153,7 +1109,7 @@ const Index = () => {
         <section id="faq" className="py-16 border-t scroll-mt-16 bg-muted/30">
           <div className="max-w-4xl mx-auto px-4">
             <div className="text-center mb-12">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+              <Badge className="mb-4 bg-accent-red/20 text-accent-red border-accent-red/30">
                 {language === 'fr' ? 'FAQ' : 'FAQ'}
               </Badge>
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -1165,12 +1121,12 @@ const Index = () => {
                   : 'Everything you need to know about my services'}
               </p>
             </div>
-
             <div className="space-y-4">
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+              {/* Exemple d'une carte FAQ harmonisée; appliquer pattern aux autres cartes */}
+              <Card className="border-2 hover:border-accent-red/40 transition-all duration-300 bg-gradient-to-br from-card to-accent-red/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <HelpCircle className="h-5 w-5 text-accent-red" />
                     {language === 'fr' ? 'Quel est le délai de réalisation ?' : 'What is the delivery time?'}
                   </CardTitle>
                 </CardHeader>
@@ -1181,10 +1137,10 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+              <Card className="border-2 hover:border-accent-red/40 transition-all duration-300 bg-gradient-to-br from-card to-accent-red/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <HelpCircle className="h-5 w-5 text-accent-red" />
                     {language === 'fr' ? 'Proposez-vous une formation ?' : 'Do you offer training?'}
                   </CardTitle>
                 </CardHeader>
@@ -1195,10 +1151,10 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+              <Card className="border-2 hover:border-accent-red/40 transition-all duration-300 bg-gradient-to-br from-card to-accent-red/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <HelpCircle className="h-5 w-5 text-accent-red" />
                     {language === 'fr' ? 'Le logiciel peut-il évoluer ?' : 'Can the software evolve?'}
                   </CardTitle>
                 </CardHeader>
@@ -1209,10 +1165,10 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
+              <Card className="border-2 hover:border-accent-red/40 transition-all duration-300 bg-gradient-to-br from-card to-accent-red/5">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
+                    <HelpCircle className="h-5 w-5 text-accent-red" />
                     {language === 'fr' ? 'Quel support après la livraison ?' : 'What support after delivery?'}
                   </CardTitle>
                 </CardHeader>
@@ -1229,8 +1185,8 @@ const Index = () => {
         {/* Section CTA forte */}
         <section id="cta" className="py-16 border-t scroll-mt-16">
           <div className="max-w-4xl mx-auto px-4">
-            <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50"></div>
+            <Card className="border-2 border-accent-blue/30 bg-gradient-to-br from-accent-blue/5 to-accent-blue/10 relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-accent-blue/10 to-transparent opacity-50"></div>
               <CardContent className="relative py-12 text-center">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
                   {language === 'fr' ? 'Prêt à optimiser votre gestion de stock ?' : 'Ready to Optimize Your Inventory Management?'}
@@ -1243,12 +1199,10 @@ const Index = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                   <Button 
                     size="lg" 
-                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-xl text-lg px-8"
+                    className="bg-accent-blue hover:bg-accent-blue/90 text-white shadow-xl shadow-accent-blue/20 hover:shadow-accent-blue/30 text-lg px-8"
                     onClick={() => {
                       const contactSection = document.getElementById('contact');
-                      if (contactSection) {
-                        contactSection.scrollIntoView({ behavior: 'smooth' });
-                      }
+                      if (contactSection) contactSection.scrollIntoView({ behavior: 'smooth' });
                     }}
                   >
                     <PhoneCall className="mr-2 h-5 w-5" />
@@ -1257,24 +1211,24 @@ const Index = () => {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="border-2 border-primary/30 hover:bg-primary/10 text-lg px-8"
+                    className="border-2 border-accent-sky/40 hover:bg-accent-sky/10 hover:border-accent-sky/60 text-lg px-8"
                     onClick={() => navigate('/produit')}
                   >
-                    <Folder className="mr-2 h-5 w-5" />
+                    <Folder className="mr-2 h-5 w-5 text-accent-sky" />
                     {language === 'fr' ? 'Voir nos solutions' : 'View Our Solutions'}
                   </Button>
                 </div>
                 <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <CheckCircle className="h-4 w-4 text-accent-green" />
                     <span>{language === 'fr' ? 'Devis gratuit' : 'Free Quote'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <CheckCircle className="h-4 w-4 text-accent-green" />
                     <span>{language === 'fr' ? 'Sans engagement' : 'No Commitment'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-primary" />
+                    <CheckCircle className="h-4 w-4 text-accent-green" />
                     <span>{language === 'fr' ? 'Réponse sous 24h' : 'Response within 24h'}</span>
                   </div>
                 </div>
@@ -1288,24 +1242,24 @@ const Index = () => {
           <h3 className="text-xl font-semibold mb-6">
             {language === 'fr' ? 'Pourquoi me choisir ?' : 'Why Choose Me?'}
           </h3>
-          <div className="flex items-center justify-center gap-8 opacity-80 flex-wrap">
-            <div className="flex items-center gap-2 text-sm">
-              <Shield className="w-4 h-4 text-primary" />
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            <div className="flex items-center gap-2 text-sm transition-all hover:scale-105">
+              <Shield className="w-4 h-4 text-accent-green" />
               <span>{language === 'fr' ? 'Solutions Sécurisées' : 'Secure Solutions'}</span>
             </div>
             <div className="w-px h-4 bg-border hidden md:block"></div>
-            <div className="flex items-center gap-2 text-sm">
-              <Target className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 text-sm transition-all hover:scale-105">
+              <Target className="w-4 h-4 text-accent-blue" />
               <span>{language === 'fr' ? 'Sur Mesure' : 'Tailor-Made'}</span>
             </div>
             <div className="w-px h-4 bg-border hidden md:block"></div>
-            <div className="flex items-center gap-2 text-sm">
-              <Clock className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 text-sm transition-all hover:scale-105">
+              <Clock className="w-4 h-4 text-accent-sky" />
               <span>{language === 'fr' ? 'Support Réactif' : 'Responsive Support'}</span>
             </div>
             <div className="w-px h-4 bg-border hidden md:block"></div>
-            <div className="flex items-center gap-2 text-sm">
-              <Star className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 text-sm transition-all hover:scale-105">
+              <Star className="w-4 h-4 text-accent-yellow" />
               <span>{language === 'fr' ? 'Code de Qualité' : 'Quality Code'}</span>
             </div>
           </div>

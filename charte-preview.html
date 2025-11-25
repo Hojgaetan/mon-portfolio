@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu Charte Graphique - Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #0652e9;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #0652e9;
+            padding-bottom: 0.5rem;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .color-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .color-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .color-swatch {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .color-info {
+            padding: 1rem;
+            background: #f9f9f9;
+        }
+
+        .color-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .color-values {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .color-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .usage {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: white;
+            border-left: 3px solid #0652e9;
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #0652e9;
+            background: white;
+            color: #0652e9;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .mode-btn:hover {
+            background: #0652e9;
+            color: white;
+        }
+
+        .mode-btn.active {
+            background: #0652e9;
+            color: white;
+        }
+
+        .demo-section {
+            padding: 2rem;
+            border-radius: 12px;
+            background: #f5f5f5;
+            margin-top: 2rem;
+        }
+
+        .demo-hero {
+            position: relative;
+            padding: 3rem;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect fill="%230652e9" opacity="0.1" width="800" height="600"/></svg>');
+            border-radius: 12px;
+            color: #333;
+        }
+
+        .demo-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .demo-name {
+            color: #0652e9;
+        }
+
+        .demo-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .demo-stat {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .demo-stat:nth-child(1) {
+            border-color: #0652e9;
+        }
+
+        .demo-stat:nth-child(2) {
+            border-color: #38b6ff;
+        }
+
+        .demo-stat:nth-child(3) {
+            border-color: #b9e185;
+        }
+
+        .demo-stat:nth-child(4) {
+            border-color: #fbeb78;
+        }
+
+        .demo-stat:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Charte Graphique Portfolio</h1>
+        <p class="subtitle">Joel Gaetan HASSAM OBAH - Développeur Python Freelance</p>
+
+        <!-- Couleurs Principales -->
+        <div class="section">
+            <h2 class="section-title">Couleurs Principales</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #0652e9;">Accent Blue</div>
+                    <div class="color-info">
+                        <div class="color-name">Accent Blue</div>
+                        <div class="color-values">
+                            <span class="color-value">HEX: #0652e9</span>
+                            <span class="color-value">HSL: 225 91% 45%</span>
+                            <span class="color-value">--accent-blue</span>
+                        </div>
+                        <div class="usage">✓ Nom principal, CTA, éléments clés</div>
+                    </div>
+                </div>
+
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #38b6ff;">Accent Sky</div>
+                    <div class="color-info">
+                        <div class="color-name">Accent Sky</div>
+                        <div class="color-values">
+                            <span class="color-value">HEX: #38b6ff</span>
+                            <span class="color-value">HSL: 202 100% 61%</span>
+                            <span class="color-value">--accent-sky</span>
+                        </div>
+                        <div class="usage">✓ Éléments secondaires, animations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Couleurs Secondaires -->
+        <div class="section">
+            <h2 class="section-title">Couleurs Secondaires</h2>
+            <div class="color-grid">
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #b9e185; color: #333;">Accent Green</div>
+                    <div class="color-info">
+                        <div class="color-name">Accent Green</div>
+                        <div class="color-values">
+                            <span class="color-value">HEX: #b9e185</span>
+                            <span class="color-value">HSL: 78 52% 72%</span>
+                            <span class="color-value">--accent-green</span>
+                        </div>
+                        <div class="usage">✓ Avantages, éléments positifs</div>
+                    </div>
+                </div>
+
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #fbeb78; color: #333;">Accent Yellow</div>
+                    <div class="color-info">
+                        <div class="color-name">Accent Yellow</div>
+                        <div class="color-values">
+                            <span class="color-value">HEX: #fbeb78</span>
+                            <span class="color-value">HSL: 56 92% 73%</span>
+                            <span class="color-value">--accent-yellow</span>
+                        </div>
+                        <div class="usage">✓ Témoignages, highlights</div>
+                    </div>
+                </div>
+
+                <div class="color-card">
+                    <div class="color-swatch" style="background: #df3821;">Accent Red</div>
+                    <div class="color-info">
+                        <div class="color-name">Accent Red</div>
+                        <div class="color-values">
+                            <span class="color-value">HEX: #df3821</span>
+                            <span class="color-value">HSL: 0 73% 50%</span>
+                            <span class="color-value">--accent-red</span>
+                        </div>
+                        <div class="usage">✓ CTA important (CV), FAQ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Démonstration -->
+        <div class="section">
+            <h2 class="section-title">Démonstration Section Hero</h2>
+            <div class="demo-section">
+                <div class="demo-hero">
+                    <div class="demo-title">
+                        Joel-Gaetan <span class="demo-name">HASSAM-OBAH</span>
+                    </div>
+                    <p style="color: #666; font-size: 1.1rem;">Développeur Python Freelance</p>
+
+                    <div class="demo-stats">
+                        <div class="demo-stat">
+                            <div class="stat-number" style="color: #0652e9;">10+</div>
+                            <div class="stat-label">Projets réalisés</div>
+                        </div>
+                        <div class="demo-stat">
+                            <div class="stat-number" style="color: #38b6ff;">5+</div>
+                            <div class="stat-label">Articles publiés</div>
+                        </div>
+                        <div class="demo-stat">
+                            <div class="stat-number" style="color: #b9e185;">24/7</div>
+                            <div class="stat-label">Disponibilité</div>
+                        </div>
+                        <div class="demo-stat">
+                            <div class="stat-number" style="color: #fbeb78;">Python</div>
+                            <div class="stat-label">Technologie</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide d'utilisation -->
+        <div class="section">
+            <h2 class="section-title">📋 Guide d'Utilisation</h2>
+            <div style="background: #f9f9f9; padding: 1.5rem; border-radius: 12px; border-left: 4px solid #0652e9;">
+                <h3 style="color: #0652e9; margin-bottom: 1rem;">Hiérarchie des Couleurs</h3>
+                <ol style="line-height: 1.8; color: #555;">
+                    <li><strong>Accent Blue</strong> - Couleur principale pour tous les éléments importants</li>
+                    <li><strong>Accent Sky</strong> - Couleur secondaire pour les animations et accents</li>
+                    <li><strong>Accent Green</strong> - Messages positifs, succès, avantages</li>
+                    <li><strong>Accent Yellow</strong> - Éléments chaleureux, témoignages</li>
+                    <li><strong>Accent Red</strong> - Actions importantes, alertes</li>
+                </ol>
+
+                <h3 style="color: #0652e9; margin: 1.5rem 0 1rem;">✅ Best Practices</h3>
+                <ul style="line-height: 1.8; color: #555;">
+                    <li>Toujours utiliser les tokens CSS plutôt que les valeurs en dur</li>
+                    <li>Respecter les contrastes (WCAG AA minimum : 4.5:1)</li>
+                    <li>Utiliser backdrop-blur avec les overlays pour cohérence</li>
+                    <li>Transitions uniformes : 300ms duration standard</li>
+                    <li>Ombres colorées : utiliser la couleur d'accent avec opacité</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 2rem; color: #999; border-top: 1px solid #e0e0e0; margin-top: 2rem;">
+            <p>Charte graphique générée le 25 novembre 2025</p>
+            <p style="margin-top: 0.5rem;">Pour plus d'informations, consulter <strong>CHARTE_GRAPHIQUE.md</strong></p>
+        </div>
+    </div>
+</body>
+</html>
+

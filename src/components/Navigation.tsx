@@ -192,8 +192,8 @@ export const Navigation = ({ activeTab, setActiveTab }: NavigationProps) => {
                     variant="ghost"
                     className={`w-full justify-start font-sans text-sm px-4 py-3 rounded-none ${
                       isActive
-                        ? "bg-background text-foreground border-l-2 border-accent"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        ? "bg-accent-blue/10 text-accent-blue border-l-4 border-accent-blue"
+                        : "text-sidebar-foreground hover:bg-accent-sky/10 hover:text-accent-sky"
                     }`}
                     onClick={() => handleNavClick(item)}
                   >

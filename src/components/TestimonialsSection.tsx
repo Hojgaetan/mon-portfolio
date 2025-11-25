@@ -144,7 +144,7 @@ export const TestimonialsSection = ({ variant = 'default', maxItems }: Testimoni
               variant="outline"
               size="icon"
               onClick={prevTestimonial}
-              className="rounded-full hover:bg-primary/10"
+              className="rounded-full border-accent-yellow/40 text-accent-yellow hover:bg-accent-yellow/10"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -156,7 +156,7 @@ export const TestimonialsSection = ({ variant = 'default', maxItems }: Testimoni
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex ? 'w-8 bg-primary' : 'w-2 bg-muted-foreground/30'
+                    index === currentIndex ? 'w-8 bg-accent-yellow' : 'w-2 bg-muted-foreground/30'
                   }`}
                   aria-label={`Aller au témoignage ${index + 1}`}
                 />
@@ -167,7 +167,7 @@ export const TestimonialsSection = ({ variant = 'default', maxItems }: Testimoni
               variant="outline"
               size="icon"
               onClick={nextTestimonial}
-              className="rounded-full hover:bg-primary/10"
+              className="rounded-full border-accent-yellow/40 text-accent-yellow hover:bg-accent-yellow/10"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>

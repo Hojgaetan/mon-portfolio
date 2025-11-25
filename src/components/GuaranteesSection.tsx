@@ -15,68 +15,68 @@ interface Guarantee {
 
 const guarantees: Guarantee[] = [
   {
-    icon: <Shield className="h-8 w-8" />,
+    icon: <Shield className="h-8 w-8 text-accent-blue" />,
     titleFr: 'Code de Qualité',
     titleEn: 'Quality Code',
     descriptionFr: 'Code professionnel, testé et documenté selon les meilleures pratiques Python',
     descriptionEn: 'Professional, tested and documented code following Python best practices',
-    color: 'text-blue-600',
+    color: 'text-accent-blue',
   },
   {
-    icon: <Clock className="h-8 w-8" />,
+    icon: <Clock className="h-8 w-8 text-accent-green" />,
     titleFr: 'Délais Respectés',
     titleEn: 'Deadlines Met',
     descriptionFr: 'Engagement sur les délais avec un suivi transparent du projet',
     descriptionEn: 'Commitment to deadlines with transparent project tracking',
-    color: 'text-green-600',
+    color: 'text-accent-green',
   },
   {
-    icon: <Lock className="h-8 w-8" />,
+    icon: <Lock className="h-8 w-8 text-accent-sky" />,
     titleFr: 'Confidentialité',
     titleEn: 'Confidentiality',
     descriptionFr: 'Respect strict de la confidentialité de vos données et processus métier',
     descriptionEn: 'Strict respect for the confidentiality of your data and business processes',
-    color: 'text-purple-600',
+    color: 'text-accent-sky',
   },
   {
-    icon: <Headphones className="h-8 w-8" />,
+    icon: <Headphones className="h-8 w-8 text-accent-red" />,
     titleFr: 'Support Dédié',
     titleEn: 'Dedicated Support',
     descriptionFr: 'Assistance technique réactive et accompagnement sur le long terme',
     descriptionEn: 'Responsive technical assistance and long-term support',
-    color: 'text-orange-600',
+    color: 'text-accent-red',
   },
   {
-    icon: <FileCheck className="h-8 w-8" />,
+    icon: <FileCheck className="h-8 w-8 text-accent-sky" />,
     titleFr: 'Documentation Complète',
     titleEn: 'Complete Documentation',
     descriptionFr: 'Documentation technique et utilisateur détaillée pour une autonomie maximale',
     descriptionEn: 'Detailed technical and user documentation for maximum autonomy',
-    color: 'text-cyan-600',
+    color: 'text-accent-sky',
   },
   {
-    icon: <Award className="h-8 w-8" />,
+    icon: <Award className="h-8 w-8 text-accent-red" />,
     titleFr: 'Garantie Satisfaction',
     titleEn: 'Satisfaction Guarantee',
     descriptionFr: 'Révisions illimitées jusqu\'à votre entière satisfaction',
     descriptionEn: 'Unlimited revisions until your complete satisfaction',
-    color: 'text-red-600',
+    color: 'text-accent-red',
   },
   {
-    icon: <Zap className="h-8 w-8" />,
+    icon: <Zap className="h-8 w-8 text-accent-yellow" />,
     titleFr: 'Performance Optimale',
     titleEn: 'Optimal Performance',
     descriptionFr: 'Solutions optimisées pour la rapidité et l\'efficacité',
     descriptionEn: 'Solutions optimized for speed and efficiency',
-    color: 'text-yellow-600',
+    color: 'text-accent-yellow',
   },
   {
-    icon: <Users className="h-8 w-8" />,
+    icon: <Users className="h-8 w-8 text-accent-green" />,
     titleFr: 'Formation Incluse',
     titleEn: 'Training Included',
     descriptionFr: 'Formation de vos équipes pour une adoption réussie',
     descriptionEn: 'Team training for successful adoption',
-    color: 'text-pink-600',
+    color: 'text-accent-green',
   },
 ];
 
@@ -88,7 +88,7 @@ export const GuaranteesSection = () => {
       <div className="max-w-6xl mx-auto px-4">
         <AnimatedSection direction="up" delay={0.1}>
           <div className="text-center mb-12">
-            <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+            <Badge className="mb-4 bg-accent-yellow/30 text-accent-yellow border-accent-yellow/40">
               {language === 'fr' ? 'Garanties' : 'Guarantees'}
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -105,7 +105,7 @@ export const GuaranteesSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {guarantees.map((guarantee, index) => (
             <ScaleIn key={index} delay={index * 0.1}>
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300 h-full hover:shadow-xl hover-lift group">
+              <Card className="border-2 hover:border-accent-blue/30 transition-all duration-300 h-full hover:shadow-xl group bg-gradient-to-br from-card to-muted/5">
                 <CardHeader>
                   <div className={`mb-4 ${guarantee.color} group-hover:scale-110 transition-transform duration-300`}>
                     {guarantee.icon}
@@ -126,7 +126,7 @@ export const GuaranteesSection = () => {
 
         {/* Section Engagement supplémentaire */}
         <AnimatedSection direction="up" delay={0.3} className="mt-12">
-          <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10">
+          <Card className="border-2 border-accent-blue/30 bg-gradient-to-br from-accent-blue/5 to-accent-blue/10">
             <CardContent className="p-8 text-center">
               <h3 className="text-2xl font-bold mb-4">
                 {language === 'fr' ? '100% Satisfaction ou Remboursé' : '100% Satisfaction or Refund'}
@@ -143,4 +143,3 @@ export const GuaranteesSection = () => {
     </section>
   );
 };
-

@@ -60,7 +60,7 @@ export const StickyFloatingCTA = () => {
             <Button
               size="lg"
               onClick={handleClick}
-              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-2xl hover:shadow-3xl transition-all duration-300 rounded-full px-6 py-6 group-hover:scale-105"
+              className="bg-accent-blue hover:bg-accent-blue/90 text-white shadow-2xl shadow-accent-blue/30 hover:shadow-3xl hover:shadow-accent-blue/40 transition-all duration-300 rounded-full px-6 py-6 group-hover:scale-105"
             >
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
@@ -75,7 +75,7 @@ export const StickyFloatingCTA = () => {
             </Button>
 
             {/* Effet de pulse */}
-            <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+            <div className="absolute inset-0 rounded-full bg-accent-blue/20 animate-ping" />
           </div>
         </motion.div>
       )}

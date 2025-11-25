@@ -11,7 +11,7 @@ import { useRef } from "react";
 export const HeroSection = () => {
   const { language } = useLanguage();
   const plugin = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: false })
+    Autoplay({ delay: 4000, stopOnInteraction: false }) as any
   );
 
   const carouselImages = [warehouse1, softwareDashboard, warehouse2, pythonInventory];
@@ -52,31 +52,30 @@ export const HeroSection = () => {
           </CarouselContent>
         </Carousel>
       </div>
-      <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-background/90 backdrop-blur-md" />
 
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4 font-sans">
         <div className="max-w-4xl w-full">
-          <div className="space-y-8">
+          <div className="space-y-8 animate-fade-in-up">
             {/* Greeting */}
             <div className="space-y-2">
-              <p className="text-muted-foreground font-sans text-lg">
+              <p className="text-accent-blue font-sans text-lg md:text-xl font-medium">
                 _{typewriterText}
-                <span className="animate-pulse">|</span>
-
+                <span className="animate-pulse text-accent-sky">|</span>
               </p>
 
               {/* Name */}
-              <h1 className="text-6xl md:text-7xl font-bold text-primary leading-tight">
+              <h1 className="text-5xl md:text-7xl font-bold text-foreground leading-tight">
                 Joel-Gaetan
                 <br />
-                <span className="text-foreground">HASSAM-OBAH</span>
+                <span className="text-accent-blue">HASSAM-OBAH</span>
               </h1>
               
               {/* Title */}
               <div className="flex items-center space-x-2">
-                <span className="text-code-keyword font-mono">&gt;</span>
-                <p className="text-xl md:text-2xl text-muted-foreground font-sans">
+                <span className="text-accent-sky font-mono text-xl">&gt;</span>
+                <p className="text-lg md:text-2xl text-muted-foreground font-sans">
                     {language === 'fr' ? 'developpeur_python_freelance' : 'freelance_python_developer'}
                     <br />
                 </p>
@@ -84,34 +83,34 @@ export const HeroSection = () => {
             </div>
 
             {/* Contact Info as Code */}
-            <div className="bg-card/80 backdrop-blur-md rounded-lg p-6 border border-primary/20 shadow-xl font-sans text-sm space-y-2 max-w-2xl">
-              <div className="text-code-comment">// bio</div>
+            <div className="bg-card/90 backdrop-blur-md rounded-lg p-6 border border-accent-blue/30 shadow-2xl font-sans text-sm space-y-2 max-w-2xl transition-all hover:border-accent-blue/50 hover:shadow-accent-blue/10">
+              <div className="text-code-comment font-mono">// bio</div>
 
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 font-mono">
                 <span className="text-code-keyword">var</span>
                 <span className="text-foreground">bio</span>
-                <span className="text-foreground">=</span>
+                <span className="text-muted-foreground">=</span>
                 <span className="text-code-string">"{language === 'fr' ? 'Specialise en developpement de logiciels de gestion de stock sur mesure en Python pour les PME' : 'Specialized in custom Python inventory management software development for SMEs'}"</span>
-                <span className="text-foreground">;</span>
+                <span className="text-muted-foreground">;</span>
               </div>
 
-              <div className="text-code-comment">// {language === 'fr' ? 'mes-contacts' : 'my-contacts'}</div>
-              
-              <div className="flex items-center space-x-2">
+              <div className="text-code-comment font-mono">// {language === 'fr' ? 'mes-contacts' : 'my-contacts'}</div>
+
+              <div className="flex items-center space-x-2 font-mono">
                 <span className="text-code-keyword">const</span>
                 <span className="text-foreground">numTelephone</span>
-                <span className="text-foreground">=</span>
+                <span className="text-muted-foreground">=</span>
                 <span className="text-code-string">"+221 77 202 04 30"</span>
-                <span className="text-foreground">;</span>
+                <span className="text-muted-foreground">;</span>
               </div>
               
-              <div className="text-code-comment">// {language === 'fr' ? 'mon mail' : 'my email'}</div>
-              <div className="flex items-center space-x-2">
+              <div className="text-code-comment font-mono">// {language === 'fr' ? 'mon mail' : 'my email'}</div>
+              <div className="flex items-center space-x-2 font-mono">
                 <span className="text-code-keyword">const</span>
                 <span className="text-foreground">e-mail</span>
-                <span className="text-foreground">=</span>
+                <span className="text-muted-foreground">=</span>
                 <span className="text-code-string">"contact@joelhassam.com"</span>
-                <span className="text-foreground">;</span>
+                <span className="text-muted-foreground">;</span>
               </div>
             </div>
           </div>

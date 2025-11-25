@@ -65,14 +65,14 @@ export default function CookieConsentBanner() {
           </div>
           <div className="mt-3 md:mt-0 flex gap-2 md:flex-col">
             {!showCustomize && (
-              <Button variant="outline" onClick={() => setShowCustomize(true)}>Personnaliser</Button>
+              <Button variant="outline" className="border-accent-sky/40 text-accent-sky hover:bg-accent-sky/10" onClick={() => setShowCustomize(true)}>Personnaliser</Button>
             )}
             {showCustomize ? (
-              <Button onClick={save}>Enregistrer</Button>
+              <Button className="bg-accent-blue hover:bg-accent-blue/90 text-white shadow-md shadow-accent-blue/20" onClick={save}>Enregistrer</Button>
             ) : (
-              <Button onClick={acceptAll}>Accepter</Button>
+              <Button className="bg-accent-green hover:bg-accent-green/90 text-white shadow-md shadow-accent-green/20" onClick={acceptAll}>Accepter</Button>
             )}
-            <Button variant="secondary" onClick={rejectAll}>Refuser</Button>
+            <Button variant="outline" className="border-accent-red/40 text-accent-red hover:bg-accent-red/10" onClick={rejectAll}>Refuser</Button>
           </div>
         </div>
       </div>
