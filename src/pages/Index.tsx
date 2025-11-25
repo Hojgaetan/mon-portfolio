@@ -357,7 +357,7 @@ const Index = () => {
           {/* Carousel d'images en arrière-plan */}
           <div className="absolute inset-0 z-0">
             <Carousel
-              plugins={[carouselPlugin.current]}
+              plugins={[carouselPlugin.current as any]}
               className="w-full h-full"
               opts={{
                 loop: true,
