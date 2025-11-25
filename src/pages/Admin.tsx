@@ -19,13 +19,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { CursusManager } from "@/components/admin/CursusManager";
 import { CertificationsManager } from "@/components/admin/CertificationsManager";
 import { HomeSectionsManager } from "@/components/admin/HomeSectionsManager";
+import { AdminExportUsage } from "@/components/admin/AdminExportUsage";
+import { CommentReactionsStats } from "@/components/admin/CommentReactionsStats"; // réutilisé comme placeholder global
 
 export default function Admin() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState("overview");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -94,6 +96,23 @@ export default function Admin() {
     }
   }, [loading, checkingAdmin, isAdmin, user, navigate, toast, t]);
 
+  // Lecture du paramètre de query pour persister la section
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sectionParam = params.get("section");
+    if (sectionParam) {
+      setActiveSection(sectionParam);
+    }
+  }, []);
+
+  // Mettre à jour l'URL quand activeSection change
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    params.set("section", activeSection);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState(null, "", newUrl);
+  }, [activeSection]);
+
   const handleSignOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -120,32 +139,44 @@ export default function Admin() {
   };
 
   const renderContent = () => {
+    // activeSection peut être "overview" ou "group:item"
     switch (activeSection) {
-      case "dashboard":
+      case "overview":
         return <AdminDashboard />;
-      case "projects":
+      case "content:projects":
         return <ProjectsManager />;
-      case "blog":
+      case "content:blog":
         return <BlogManager />;
-      case "about":
+      case "content:about":
         return <AboutManager />;
-      case "messages":
+      case "interactions:messages":
         return <ContactMessagesManager />;
-      case "comments":
+      case "interactions:comments":
         return <CommentsManager />;
-      case "categories":
+      case "interactions:reactions":
+        return (
+          <div className="space-y-6">
+            <h1 className="text-3xl font-bold">Réactions aux commentaires</h1>
+            <p className="text-muted-foreground">Vue agrégée à construire (placeholder). Exemple ci-dessous pour un commentId spécifique.</p>
+            {/* Placeholder démonstration - un ID fictif */}
+            <CommentReactionsStats commentId="00000000-0000-0000-0000-000000000000" />
+          </div>
+        );
+      case "content:categories":
         return <CategorieManager />;
-      case "entreprises":
+      case "catalog:entreprises":
         return <EntrepriseManager />;
-      case "cursus":
+      case "catalog:exports":
+        return <AdminExportUsage />;
+      case "features:cursus":
         return <CursusManager />;
-      case "certifications":
+      case "features:certifications":
         return <CertificationsManager />;
-      case "home_sections":
+      case "content:home_sections":
         return <HomeSectionsManager />;
-      case "access":
+      case "users:access":
         return <AccessManager />;
-      case "users":
+      case "users:manage":
         return <UsersManager />;
       case "settings":
         return <AdminSettings />;
