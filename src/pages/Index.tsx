@@ -652,10 +652,10 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+              <Card className="border-2 hover:border-accent-green/30 transition-all duration-300 bg-gradient-to-br from-card to-accent-green/5">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mb-4">
-                    <TrendingUp className="h-6 w-6 text-green-600" />
+                  <div className="w-12 h-12 rounded-full bg-accent-green/20 flex items-center justify-center mb-4">
+                    <TrendingUp className="h-6 w-6 text-accent-green" />
                   </div>
                   <CardTitle className="text-xl">
                     {language === 'fr' ? 'Réduction des coûts' : 'Cost Reduction'}
@@ -669,25 +669,25 @@ const Index = () => {
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-green mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Moins de surstockage' : 'Less overstocking'}</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-green mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Réduction des ruptures' : 'Reduced stockouts'}</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-green mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Meilleure trésorerie' : 'Better cash flow'}</span>
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+              <Card className="border-2 hover:border-accent-blue/30 transition-all duration-300 bg-gradient-to-br from-card to-accent-blue/5">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
-                    <Zap className="h-6 w-6 text-blue-600" />
+                  <div className="w-12 h-12 rounded-full bg-accent-blue/20 flex items-center justify-center mb-4">
+                    <Zap className="h-6 w-6 text-accent-blue" />
                   </div>
                   <CardTitle className="text-xl">
                     {language === 'fr' ? 'Gain de temps' : 'Time Savings'}
@@ -701,25 +701,25 @@ const Index = () => {
                   </p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-blue mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Saisies automatiques' : 'Automatic entries'}</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-blue mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Rapports instantanés' : 'Instant reports'}</span>
                     </li>
                     <li className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-accent-blue mt-0.5 flex-shrink-0" />
                       <span>{language === 'fr' ? 'Alertes proactives' : 'Proactive alerts'}</span>
                     </li>
                   </ul>
                 </CardContent>
               </Card>
 
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300 bg-gradient-to-br from-card to-primary/5">
+              <Card className="border-2 hover:border-accent-sky/30 transition-all duration-300 bg-gradient-to-br from-card to-accent-sky/5">
                 <CardHeader>
-                  <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mb-4">
-                    <Shield className="h-6 w-6 text-purple-600" />
+                  <div className="w-12 h-12 rounded-full bg-accent-sky/20 flex items-center justify-center mb-4">
+                    <Shield className="h-6 w-6 text-accent-sky" />
                   </div>
                   <CardTitle className="text-xl">
                     {language === 'fr' ? 'Fiabilité & Sécurité' : 'Reliability & Security'}
@@ -892,7 +892,7 @@ const Index = () => {
                           <h4 className="font-semibold text-foreground mb-1">{c.title}</h4>
                           <p className="text-sm text-muted-foreground mb-2">{c.provider}</p>
                           <div className="flex items-center gap-2 mb-2">
-                            <div className={`w-2 h-2 rounded-full ${['bg-yellow-500','bg-blue-500','bg-green-500','bg-purple-500'][idx % 4]}`}></div>
+                            <div className={`w-2 h-2 rounded-full ${['bg-accent-yellow','bg-accent-blue','bg-accent-green','bg-accent-red'][idx % 4]}`}></div>
                             <span className="text-sm font-medium">{c.progress || ''}</span>
                           </div>
                           {c.expected && (
@@ -921,7 +921,7 @@ const Index = () => {
                     {skills.length > 0 ? (
                       skills.map((s) => (
                         <div key={s.id} className="flex items-center gap-3 p-3 bg-background/30 rounded-lg hover:bg-background/50 transition-colors">
-                          <div className={`w-10 h-10 rounded-full ${s.color_class || 'bg-blue-500/20 text-blue-600'} flex items-center justify-center text-lg`}>
+                          <div className={`w-10 h-10 rounded-full ${s.color_class || 'bg-accent-blue/20 text-accent-blue'} flex items-center justify-center text-lg`}>
                             {s.icon || '•'}
                           </div>
                           <div>
@@ -983,7 +983,7 @@ const Index = () => {
                         </span>
                       )}
                       {isNew(p.created_at) && (
-                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-green-500/15 text-green-600 border border-green-500/20">{t('common.new')}</span>
+                        <span className="absolute top-3 right-3 text-xs px-2 py-1 rounded-full bg-accent-green/15 text-accent-green border border-accent-green/20">{t('common.new')}</span>
                       )}
                     </div>
 
@@ -1036,7 +1036,7 @@ const Index = () => {
               <Card className="border-2 hover:border-primary/30 transition-all duration-300">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-blue to-accent-blue/80 flex items-center justify-center text-white font-bold text-lg">
                       AM
                     </div>
                     <div>
@@ -1048,7 +1048,7 @@ const Index = () => {
                   </div>
                   <div className="flex gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
                     ))}
                   </div>
                 </CardHeader>
@@ -1064,7 +1064,7 @@ const Index = () => {
               <Card className="border-2 hover:border-primary/30 transition-all duration-300">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-green to-accent-green/80 flex items-center justify-center text-white font-bold text-lg">
                       BD
                     </div>
                     <div>
@@ -1076,7 +1076,7 @@ const Index = () => {
                   </div>
                   <div className="flex gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
                     ))}
                   </div>
                 </CardHeader>
@@ -1092,7 +1092,7 @@ const Index = () => {
               <Card className="border-2 hover:border-primary/30 transition-all duration-300">
                 <CardHeader>
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-red to-accent-red/80 flex items-center justify-center text-white font-bold text-lg">
                       FK
                     </div>
                     <div>
@@ -1104,7 +1104,7 @@ const Index = () => {
                   </div>
                   <div className="flex gap-1 mb-2">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
                     ))}
                   </div>
                 </CardHeader>
