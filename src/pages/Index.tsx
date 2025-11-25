@@ -11,6 +11,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { FolderKanban, Newspaper, ArrowRight, Folder, Shield, Clock, Star, Briefcase, Award, Target, GraduationCap, MapPin, CheckCircle, Users, TrendingUp, Zap, MessageSquare, PhoneCall, Mail, HelpCircle, ChevronDown } from "lucide-react";
 // Ajout d'icônes pour les métadonnées
 import { Calendar, Tag, BookOpen, BookOpen as BookOpenIcon } from "lucide-react";
+// Composants d'amélioration
+import { SEO } from "@/components/SEO";
+import { AnimatedSection, FadeIn, ScaleIn } from "@/components/AnimatedSection";
+import { CountUpAnimation } from "@/components/CountUpAnimation";
+import { StickyFloatingCTA } from "@/components/StickyFloatingCTA";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
+import { TechStackSection } from "@/components/TechStackSection";
+import { GuaranteesSection } from "@/components/GuaranteesSection";
 import profilePhoto from "../assets/photo-p.JPG";
 import warehouse1 from "@/assets/warehouse-1.jpg";
 import warehouse2 from "@/assets/warehouse-2.jpg";
@@ -350,6 +358,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen h-auto bg-background flex flex-col">
+      <SEO />
+      <StickyFloatingCTA />
       <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="flex-1">
         {/* Hero avec carousel */}
@@ -406,25 +416,41 @@ const Index = () => {
                   : 'Complete inventory tracking solutions, automated alerts, real-time reporting and ERP integrations'}
               </p>
 
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
-                  <div className="text-2xl font-bold text-primary">{projectsCount !== null ? projectsCount.toLocaleString('fr-FR') : '—'}</div>
+            {/* Stats avec animations */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 max-w-2xl mx-auto">
+              <ScaleIn delay={0.1}>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+                  <div className="text-2xl font-bold text-primary">
+                    {projectsCount !== null ? (
+                      <CountUpAnimation end={projectsCount} duration={2000} suffix="+" />
+                    ) : '—'}
+                  </div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Projets réalisés' : 'Projects completed'}</div>
                 </div>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
-                  <div className="text-2xl font-bold text-primary">{publishedPostsCount !== null ? publishedPostsCount.toLocaleString('fr-FR') : '—'}</div>
+              </ScaleIn>
+              <ScaleIn delay={0.2}>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+                  <div className="text-2xl font-bold text-primary">
+                    {publishedPostsCount !== null ? (
+                      <CountUpAnimation end={publishedPostsCount} duration={2000} suffix="+" />
+                    ) : '—'}
+                  </div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Articles publiés' : 'Published articles'}</div>
                 </div>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+              </ScaleIn>
+              <ScaleIn delay={0.3}>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
                   <div className="text-2xl font-bold text-primary">24/7</div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Disponibilité' : 'Availability'}</div>
                 </div>
-                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
+              </ScaleIn>
+              <ScaleIn delay={0.4}>
+                <div className="text-center p-4 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
                   <div className="text-2xl font-bold text-primary">Python</div>
                   <div className="text-sm text-muted-foreground">{language === 'fr' ? 'Technologie' : 'Technology'}</div>
                 </div>
-              </div>
+              </ScaleIn>
+            </div>
             </div>
           </div>
         </section>
@@ -605,7 +631,7 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
               <div className="md:col-span-2">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  {language === 'fr' ? 'Développeur Python Spécialisé' : 'Specialized Python Developer'}
+                  {language === 'fr' ? 'Développeur Python Junior' : 'Associate Python Developer'}
                 </h2>
                 <p className="text-lg text-muted-foreground mb-4">
                   {language === 'fr'
@@ -754,21 +780,26 @@ const Index = () => {
         {/* Section Cursus - Compétences Python */}
         <section id="cursus" className="py-16 border-t scroll-mt-16">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="text-center mb-12">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
-                {language === 'fr' ? 'Expertise Technique' : 'Technical Expertise'}
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                {language === 'fr' ? 'Technologies & Compétences' : 'Technologies & Skills'}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {language === 'fr'
-                  ? 'Stack technologique moderne pour des solutions performantes et évolutives'
-                  : 'Modern tech stack for high-performance and scalable solutions'}
-              </p>
-            </div>
+            <AnimatedSection direction="up" delay={0.1}>
+              <div className="text-center mb-12">
+                <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                  {language === 'fr' ? 'Expertise Technique' : 'Technical Expertise'}
+                </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                  {language === 'fr' ? 'Technologies & Compétences' : 'Technologies & Skills'}
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {language === 'fr'
+                    ? 'Stack technologique moderne pour des solutions performantes et évolutives'
+                    : 'Modern tech stack for high-performance and scalable solutions'}
+                </p>
+              </div>
+            </AnimatedSection>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Stack Tech visuel */}
+            <TechStackSection />
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
               {/* Technologies Python */}
               <Card className="relative overflow-hidden border-2 hover:border-primary/30 bg-gradient-to-br from-card to-primary/5 transition-all duration-300">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-50" />
@@ -1015,108 +1046,26 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Section Témoignages */}
+        {/* Section Témoignages - Dynamique */}
         <section id="testimonials" className="py-16 border-t scroll-mt-16 bg-muted/30">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="text-center mb-12">
-              <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
-                {language === 'fr' ? 'Témoignages' : 'Testimonials'}
-              </Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">
-                {language === 'fr' ? 'Ils me font confiance' : 'They Trust Me'}
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {language === 'fr'
-                  ? 'Découvrez les retours d\'expérience de mes clients'
-                  : 'Discover feedback from my clients'}
-              </p>
-            </div>
+            <AnimatedSection direction="up" delay={0.1}>
+              <div className="text-center mb-12">
+                <Badge className="mb-4 bg-primary/20 text-primary border-primary/30">
+                  {language === 'fr' ? 'Témoignages' : 'Testimonials'}
+                </Badge>
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                  {language === 'fr' ? 'Ils me font confiance' : 'They Trust Me'}
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {language === 'fr'
+                    ? 'Découvrez les retours d\'expérience de mes clients'
+                    : 'Discover feedback from my clients'}
+                </p>
+              </div>
+            </AnimatedSection>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-blue to-accent-blue/80 flex items-center justify-center text-white font-bold text-lg">
-                      AM
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">Aminata M.</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {language === 'fr' ? 'Gérante, Commerce de détail' : 'Manager, Retail Business'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground italic">
-                    {language === 'fr'
-                      ? '"Depuis l\'implémentation du système de gestion de stock, nous avons réduit nos ruptures de 40%. Le système d\'alertes automatiques est un vrai gain de temps !"'
-                      : '"Since implementing the inventory management system, we\'ve reduced stockouts by 40%. The automatic alert system is a real time-saver!"'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-green to-accent-green/80 flex items-center justify-center text-white font-bold text-lg">
-                      BD
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">Boubacar D.</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {language === 'fr' ? 'Directeur logistique, Distribution' : 'Logistics Director, Distribution'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground italic">
-                    {language === 'fr'
-                      ? '"Une solution sur mesure parfaitement adaptée à nos besoins. Les rapports en temps réel nous permettent de prendre les bonnes décisions rapidement."'
-                      : '"A tailor-made solution perfectly adapted to our needs. Real-time reports allow us to make the right decisions quickly."'}
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card className="border-2 hover:border-primary/30 transition-all duration-300">
-                <CardHeader>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent-red to-accent-red/80 flex items-center justify-center text-white font-bold text-lg">
-                      FK
-                    </div>
-                    <div>
-                      <CardTitle className="text-base">Fatou K.</CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {language === 'fr' ? 'Responsable achat, Industrie' : 'Purchasing Manager, Industry'}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-accent-yellow text-accent-yellow" />
-                    ))}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground italic">
-                    {language === 'fr'
-                      ? '"Professionnel, réactif et à l\'écoute. Le support technique est excellent et les mises à jour régulières apportent toujours des améliorations pertinentes."'
-                      : '"Professional, responsive and attentive. Technical support is excellent and regular updates always bring relevant improvements."'}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
+            <TestimonialsSection variant="default" maxItems={3} />
           </div>
         </section>
 
@@ -1196,6 +1145,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Section Garanties */}
+        <GuaranteesSection />
 
         {/* Section FAQ */}
         <section id="faq" className="py-16 border-t scroll-mt-16 bg-muted/30">

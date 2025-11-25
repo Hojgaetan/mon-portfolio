@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 import {
-  Package, 
-  Warehouse, 
-  TrendingUp, 
-  CheckCircle, 
+    Package,
+    Warehouse,
+    TrendingUp,
+    CheckCircle,
   Star, 
   Clock,
   Shield,
@@ -31,49 +31,49 @@ export default function ServicesPage() {
 
   const services = [
     {
-      id: "supply-chain",
-      title: "Gestion de la chaîne d'approvisionnement",
-      description: "Solution complète Python pour gérer vos fournisseurs, commandes et livraisons de bout en bout",
-      icon: Package,
-      price: "À partir de 800 000 F CFA",
-      features: [
-        "Suivi fournisseurs",
-        "Gestion commandes",
-        "Traçabilité livraisons",
-        "Reporting avancé"
-      ],
-      badge: "📦 Complet",
-      color: "accent-blue"
+        id: "supply-chain",
+        title: "Gestion de la chaîne d'approvisionnement",
+        description: "Solution complète Python pour gérer vos fournisseurs, commandes et livraisons de bout en bout",
+        icon: Package,
+        price: "À partir de 800 000 F CFA",
+        features: [
+            "Suivi fournisseurs",
+            "Gestion commandes",
+            "Traçabilité livraisons",
+            "Reporting avancé"
+        ],
+        badge: "📦 Complet",
+        color: "accent-blue"
     },
-    {
-      id: "inventory",
-      title: "Gestion de stock",
-      description: "Logiciel Python sur mesure pour suivre vos stocks en temps réel avec alertes automatiques",
-      icon: Warehouse,
-      price: "À partir de 500 000 F CFA",
-      features: [
-        "Suivi temps réel",
-        "Alertes automatiques",
-        "Multi-entrepôts",
-        "Rapports détaillés"
-      ],
-      badge: "🔥 Populaire",
-      color: "accent-green"
-    },
-    {
-      id: "optimization",
-      title: "Optimisation de la gestion de stock des PME",
-      description: "Analyse et optimisation de vos processus de stock avec algorithmes Python pour réduire les coûts",
-      icon: TrendingUp,
-      price: "À partir de 350 000 F CFA",
-      features: [
-        "Analyse prédictive",
-        "Réduction coûts",
-        "Optimisation niveaux",
-        "Tableaux de bord"
-      ],
-      badge: "🚀 Performance",
-      color: "accent-sky"
+      {
+          id: "inventory",
+          title: "Gestion de stock",
+          description: "Logiciel Python sur mesure pour suivre vos stocks en temps réel avec alertes automatiques",
+          icon: Warehouse,
+          price: "À partir de 500 000 F CFA",
+          features: [
+              "Suivi temps réel",
+              "Alertes automatiques",
+              "Multi-entrepôts",
+              "Rapports détaillés"
+          ],
+          badge: "🔥 Populaire",
+          color: "accent-green"
+      },
+      {
+          id: "optimization",
+          title: "Optimisation de la gestion de stock des PME",
+          description: "Analyse et optimisation de vos processus de stock avec algorithmes Python pour réduire les coûts",
+          icon: TrendingUp,
+          price: "À partir de 350 000 F CFA",
+          features: [
+              "Analyse prédictive",
+              "Réduction coûts",
+              "Optimisation niveaux",
+              "Tableaux de bord"
+          ],
+          badge: "🚀 Performance",
+          color: "accent-sky"
     }
   ];
 

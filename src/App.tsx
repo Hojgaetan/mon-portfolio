@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { SessionProvider } from "@/contexts/SessionContext";
 import CookieConsentBanner from "@/components/CookieConsent";
+import { HelmetProvider } from 'react-helmet-async';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -23,7 +24,6 @@ import ProductIndex from "./pages/ProductIndex";
 import AboutPage from "./pages/AboutPage";
 import ServicesPage from "./pages/ServicesPage";
 import ProjectPage from "./pages/ProjectPage";
-
 const queryClient = new QueryClient();
 
 function AppRoutes() {
@@ -55,7 +55,6 @@ function AppRoutes() {
           <Route path="/about" element={<Navigate to="/a-propos" replace />} />
           <Route path="/services" element={<ServicesPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {!hideFooter && <Footer />}
@@ -65,20 +64,22 @@ function AppRoutes() {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <LanguageProvider>
-      <SessionProvider>
-        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-            <CookieConsentBanner />
-          </TooltipProvider>
-        </ThemeProvider>
-      </SessionProvider>
-    </LanguageProvider>
+    <HelmetProvider>
+      <LanguageProvider>
+        <SessionProvider>
+          <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+              <CookieConsentBanner />
+            </TooltipProvider>
+          </ThemeProvider>
+        </SessionProvider>
+      </LanguageProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 
